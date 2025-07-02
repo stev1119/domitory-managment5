@@ -1204,7 +1204,7 @@
             }
         }
 
-        // 선택된 동/층의 학생 데이터 가져오기 (인덱스 매핑 수정)
+        // 선택된 동/층의 학생 데이터 가져오기 (E동, F동 4층 특별 처리)
         function getStudentsByFloor(building, floor) {
             if (!building || !floor || !dormitoryRanges[building] || !dormitoryRanges[building][floor]) {
                 console.error('잘못된 동/층 선택:', building, floor);
@@ -1213,17 +1213,19 @@
 
             console.log(`${building}동 ${floor}층 학생 데이터 로드 중...`);
 
+            // E동 4층과 F동 4층은 특별한 셀 범위에서 검색
+            if ((building === 'E' && floor === '4') || (building === 'F' && floor === '4')) {
+                return getSpecialFloor4Students(building);
+            }
+
+            // 기존 로직 (다른 모든 동/층)
             const range = dormitoryRanges[building][floor];
             const students = [];
 
-            // 호실 범위 내의 모든 호실 처리
             for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
                 const roomCode = `${building}${roomNum}`;
                 
-                // 시트에서 해당 호실 찾기 (대소문자 구분 없이)
                 const studentRows = [];
-                
-                // 헤더 제외하고 검색 (인덱스 1부터)
                 for (let i = 1; i < sheetsData.length; i++) {
                     const row = sheetsData[i];
                     const sheetRoom = row[1] ? row[1].toString().toUpperCase() : '';
@@ -1237,7 +1239,6 @@
                 }
 
                 if (studentRows.length > 0) {
-                    // 해당 호실의 모든 학생 추가 (3인실 대응)
                     studentRows.forEach(studentRow => {
                         students.push({
                             room: studentRow.data[1] || roomCode,
@@ -1245,11 +1246,10 @@
                             status: studentRow.data[3] || '정상',
                             date: studentRow.data[4] || '',
                             memo: studentRow.data[5] || '',
-                            rowIndex: studentRow.index // 수정: -1 제거
+                            rowIndex: studentRow.index
                         });
                     });
                 } else {
-                    // 시트에 없는 호실은 미배정으로 추가
                     students.push({
                         room: roomCode,
                         name: '미배정',
@@ -1262,7 +1262,50 @@
             }
 
             console.log(`${building}동 ${floor}층 학생 수:`, students.length);
-            console.log(`${building}동 ${floor}층 첫 3명:`, students.slice(0, 3));
+            return students;
+        }
+
+        // E동/F동 4층 특별 처리 함수
+        function getSpecialFloor4Students(building) {
+            const students = [];
+            let startRow, endRow;
+            
+            // 특별 셀 범위 설정
+            if (building === 'E') {
+                startRow = 1185; // B1185
+                endRow = 1304;   // B1304
+            } else if (building === 'F') {
+                startRow = 1403; // B1403
+                endRow = 1453;   // B1453
+            }
+            
+            console.log(`${building}동 4층 특별 범위: ${startRow}~${endRow} 행`);
+            
+            // CSV 데이터에서 해당 범위의 실제 인덱스 찾기
+            for (let i = 1; i < sheetsData.length; i++) {
+                const row = sheetsData[i];
+                const actualRowNum = row[0]; // 첫 번째 열에 실제 시트 행 번호가 있음
+                
+                if (actualRowNum >= startRow && actualRowNum <= endRow) {
+                    const room = row[1] || ''; // B열 (호실번호)
+                    const name = row[2] || ''; // C열 (학생이름)
+                    
+                    // E4 또는 F4로 시작하는 호실만 포함
+                    if (room.startsWith(`${building}4`)) {
+                        students.push({
+                            room: room,
+                            name: name || '미배정',
+                            status: row[3] || '정상', // D열 (학생상태)
+                            date: row[4] || '',
+                            memo: row[5] || '',
+                            rowIndex: i
+                        });
+                    }
+                }
+            }
+            
+            console.log(`${building}동 4층 특별 범위에서 찾은 학생 수:`, students.length);
+            console.log(`${building}동 4층 첫 3명:`, students.slice(0, 3));
             
             return students;
         }
