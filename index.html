@@ -599,23 +599,23 @@
                 const roomCode = `${building}${roomNum}`;
                 
                 // 시트에서 해당 호실 찾기 (대소문자 구분 없이)
-                const studentRows = sheetsData.filter((row, index) => {
-                    if (index === 0) return false; // 헤더 제외
-                    const sheetRoom = row[1] ? row[1].toString().toUpperCase() : '';
+                const studentRows = sheetsData.filter(obj => {
+                    const sheetRoom = obj.row[1]?.toString().toUpperCase() || '';
                     return sheetRoom === roomCode.toUpperCase();
                 });
 
                 if (studentRows.length > 0) {
                     // 해당 호실의 모든 학생 추가 (3인실 대응)
-                    studentRows.forEach(studentRow => {
-                        const rowIndex = sheetsData.indexOf(studentRow);
+                    studentRows.forEach(obj => {
+                    const studentRow = obj.row;
+                        const rowIndex = sheetsData.findIndex(r => r[0] === studentRow[0]);
                         students.push({
                             room: studentRow[1] || roomCode,
                             name: studentRow[2] || '미배정',
                             status: studentRow[3] || '정상',
                             date: studentRow[4] || '',
                             memo: studentRow[5] || '',
-                            rowIndex: rowIndex
+                            sheetRow: sheetRow
                         });
                     });
                 } else {
@@ -649,7 +649,7 @@
                         status: row[3] || '정상',
                         date: row[4] || '',
                         memo: row[5] || '',
-                        rowIndex: index
+                        sheetRow: row[0]
                     });
                 }
             });
@@ -820,17 +820,17 @@
                 const updates = [];
                 
                 currentStudents.forEach(student => {
-                    if (student.name !== '미배정' && student.rowIndex >= 0) {
+                    if (student.name !== '미배정' && student.sheetRow >= 0) {
                         // 행 번호 수정: B3이 헤더, B4부터 데이터 시작
-                        // student.rowIndex는 CSV에서의 인덱스 (0=헤더, 1=첫번째 데이터행)
+                        // student.sheetRow는 CSV에서의 인덱스 (0=헤더, 1=첫번째 데이터행)
                         // 실제 시트에서는 B3=헤더, B4=첫번째 데이터행
-                        const actualSheetRow = student.rowIndex + 3; // 한 줄 위로 수정
+                        const actualSheetRow = student.sheetRow + 3; // 한 줄 위로 수정
                         
                         updates.push({
                             room: student.room,
                             status: student.status,
                             memo: student.memo,
-                            rowIndex: actualSheetRow - 1 // Apps Script는 0-based 인덱스 사용
+                            rowIndex: sheetRow - 1 // Apps Script는 0-based 인덱스 사용
                         });
                     }
                 });
@@ -860,10 +860,10 @@
 
                 // 로컬 데이터 동기화
                 currentStudents.forEach(student => {
-                    if (student.rowIndex >= 0 && sheetsData[student.rowIndex + 1]) {
-                        sheetsData[student.rowIndex + 1][3] = student.status; // D열
-                        sheetsData[student.rowIndex + 1][4] = new Date().toISOString().split('T')[0]; // E열
-                        sheetsData[student.rowIndex + 1][5] = student.memo; // F열
+                    if (student.sheetRow >= 0 && sheetsData[student.sheetRow + 1]) {
+                        sheetsData[student.sheetRow + 1][3] = student.status; // D열
+                        sheetsData[student.sheetRow + 1][4] = new Date().toISOString().split('T')[0]; // E열
+                        sheetsData[student.sheetRow + 1][5] = student.memo; // F열
                     }
                 });
 
@@ -880,9 +880,9 @@
                     
                     // 로컬 데이터만 업데이트
                     currentStudents.forEach(student => {
-                        if (student.rowIndex >= 0 && sheetsData[student.rowIndex + 1]) {
-                            sheetsData[student.rowIndex + 1][3] = student.status;
-                            sheetsData[student.rowIndex + 1][5] = student.memo;
+                        if (student.sheetRow >= 0 && sheetsData[student.sheetRow + 1]) {
+                            sheetsData[student.sheetRow + 1][3] = student.status;
+                            sheetsData[student.sheetRow + 1][5] = student.memo;
                         }
                     });
                     
@@ -896,8 +896,8 @@
             const updates = [];
             
             currentStudents.forEach(student => {
-                if (student.name !== '미배정' && student.rowIndex >= 0) {
-                    const actualSheetRow = student.rowIndex + 3; // 한 줄 위로 수정
+                if (student.name !== '미배정' && student.sheetRow >= 0) {
+                    const actualSheetRow = student.sheetRow + 3; // 한 줄 위로 수정
                     
                     // D열 (상태) 업데이트
                     updates.push({
