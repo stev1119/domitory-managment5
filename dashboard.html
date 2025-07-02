@@ -662,7 +662,7 @@
 
         // 3인실 셀 범위
         const tripleRoomRanges = {
-            'A': { start: 188, end: 283 },
+            'A': { start: 188, end: 432 },
             'B': { start: 406, end: 468 },
             'C': { start: 654, end: 749 },
             'D': { start: 884, end: 952 },
@@ -834,7 +834,7 @@
             setTimeout(addRefreshButton, 1000);
         });
 
-        // 구글 시트 데이터 로드 (오류 처리 강화 + 대안 방법)
+        // 구글 시트 데이터 로드 (올바른 범위로 수정)
         async function loadSheetsData() {
             try {
                 console.log('시트 데이터 로드 시도 중...');
@@ -848,18 +848,38 @@
                     
                     if (csvResponse.ok) {
                         const csvText = await csvResponse.text();
-                        sheetsData = parseCSV(csvText);
-                        console.log('CSV 방식 성공:', sheetsData.length, '행');
+                        const allData = parseCSV(csvText);
+                        
+                        // B3부터 시작하는 데이터만 추출 (B=2번째 열, 3=3번째 행)
+                        sheetsData = [];
+                        
+                        // 헤더 (B3:P3)
+                        if (allData.length > 2 && allData[2].length > 1) {
+                            const header = allData[2].slice(1, 16); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
+                            sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
+                        }
+                        
+                        // 데이터 (B4부터)
+                        for (let i = 3; i < allData.length; i++) {
+                            if (allData[i].length > 1) {
+                                const row = allData[i].slice(1, 16); // B열:P열
+                                if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
+                                    sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
+                                }
+                            }
+                        }
+                        
+                        console.log('CSV 방식 성공:', sheetsData.length, '행 (헤더 포함)');
                         return true;
                     }
                 } catch (csvError) {
                     console.log('CSV 방식 실패, API 방식으로 전환:', csvError);
                 }
                 
-                // 방법 2: Google Sheets API 방식
-                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!A:P?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
+                // 방법 2: Google Sheets API 방식 (올바른 범위)
+                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:P1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
                 
-                console.log('API 방식으로 시도 중...');
+                console.log('API 방식으로 시도 중... (범위: B3:P1000)');
                 const response = await fetch(apiUrl);
                 
                 if (!response.ok) {
@@ -875,11 +895,25 @@
                 const data = await response.json();
                 
                 if (!data.values || data.values.length === 0) {
-                    throw new Error('시트에 데이터가 없습니다.');
+                    throw new Error('B3:P1000 범위에 데이터가 없습니다.');
                 }
                 
-                sheetsData = data.values;
-                console.log('API 방식 성공:', sheetsData.length, '행');
+                // API에서 받은 데이터를 올바른 형식으로 변환
+                sheetsData = [];
+                
+                // 헤더 추가 (첫 번째 행)
+                sheetsData.push(['인덱스'].concat(data.values[0])); 
+                
+                // 데이터 추가 (나머지 행들)
+                for (let i = 1; i < data.values.length; i++) {
+                    const row = data.values[i];
+                    if (row && row.length > 0 && row.some(cell => cell && cell.trim() !== '')) {
+                        sheetsData.push([i + 3].concat(row)); // 실제 시트 행 번호 (B4부터 시작하므로 +3)
+                    }
+                }
+                
+                console.log('API 방식 성공:', sheetsData.length, '행 (헤더 포함)');
+                console.log('첫 5행 데이터:', sheetsData.slice(0, 5));
                 return true;
                 
             } catch (error) {
@@ -894,16 +928,12 @@
                             <strong>오류:</strong> ${error.message}
                         </p>
                         <div style="background: #f3f4f6; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
-                            <h4 style="color: #374151; margin-bottom: 10px;">해결 방법:</h4>
+                            <h4 style="color: #374151; margin-bottom: 10px;">확인사항:</h4>
                             <ol style="color: #6b7280; margin-left: 20px; line-height: 1.8;">
-                                <li><strong>구글 시트 공개 설정:</strong><br>
-                                   시트 우상단 "공유" → "일반 액세스" → "링크가 있는 모든 사용자"</li>
-                                <li><strong>API 키 확인:</strong><br>
-                                   Google Cloud Console에서 Sheets API가 활성화되어 있는지 확인</li>
-                                <li><strong>네트워크 연결:</strong><br>
-                                   인터넷 연결 상태를 확인해주세요</li>
-                                <li><strong>브라우저 캐시:</strong><br>
-                                   Ctrl+F5로 강력 새로고침을 시도해보세요</li>
+                                <li><strong>데이터 위치:</strong> B3부터 헤더가 시작하고 B4부터 데이터가 있는지 확인</li>
+                                <li><strong>구글 시트 공개:</strong> 시트 우상단 "공유" → "링크가 있는 모든 사용자"</li>
+                                <li><strong>시트 이름:</strong> 하단 탭이 정확히 "yulee"인지 확인</li>
+                                <li><strong>네트워크:</strong> 인터넷 연결 상태 확인</li>
                             </ol>
                         </div>
                         <div style="display: flex; gap: 10px; justify-content: center;">
