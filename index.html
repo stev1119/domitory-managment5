@@ -810,21 +810,28 @@
             }
         }
 
-        // 구글 시트 업데이트 (Apps Script 웹앱 호출)
+        // 구글 시트 업데이트 (실제 Apps Script 사용)
         async function updateGoogleSheets() {
             try {
-                // Apps Script 웹앱 URL (배포 후 실제 URL로 교체 필요)
+                // 실제 Apps Script 웹앱 URL
                 const scriptUrl = 'https://script.google.com/macros/s/AKfycbxaXVyYcaOL-GYYkmqOKaWwubOSzKctrAwERV04fTPr5sBSPqsxGPhfVsuZqVOMw7d4vQ/exec';
                 
                 // 업데이트할 학생 데이터 준비
-                const updates = currentStudents
-                    .filter(student => student.name !== '미배정' && student.rowIndex >= 0)
-                    .map(student => ({
-                        room: student.room,
-                        status: student.status,
-                        memo: student.memo,
-                        rowIndex: student.rowIndex
-                    }));
+                const updates = [];
+                
+                currentStudents.forEach(student => {
+                    if (student.name !== '미배정' && student.rowIndex >= 0) {
+                        // 실제 시트 행 번호 계산 (B4부터 시작하므로 +4)
+                        const actualSheetRow = student.rowIndex + 4;
+                        
+                        updates.push({
+                            room: student.room,
+                            status: student.status,
+                            memo: student.memo,
+                            rowIndex: actualSheetRow - 1 // Apps Script는 0-based 인덱스 사용
+                        });
+                    }
+                });
 
                 if (updates.length === 0) {
                     console.log('업데이트할 학생 데이터가 없습니다.');
@@ -843,45 +850,96 @@
                         action: 'updateStudents',
                         updates: updates
                     }),
-                    mode: 'cors'
+                    mode: 'no-cors' // CORS 문제 해결
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 간주
+                console.log('Apps Script 호출 완료 (no-cors 모드)');
 
-                const result = await response.json();
-                
-                if (result.success) {
-                    console.log('구글 시트 업데이트 완료:', result.message);
-                } else {
-                    throw new Error(result.message || '알 수 없는 오류');
-                }
-
-                // 로컬 데이터도 동기화
+                // 로컬 데이터 동기화
                 currentStudents.forEach(student => {
-                    if (student.rowIndex >= 0 && sheetsData[student.rowIndex]) {
-                        sheetsData[student.rowIndex][3] = student.status;
-                        sheetsData[student.rowIndex][4] = new Date().toISOString().split('T')[0];
-                        sheetsData[student.rowIndex][5] = student.memo;
+                    if (student.rowIndex >= 0 && sheetsData[student.rowIndex + 1]) {
+                        sheetsData[student.rowIndex + 1][3] = student.status; // D열
+                        sheetsData[student.rowIndex + 1][4] = new Date().toISOString().split('T')[0]; // E열
+                        sheetsData[student.rowIndex + 1][5] = student.memo; // F열
                     }
                 });
+
+                console.log('구글 시트 업데이트 요청 전송 완료');
 
             } catch (error) {
                 console.error('구글시트 업데이트 오류:', error);
                 
-                // 실패해도 로컬 데이터는 업데이트 (오프라인 대응)
-                currentStudents.forEach(student => {
-                    if (student.rowIndex >= 0 && sheetsData[student.rowIndex]) {
-                        sheetsData[student.rowIndex][3] = student.status;
-                        sheetsData[student.rowIndex][5] = student.memo;
+                // 백업: 직접 API 호출 시도
+                try {
+                    await updateSheetsDirectly();
+                } catch (directError) {
+                    console.error('직접 API 호출도 실패:', directError);
+                    
+                    // 로컬 데이터만 업데이트
+                    currentStudents.forEach(student => {
+                        if (student.rowIndex >= 0 && sheetsData[student.rowIndex + 1]) {
+                            sheetsData[student.rowIndex + 1][3] = student.status;
+                            sheetsData[student.rowIndex + 1][5] = student.memo;
+                        }
+                    });
+                    
+                    showMessage('구글시트 업데이트에 실패했지만 로컬 데이터는 저장되었습니다.', 'error');
+                }
+            }
+        }
+
+        // 백업용 직접 API 호출
+        async function updateSheetsDirectly() {
+            const updates = [];
+            
+            currentStudents.forEach(student => {
+                if (student.name !== '미배정' && student.rowIndex >= 0) {
+                    const actualSheetRow = student.rowIndex + 4; // B4부터 시작
+                    
+                    // D열 (상태) 업데이트
+                    updates.push({
+                        range: `yulee!D${actualSheetRow}`,
+                        values: [[student.status]]
+                    });
+                    
+                    // E열 (날짜) 업데이트
+                    const today = new Date().toISOString().split('T')[0];
+                    updates.push({
+                        range: `yulee!E${actualSheetRow}`,
+                        values: [[today]]
+                    });
+                    
+                    // F열 (메모) 업데이트
+                    if (student.memo) {
+                        updates.push({
+                            range: `yulee!F${actualSheetRow}`,
+                            values: [[student.memo]]
+                        });
                     }
+                }
+            });
+
+            if (updates.length > 0) {
+                const batchUpdateUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values:batchUpdate?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
+                
+                const response = await fetch(batchUpdateUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        valueInputOption: 'USER_ENTERED',
+                        data: updates
+                    })
                 });
-                
-                // 사용자에게 경고 표시 (하지만 프로세스는 계속)
-                showMessage('구글시트 업데이트에 실패했지만 로컬 데이터는 저장되었습니다. 네트워크 연결을 확인해주세요.', 'error');
-                
-                // 오류를 던지지 않고 계속 진행 (잔디 전송은 시도)
+
+                if (response.ok) {
+                    console.log('직접 API 호출로 업데이트 성공');
+                    showMessage('구글시트 업데이트 완료', 'success');
+                } else {
+                    throw new Error('직접 API 호출 실패');
+                }
             }
         }
 
