@@ -1204,7 +1204,7 @@
             }
         }
 
-        // 선택된 동/층의 학생 데이터 가져오기 (F동 4층 문제 해결)
+        // 선택된 동/층의 학생 데이터 가져오기 (인덱스 매핑 수정)
         function getStudentsByFloor(building, floor) {
             if (!building || !floor || !dormitoryRanges[building] || !dormitoryRanges[building][floor]) {
                 console.error('잘못된 동/층 선택:', building, floor);
@@ -1245,7 +1245,7 @@
                             status: studentRow.data[3] || '정상',
                             date: studentRow.data[4] || '',
                             memo: studentRow.data[5] || '',
-                            rowIndex: studentRow.index - 1 // CSV 헤더 때문에 -1
+                            rowIndex: studentRow.index // 수정: -1 제거
                         });
                     });
                 } else {
@@ -1262,7 +1262,7 @@
             }
 
             console.log(`${building}동 ${floor}층 학생 수:`, students.length);
-            console.log(`${building}동 ${floor}층 첫 5명:`, students.slice(0, 5));
+            console.log(`${building}동 ${floor}층 첫 3명:`, students.slice(0, 3));
             
             return students;
         }
