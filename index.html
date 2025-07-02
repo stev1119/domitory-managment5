@@ -810,7 +810,7 @@
             }
         }
 
-        // 구글 시트 업데이트 (실제 Apps Script 사용)
+        // 구글 시트 업데이트 (행 번호 수정)
         async function updateGoogleSheets() {
             try {
                 // 실제 Apps Script 웹앱 URL
@@ -821,8 +821,10 @@
                 
                 currentStudents.forEach(student => {
                     if (student.name !== '미배정' && student.rowIndex >= 0) {
-                        // 실제 시트 행 번호 계산 (B4부터 시작하므로 +4)
-                        const actualSheetRow = student.rowIndex + 4;
+                        // 행 번호 수정: B3이 헤더, B4부터 데이터 시작
+                        // student.rowIndex는 CSV에서의 인덱스 (0=헤더, 1=첫번째 데이터행)
+                        // 실제 시트에서는 B3=헤더, B4=첫번째 데이터행
+                        const actualSheetRow = student.rowIndex + 3; // 한 줄 위로 수정
                         
                         updates.push({
                             room: student.room,
@@ -889,13 +891,13 @@
             }
         }
 
-        // 백업용 직접 API 호출
+        // 백업용 직접 API 호출 (행 번호 수정)
         async function updateSheetsDirectly() {
             const updates = [];
             
             currentStudents.forEach(student => {
                 if (student.name !== '미배정' && student.rowIndex >= 0) {
-                    const actualSheetRow = student.rowIndex + 4; // B4부터 시작
+                    const actualSheetRow = student.rowIndex + 3; // 한 줄 위로 수정
                     
                     // D열 (상태) 업데이트
                     updates.push({
