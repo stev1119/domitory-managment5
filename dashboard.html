@@ -660,56 +660,146 @@
             'F': { start: 1403, end: 1453 }
         };
 
-        // 페이지 로드 시 초기화
+        // 페이지 로드 시 초기화 (개선된 버전)
         window.addEventListener('load', async function() {
+            console.log('대시보드 초기화 시작...');
             await loadData();
             setupEventListeners();
+            
+            // 주기적 새로고침 설정 (5분마다)
+            setInterval(async () => {
+                console.log('자동 새로고침 실행...');
+                await refreshData();
+            }, 5 * 60 * 1000);
         });
 
-        // 데이터 로드
+        // 데이터 로드 (오류 처리 강화)
         async function loadData() {
             showLoading(true);
             try {
-                await Promise.all([
-                    loadSheetsData(),
-                    loadReportData()
-                ]);
+                console.log('데이터 로드 시작...');
                 
+                // 시트 데이터 로드
+                const sheetsLoaded = await loadSheetsData();
+                if (!sheetsLoaded) {
+                    throw new Error('시트 데이터 로드 실패');
+                }
+                
+                // 보고 데이터 로드
+                loadReportData();
+                
+                // 대시보드 업데이트
                 updateDashboard();
+                
                 showLoading(false);
+                console.log('데이터 로드 완료');
+                
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
                 showLoading(false);
+                
+                // 사용자에게 오류 메시지 표시
+                const loadingEl = document.getElementById('loading');
+                loadingEl.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3 style="color: #ef4444; margin-bottom: 20px;">⚠️ 데이터 로드 실패</h3>
+                        <p style="color: #6b7280; margin-bottom: 20px;">네트워크 연결이나 API 키를 확인해주세요.</p>
+                        <button onclick="location.reload()" style="padding: 12px 24px; background: #4f46e5; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            🔄 다시 시도
+                        </button>
+                    </div>
+                `;
+                loadingEl.style.display = 'block';
             }
         }
 
-        // 구글 시트 데이터 로드
+        // 데이터 새로고침
+        async function refreshData() {
+            try {
+                const sheetsLoaded = await loadSheetsData();
+                if (sheetsLoaded) {
+                    updateDashboard();
+                    console.log('데이터 새로고침 완료');
+                }
+            } catch (error) {
+                console.error('데이터 새로고침 실패:', error);
+            }
+        }
+
+        // 수동 새로고침 버튼 추가
+        function addRefreshButton() {
+            const header = document.querySelector('.header');
+            const refreshBtn = document.createElement('button');
+            refreshBtn.innerHTML = '🔄 새로고침';
+            refreshBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                color: white;
+                border: none;
+                border-radius: 10px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                font-weight: 600;
+                box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+                transition: all 0.3s ease;
+            `;
+            
+            refreshBtn.addEventListener('click', async () => {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '🔄 새로고침 중...';
+                await refreshData();
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '🔄 새로고침';
+            });
+            
+            header.style.position = 'relative';
+            header.appendChild(refreshBtn);
+        }
+
+        // 새로고침 버튼 추가 (페이지 로드 후)
+        window.addEventListener('load', () => {
+            setTimeout(addRefreshButton, 1000);
+        });
+
+        // 구글 시트 데이터 로드 (더 안정적인 방식)
         async function loadSheetsData() {
             try {
                 const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!A:P?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 sheetsData = data.values || [];
+                console.log('시트 데이터 로드 완료:', sheetsData.length, '행');
+                
+                // 데이터 검증
+                if (sheetsData.length === 0) {
+                    throw new Error('시트에 데이터가 없습니다.');
+                }
+                
+                return true;
             } catch (error) {
                 console.error('시트 데이터 로드 실패:', error);
+                // 오류 메시지 표시
+                const loadingEl = document.getElementById('loading');
+                loadingEl.innerHTML = `
+                    <div class="spinner"></div>
+                    <p style="color: #ef4444;">데이터 로드 실패: ${error.message}</p>
+                    <button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 8px; cursor: pointer;">다시 시도</button>
+                `;
+                return false;
             }
         }
 
-        // 보고 데이터 로드 (localStorage에서)
-        function loadReportData() {
-            const savedData = localStorage.getItem('reportData');
-            reportData = savedData ? JSON.parse(savedData) : {};
-        }
-
-        // 대시보드 업데이트
-        function updateDashboard() {
-            const stats = calculateStats();
-            updateTotalStats(stats);
-            updateGenderStats(stats);
-            updateBuildingStats(stats);
-        }
-
-        // 통계 계산
+        // 통계 계산 (더 정확한 로직)
         function calculateStats() {
+            console.log('통계 계산 시작, 데이터 행 수:', sheetsData.length);
+            
             const stats = {
                 total: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
@@ -726,6 +816,8 @@
                 };
             });
 
+            let processedCount = 0;
+
             // 시트 데이터 분석
             sheetsData.forEach((row, index) => {
                 if (index === 0) return; // 헤더 제외
@@ -733,15 +825,23 @@
                 const room = row[1]; // B열 (기숙사 번호)
                 const name = row[2]; // C열 (학생 이름)
                 const status = row[3] || '정상'; // D열 (상태)
-                const gender = row[12]; // M열 (성별)
 
-                if (!room || !name || name === '미배정') return;
+                // 데이터 유효성 검사
+                if (!room || !name || name === '미배정' || name.trim() === '') {
+                    return;
+                }
+
+                processedCount++;
 
                 // 건물과 층 추출
-                const building = room.charAt(0);
-                const floor = room.charAt(1);
+                const building = room.toString().charAt(0).toUpperCase();
+                const floor = room.toString().charAt(1);
 
-                if (!buildingInfo[building]) return;
+                // 건물 정보 확인
+                if (!buildingInfo[building]) {
+                    console.warn('알 수 없는 건물:', building, 'in room:', room);
+                    return;
+                }
 
                 const buildingGender = buildingInfo[building].gender;
 
@@ -755,27 +855,34 @@
                     updateStatsByStatus(stats.female, status);
                 }
 
-                // 동별 통계 업데이트
-                if (stats.buildings[building]) {
-                    if (status === '정상' || status === '신규' || status === '이동+') {
+                // 동별 통계 업데이트 (현재원만)
+                if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
+                    if (floor >= '1' && floor <= '4') {
                         stats.buildings[building].floors[floor]++;
                         stats.buildings[building].total++;
                     }
                 }
             });
 
+            console.log('처리된 학생 수:', processedCount);
+            console.log('계산된 통계:', stats);
+            
             return stats;
         }
 
-        // 상태별 통계 업데이트
+        // 상태별 통계 업데이트 (수정된 로직)
         function updateStatsByStatus(statObj, status) {
             switch (status) {
                 case '정상':
+                    statObj.current++;
+                    break;
                 case '신규':
+                    statObj.current++;
+                    statObj.new++;
+                    break;
                 case '이동+':
                     statObj.current++;
-                    if (status === '신규') statObj.new++;
-                    if (status === '이동+') statObj.moveIn++;
+                    statObj.moveIn++;
                     break;
                 case '외박':
                     statObj.out++;
@@ -788,6 +895,10 @@
                     break;
                 case '퇴소':
                     statObj.exit++;
+                    break;
+                default:
+                    // 기본값 처리 (정상으로 간주)
+                    statObj.current++;
                     break;
             }
         }
