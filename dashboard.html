@@ -876,9 +876,13 @@
         }
 
         // 새로고침 버튼 추가 (페이지 로드 후)
-        window.addEventListener('load', () => {
-            setTimeout(addRefreshButton, 1000);
-        });
+        setTimeout(() => {
+            try {
+                addRefreshButton();
+            } catch (error) {
+                console.log('새로고침 버튼 추가 실패:', error);
+            }
+        }, 2000);
 
         // 구글 시트 데이터 로드 (올바른 범위로 수정)
         async function loadSheetsData() {
