@@ -505,6 +505,16 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -713,17 +723,77 @@
             }
         }
 
+        // 대시보드 업데이트 (오류 처리 강화)
+        function updateDashboard() {
+            try {
+                console.log('대시보드 업데이트 시작...');
+                
+                if (!sheetsData || sheetsData.length === 0) {
+                    console.error('시트 데이터가 없습니다.');
+                    throw new Error('시트 데이터가 없습니다.');
+                }
+
+                const stats = calculateStats();
+                
+                if (!stats) {
+                    console.error('통계 계산 실패');
+                    throw new Error('통계 계산 실패');
+                }
+
+                updateTotalStats(stats);
+                updateGenderStats(stats);
+                updateBuildingStats(stats);
+                
+                console.log('대시보드 업데이트 완료');
+            } catch (error) {
+                console.error('대시보드 업데이트 오류:', error);
+                throw error; // 상위로 오류 전파
+            }
+        }
+
         // 데이터 새로고침
         async function refreshData() {
             try {
+                console.log('데이터 새로고침 시작...');
                 const sheetsLoaded = await loadSheetsData();
                 if (sheetsLoaded) {
                     updateDashboard();
                     console.log('데이터 새로고침 완료');
+                    
+                    // 성공 메시지 표시 (선택사항)
+                    showTemporaryMessage('✅ 데이터가 성공적으로 새로고침되었습니다.', 'success');
                 }
             } catch (error) {
                 console.error('데이터 새로고침 실패:', error);
+                showTemporaryMessage('❌ 데이터 새로고침에 실패했습니다.', 'error');
             }
+        }
+
+        // 임시 메시지 표시 함수
+        function showTemporaryMessage(message, type) {
+            const messageEl = document.createElement('div');
+            messageEl.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 600;
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+                ${type === 'success' ? 'background: linear-gradient(135deg, #10b981, #059669);' : 'background: linear-gradient(135deg, #ef4444, #dc2626);'}
+            `;
+            messageEl.textContent = message;
+            
+            document.body.appendChild(messageEl);
+            
+            setTimeout(() => {
+                messageEl.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(messageEl);
+                }, 300);
+            }, 3000);
         }
 
         // 수동 새로고침 버튼 추가
