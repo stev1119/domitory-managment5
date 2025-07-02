@@ -594,40 +594,128 @@
             const range = dormitoryRanges[building][floor];
             const students = [];
 
-            // 호실 범위 내의 모든 호실 처리
-            for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
-                const roomCode = `${building}${roomNum}`;
+            // E동 4층과 F동 4층은 3인실 특별 처리
+            if ((building === 'E' && floor === '4') || (building === 'F' && floor === '4')) {
+                console.log(`${building}동 ${floor}층 3인실 특별 처리 시작`);
                 
-                // 시트에서 해당 호실 찾기 (대소문자 구분 없이)
-                const studentRows = sheetsData.filter((row, index) => {
-                    if (index === 0) return false; // 헤더 제외
-                    const sheetRoom = row[1] ? row[1].toString().toUpperCase() : '';
-                    return sheetRoom === roomCode.toUpperCase();
+                // 각 호실마다 3명의 학생 슬롯 생성
+                for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
+                    const baseRoomCode = `${building}${roomNum}`;
+                    
+                    // 각 호실의 3명 학생 찾기 (A, B, C 또는 1, 2, 3 형태로 구분될 수 있음)
+                    for (let studentSlot = 1; studentSlot <= 3; studentSlot++) {
+                        // 여러 가지 호실 코드 형태로 검색
+                        const possibleRoomCodes = [
+                            `${baseRoomCode}-${studentSlot}`,
+                            `${baseRoomCode}${String.fromCharCode(64 + studentSlot)}`, // A, B, C
+                            `${baseRoomCode}_${studentSlot}`,
+                            baseRoomCode // 기본 호실 코드도 검색
+                        ];
+                        
+                        let foundStudent = null;
+                        
+                        // 각 가능한 호실 코드로 검색
+                        for (const roomCode of possibleRoomCodes) {
+                            const studentRow = sheetsData.find((row, index) => {
+                                if (index === 0) return false; // 헤더 제외
+                                const sheetRoom = row[1] ? row[1].toString().toUpperCase() : '';
+                                return sheetRoom === roomCode.toUpperCase();
+                            });
+                            
+                            if (studentRow && studentRow[2] && studentRow[2] !== '미배정') {
+                                const rowIndex = sheetsData.indexOf(studentRow);
+                                foundStudent = {
+                                    room: studentRow[1] || roomCode,
+                                    name: studentRow[2] || '미배정',
+                                    status: studentRow[3] || '정상',
+                                    date: studentRow[4] || '',
+                                    memo: studentRow[5] || '',
+                                    rowIndex: rowIndex
+                                };
+                                break;
+                            }
+                        }
+                        
+                        // 학생을 찾았으면 추가, 못 찾았으면 빈 슬롯으로 추가
+                        if (foundStudent) {
+                            students.push(foundStudent);
+                        } else {
+                            // 빈 슬롯도 표시 (3인실 구조 유지)
+                            students.push({
+                                room: `${baseRoomCode}-${studentSlot}`,
+                                name: '미배정',
+                                status: '정상',
+                                date: '',
+                                memo: '',
+                                rowIndex: -1
+                            });
+                        }
+                    }
+                }
+                
+                // 추가로 기본 범위 밖의 학생들도 검색 (특별 범위에 있을 수 있음)
+                sheetsData.forEach((row, index) => {
+                    if (index === 0) return; // 헤더 제외
+                    
+                    const roomCode = row[1] ? row[1].toString().toUpperCase() : '';
+                    const studentName = row[2] || '';
+                    
+                    // E4나 F4로 시작하는 호실이면서 아직 추가되지 않은 학생
+                    if (roomCode.startsWith(building + '4') && studentName && studentName !== '미배정') {
+                        const existingStudent = students.find(s => 
+                            s.room.toUpperCase() === roomCode || 
+                            s.name === studentName
+                        );
+                        
+                        if (!existingStudent) {
+                            students.push({
+                                room: roomCode,
+                                name: studentName,
+                                status: row[3] || '정상',
+                                date: row[4] || '',
+                                memo: row[5] || '',
+                                rowIndex: index
+                            });
+                        }
+                    }
                 });
+                
+            } else {
+                // 다른 동/층은 기존 로직 사용
+                for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
+                    const roomCode = `${building}${roomNum}`;
+                    
+                    // 시트에서 해당 호실 찾기 (대소문자 구분 없이)
+                    const studentRows = sheetsData.filter((row, index) => {
+                        if (index === 0) return false; // 헤더 제외
+                        const sheetRoom = row[1] ? row[1].toString().toUpperCase() : '';
+                        return sheetRoom === roomCode.toUpperCase();
+                    });
 
-                if (studentRows.length > 0) {
-                    // 해당 호실의 모든 학생 추가 (3인실 대응)
-                    studentRows.forEach(studentRow => {
-                        const rowIndex = sheetsData.indexOf(studentRow);
-                        students.push({
-                            room: studentRow[1] || roomCode,
-                            name: studentRow[2] || '미배정',
-                            status: studentRow[3] || '정상',
-                            date: studentRow[4] || '',
-                            memo: studentRow[5] || '',
-                            rowIndex: rowIndex
+                    if (studentRows.length > 0) {
+                        // 해당 호실의 모든 학생 추가 (3인실 대응)
+                        studentRows.forEach(studentRow => {
+                            const rowIndex = sheetsData.indexOf(studentRow);
+                            students.push({
+                                room: studentRow[1] || roomCode,
+                                name: studentRow[2] || '미배정',
+                                status: studentRow[3] || '정상',
+                                date: studentRow[4] || '',
+                                memo: studentRow[5] || '',
+                                rowIndex: rowIndex
+                            });
                         });
-                    });
-                } else {
-                    // 시트에 없는 호실은 미배정으로 추가
-                    students.push({
-                        room: roomCode,
-                        name: '미배정',
-                        status: '정상',
-                        date: '',
-                        memo: '',
-                        rowIndex: -1
-                    });
+                    } else {
+                        // 시트에 없는 호실은 미배정으로 추가
+                        students.push({
+                            room: roomCode,
+                            name: '미배정',
+                            status: '정상',
+                            date: '',
+                            memo: '',
+                            rowIndex: -1
+                        });
+                    }
                 }
             }
 
