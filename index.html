@@ -573,14 +573,36 @@
                 }
                 
                 console.log('시트 데이터 로드 완료:', sheetsData.length, '행 (헤더 포함)');
+                console.log('전체 원본 데이터:', data.values.slice(0, 10));
                 
-                // E동과 F동 데이터 확인
-                const eRooms = sheetsData.filter(row => row[1] && row[1].toString().startsWith('E'));
-                const fRooms = sheetsData.filter(row => row[1] && row[1].toString().startsWith('F'));
-                console.log('E동 데이터 개수:', eRooms.length);
-                console.log('F동 데이터 개수:', fRooms.length);
-                console.log('E동 샘플:', eRooms.slice(0, 3));
-                console.log('F동 샘플:', fRooms.slice(0, 3));
+                // 모든 동별 데이터 확인
+                ['A', 'B', 'C', 'D', 'E', 'F'].forEach(building => {
+                    const buildingRooms = sheetsData.filter(row => row[1] && row[1].toString().startsWith(building));
+                    console.log(`${building}동 데이터:`, buildingRooms.length, '개');
+                    if (buildingRooms.length > 0) {
+                        console.log(`${building}동 샘플:`, buildingRooms.slice(0, 5));
+                    }
+                });
+                
+                // E동 층별 상세 확인
+                [1, 2, 3, 4].forEach(floor => {
+                    const floorPrefix = `E${floor}`;
+                    const floorRooms = sheetsData.filter(row => row[1] && row[1].toString().startsWith(floorPrefix));
+                    console.log(`E동 ${floor}층 데이터:`, floorRooms.length, '개');
+                    if (floorRooms.length > 0) {
+                        console.log(`E동 ${floor}층 샘플:`, floorRooms.slice(0, 3));
+                    }
+                });
+                
+                // F동 층별 상세 확인
+                [1, 2, 3, 4].forEach(floor => {
+                    const floorPrefix = `F${floor}`;
+                    const floorRooms = sheetsData.filter(row => row[1] && row[1].toString().startsWith(floorPrefix));
+                    console.log(`F동 ${floor}층 데이터:`, floorRooms.length, '개');
+                    if (floorRooms.length > 0) {
+                        console.log(`F동 ${floor}층 샘플:`, floorRooms.slice(0, 3));
+                    }
+                });
                 
                 showLoading(false);
                 
@@ -598,15 +620,29 @@
                 return [];
             }
 
-            console.log(`${building}동 ${floor}층 학생 데이터 로드 중...`);
-            console.log('현재 시트 데이터 샘플:', sheetsData.slice(0, 5));
-
+            console.log(`\n=== ${building}동 ${floor}층 학생 데이터 로드 시작 ===`);
+            console.log('호실 범위:', dormitoryRanges[building][floor]);
+            
             const range = dormitoryRanges[building][floor];
             const students = [];
+
+            // 먼저 해당 동/층의 모든 데이터를 시트에서 찾아보기
+            const floorPrefix = `${building}${floor}`;
+            const allFloorData = sheetsData.filter(row => {
+                if (!row[1]) return false;
+                return row[1].toString().startsWith(floorPrefix);
+            });
+            
+            console.log(`${building}동 ${floor}층으로 시작하는 모든 데이터:`, allFloorData.length, '개');
+            if (allFloorData.length > 0) {
+                console.log('찾은 데이터 샘플:', allFloorData.slice(0, 5));
+            }
 
             // 호실 범위 내의 모든 호실 처리
             for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
                 const roomCode = `${building}${roomNum}`;
+                
+                console.log(`호실 ${roomCode} 검색 중...`);
                 
                 // 시트에서 해당 호실 찾기 (더 안전한 방식)
                 const studentRows = [];
@@ -619,6 +655,7 @@
                     const targetRoom = roomCode.toUpperCase();
                     
                     if (sheetRoom === targetRoom) {
+                        console.log(`매칭 발견: ${sheetRoom} = ${targetRoom}`, row);
                         studentRows.push({
                             data: row,
                             index: i
@@ -637,6 +674,7 @@
                             memo: studentRow.data[5] || '',
                             rowIndex: studentRow.index
                         });
+                        console.log(`학생 추가: ${roomCode} - ${studentRow.data[2] || '미배정'}`);
                     });
                 } else {
                     // 시트에 없는 호실은 미배정으로 추가
@@ -648,11 +686,19 @@
                         memo: '',
                         rowIndex: -1
                     });
+                    console.log(`미배정 호실 추가: ${roomCode}`);
+                }
+                
+                // 처음 몇 개 호실만 상세 로그 출력 (너무 많은 로그 방지)
+                if (roomNum <= range.start + 5) {
+                    console.log(`${roomCode} 처리 완료`);
                 }
             }
 
-            console.log(`${building}동 ${floor}층 학생 수:`, students.length);
-            console.log('찾은 학생 데이터 샘플:', students.slice(0, 3));
+            console.log(`=== ${building}동 ${floor}층 최종 결과: ${students.length}명 ===`);
+            console.log('실제 학생 데이터:', students.filter(s => s.name !== '미배정').length, '명');
+            console.log('미배정 호실:', students.filter(s => s.name === '미배정').length, '개');
+            
             return students;
         }
 
