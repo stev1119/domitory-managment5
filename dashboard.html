@@ -670,7 +670,7 @@
             'F': { start: 1403, end: 1453 }
         };
 
-        // 페이지 로드 시 초기화 (개선된 버전)
+        // 페이지 로드 시 초기화 (loadReportData 참조 완전 제거)
         window.addEventListener('load', async function() {
             console.log('대시보드 초기화 시작...');
             await loadData();
