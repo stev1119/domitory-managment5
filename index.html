@@ -595,8 +595,12 @@
             const students = [];
 
             // E동 4층과 F동 4층은 3인실 특별 처리
-            if ((building === 'E' && floor === '4') || (building === 'F' && floor === '4')) {
-                console.log(`${building}동 ${floor}층 3인실 특별 처리 시작`);
+           const studentRows = sheetsData.filter((row, index) => {
+    if (index === 0) return false;
+    const sheetRoom = row[1] ? row[1].toString().replace(/\s/g, '').toUpperCase() : '';
+    return sheetRoom.startsWith(roomCode.toUpperCase()); // 예: E401 → E401A, E401-1 포함
+});
+
                 
                 // 각 호실마다 3명의 학생 슬롯 생성
                 for (let roomNum = range.start; roomNum <= range.end; roomNum++) {
