@@ -670,10 +670,56 @@
             'F': { start: 1403, end: 1453 }
         };
 
-        // 페이지 로드 시 초기화 (loadReportData 참조 완전 제거)
+        // 페이지 로드 시 초기화 (완전 수정)
         window.addEventListener('load', async function() {
             console.log('대시보드 초기화 시작...');
-            await loadData();
+            
+            // 직접 데이터 로드 함수 호출
+            showLoading(true);
+            try {
+                console.log('데이터 로드 시작...');
+                
+                // 시트 데이터 로드
+                const sheetsLoaded = await loadSheetsData();
+                if (!sheetsLoaded) {
+                    throw new Error('시트 데이터 로드 실패');
+                }
+                
+                // 보고 데이터 초기화 (localStorage에서 직접 처리)
+                try {
+                    const savedData = localStorage.getItem('reportData');
+                    reportData = savedData ? JSON.parse(savedData) : {};
+                    console.log('보고 데이터 초기화 완료');
+                } catch (storageError) {
+                    console.warn('보고 데이터 초기화 실패, 빈 객체로 설정:', storageError);
+                    reportData = {};
+                }
+                
+                // 대시보드 업데이트
+                updateDashboard();
+                
+                showLoading(false);
+                console.log('데이터 로드 완료');
+                
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+                showLoading(false);
+                
+                // 사용자에게 오류 메시지 표시
+                const loadingEl = document.getElementById('loading');
+                loadingEl.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <h3 style="color: #ef4444; margin-bottom: 20px;">⚠️ 데이터 로드 실패</h3>
+                        <p style="color: #6b7280; margin-bottom: 20px;">${error.message}</p>
+                        <button onclick="location.reload()" style="padding: 12px 24px; background: #4f46e5; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;">
+                            🔄 다시 시도
+                        </button>
+                    </div>
+                `;
+                loadingEl.style.display = 'block';
+            }
+            
+            // 이벤트 리스너 설정
             setupEventListeners();
             
             // 주기적 새로고침 설정 (5분마다)
