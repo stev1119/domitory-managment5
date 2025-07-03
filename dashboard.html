@@ -1280,7 +1280,7 @@
             });
         }
 
-        // 실시간 검색 수행
+        // 실시간 검색 수행 (수정: 행 인덱스 추가)
         function performSearch(query) {
             const searchResults = document.getElementById('searchResults');
             const results = [];
@@ -1311,7 +1311,8 @@
                         room: room,
                         name: name,
                         status: status,
-                        rowData: row
+                        rowData: row,
+                        rowIndex: index  // 행 인덱스 추가
                     });
                 }
             });
@@ -1319,15 +1320,15 @@
             displaySearchResults(results);
         }
 
-        // 검색 결과 표시
+        // 검색 결과 표시 (수정: 행 인덱스 기반 클릭)
         function displaySearchResults(results) {
             const searchResults = document.getElementById('searchResults');
             
             if (results.length === 0) {
                 searchResults.innerHTML = '<div class="search-result-item">검색 결과가 없습니다.</div>';
             } else {
-                searchResults.innerHTML = results.map(result => `
-                    <div class="search-result-item" onclick="showStudentDetail('${result.room}')">
+                searchResults.innerHTML = results.map((result, index) => `
+                    <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex})">
                         <div class="result-room">${result.room}</div>
                         <div class="result-name">${result.name}</div>
                         <div class="result-status">상태: ${result.status}</div>
@@ -1357,11 +1358,22 @@
             showStudentsModal(`${building}동 ${floor}층 학생 목록`, students);
         }
 
-        // 특정 학생 상세 정보 보기
+        // 특정 학생 상세 정보 보기 (기존 방식 - 호실 기준)
         function showStudentDetail(room) {
             const student = sheetsData.find(row => row[1] === room);
             if (student) {
                 showStudentsModal(`${room} 학생 정보`, [student]);
+            }
+            document.getElementById('searchResults').style.display = 'none';
+        }
+
+        // 인덱스로 특정 학생 상세 정보 보기 (새로운 방식 - 정확한 학생 선택)
+        function showStudentDetailByIndex(rowIndex) {
+            const student = sheetsData[rowIndex];
+            if (student) {
+                const room = student[1] || '';
+                const name = student[2] || '';
+                showStudentsModal(`${room} ${name} 학생 정보`, [student]);
             }
             document.getElementById('searchResults').style.display = 'none';
         }
