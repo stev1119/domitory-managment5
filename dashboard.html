@@ -329,7 +329,7 @@
             color: #1f2937;
         }
 
-        /* 담당자별 상세 현황 */
+        /* 구역별 담당자 현황 스타일 */
         .manager-stats {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -346,91 +346,131 @@
             font-weight: 600;
         }
 
-        .managers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
+        .area-info-summary {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-radius: 12px;
         }
 
-        .manager-card {
+        .area-info-summary p {
+            color: #6b7280;
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .area-managers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .area-manager-card {
             background: linear-gradient(135deg, #f8fafc, #f1f5f9);
             border-radius: 15px;
             padding: 20px;
-            border-left: 5px solid #8b5cf6;
+            border-left: 5px solid #6366f1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
         }
 
-        .manager-header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+        .area-manager-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left-color: #4f46e5;
+        }
+
+        .area-manager-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
             border-bottom: 2px solid #e5e7eb;
         }
 
-        .manager-name {
-            font-size: 1.3rem;
+        .area-manager-name {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1f2937;
-            margin-bottom: 5px;
         }
 
-        .manager-area {
-            font-size: 1rem;
-            color: #6b7280;
-            font-weight: 500;
+        .area-manager-zone {
+            font-size: 0.9rem;
+            color: #6366f1;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
         }
 
-        .manager-stats-grid {
+        .area-stats-compact {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .manager-stat-card {
+        .area-stat-item {
             background: white;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 8px 6px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: 2px solid transparent;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .manager-stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        .area-stat-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .manager-stat-card.current { border-color: #10b981; }
-        .manager-stat-card.out { border-color: #f59e0b; }
-        .manager-stat-card.new { border-color: #3b82f6; }
-        .manager-stat-card.move-out { border-color: #ef4444; }
-        .manager-stat-card.move-in { border-color: #8b5cf6; }
-        .manager-stat-card.absent { border-color: #6b7280; }
-        .manager-stat-card.exit { border-color: #dc2626; }
+        .area-stat-item.current { border-color: #10b981; }
+        .area-stat-item.out { border-color: #f59e0b; }
+        .area-stat-item.new { border-color: #3b82f6; }
+        .area-stat-item.absent { border-color: #6b7280; }
+        .area-stat-item.move-out { border-color: #ef4444; }
+        .area-stat-item.move-in { border-color: #8b5cf6; }
+        .area-stat-item.exit { border-color: #dc2626; }
 
-        .manager-stat-number {
-            font-size: 1.4rem;
+        .area-stat-number {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #1f2937;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
-        .manager-stat-label {
-            font-size: 0.7rem;
+        .area-stat-label {
+            font-size: 0.65rem;
             color: #6b7280;
             font-weight: 500;
         }
 
-        .manager-total-info {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        .area-total-summary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 10px;
+            border-radius: 8px;
             text-align: center;
             font-weight: 600;
-            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .area-building-indicator {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #4f46e5;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         /* 학생 정보 모달 */
@@ -726,11 +766,14 @@
             </div>
         </div>
 
-        <!-- 담당자별 상세 현황 -->
+        <!-- 구역별 담당자 현황 (24개 구역) -->
         <div class="manager-stats">
-            <h3>👥 담당자별 상세 현황</h3>
-            <div class="managers-grid" id="managersGrid">
-                <!-- 담당자별 카드들이 여기에 동적으로 추가됩니다 -->
+            <h3>👥 구역별 담당자 현황 (24개 구역)</h3>
+            <div class="area-info-summary">
+                <p>A동~F동까지 각 층별로 담당자가 배치되어 7가지 상태별 통계를 관리합니다</p>
+            </div>
+            <div class="area-managers-grid" id="areaManagersGrid">
+                <!-- 구역별 담당자 카드들이 여기에 동적으로 추가됩니다 -->
             </div>
         </div>
 
@@ -772,20 +815,32 @@
             'F': { name: 'F동', type: '남학생', gender: 'male' }
         };
 
-        // 담당자별 담당 구역 정보
+        // 담당자별 담당 구역 정보 (24개 구역으로 확장)
         const managerInfo = {
-            '김담당': ['A동1층', 'A동2층'],
-            '이담당': ['A동3층', 'A동4층'],
-            '박담당': ['B동1층', 'B동2층'],
-            '최담당': ['B동3층', 'B동4층'],
-            '정담당': ['C동1층', 'C동2층'],
-            '강담당': ['C동3층', 'C동4층'],
-            '윤담당': ['D동1층', 'D동2층'],
-            '조담당': ['D동3층', 'D동4층'],
-            '장담당': ['E동1층', 'E동2층'],
-            '한담당': ['E동3층', 'E동4층'],
-            '오담당': ['F동1층', 'F동2층'],
-            '신담당': ['F동3층', 'F동4층']
+            '김담당': ['A동1층'],
+            '이담당': ['A동2층'],
+            '박담당': ['A동3층'],
+            '최담당': ['A동4층'],
+            '정담당': ['B동1층'],
+            '강담당': ['B동2층'],
+            '윤담당': ['B동3층'],
+            '조담당': ['B동4층'],
+            '장담당': ['C동1층'],
+            '한담당': ['C동2층'],
+            '오담당': ['C동3층'],
+            '신담당': ['C동4층'],
+            '홍담당': ['D동1층'],
+            '양담당': ['D동2층'],
+            '서담당': ['D동3층'],
+            '문담당': ['D동4층'],
+            '권담당': ['E동1층'],
+            '남담당': ['E동2층'],
+            '송담당': ['E동3층'],
+            '전담당': ['E동4층'],
+            '류담당': ['F동1층'],
+            '노담당': ['F동2층'],
+            '안담당': ['F동3층'],
+            '유담당': ['F동4층']
         };
 
         // 3인실 셀 범위
@@ -917,7 +972,7 @@
                 updateTotalStats(stats);
                 updateGenderStats(stats);
                 updateBuildingStats(stats);
-                updateManagerStats(stats);  // 담당자별 통계 업데이트 추가
+                updateAreaManagerStats(stats);  // 구역별 담당자 통계 업데이트
                 
                 console.log('대시보드 업데이트 완료');
             } catch (error) {
@@ -1207,7 +1262,8 @@
                     male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                     female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                     buildings: {},
-                    managers: {}
+                    managers: {},
+                    areas: {}
                 };
             }
             
@@ -1216,7 +1272,8 @@
                 male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 buildings: {},
-                managers: {}
+                managers: {},
+                areas: {}
             };
 
             // 각 동별로 초기화
@@ -1232,6 +1289,23 @@
             Object.keys(managerInfo).forEach(manager => {
                 stats.managers[manager] = {
                     areas: managerInfo[manager],
+                    current: 0,
+                    out: 0,
+                    new: 0,
+                    moveOut: 0,
+                    moveIn: 0,
+                    absent: 0,
+                    exit: 0,
+                    total: 0
+                };
+            });
+
+            // 구역별(층별) 통계 초기화
+            stats.areas = {};
+            Object.keys(managerInfo).forEach(manager => {
+                const area = managerInfo[manager][0]; // 각 담당자는 하나의 구역만 담당
+                stats.areas[area] = {
+                    manager: manager,
                     current: 0,
                     out: 0,
                     new: 0,
@@ -1300,6 +1374,12 @@
                         stats.managers[manager].total++;
                     }
                 });
+
+                // 구역별 통계 업데이트
+                if (stats.areas[areaKey]) {
+                    updateStatsByStatus(stats.areas[areaKey], status);
+                    stats.areas[areaKey].total++;
+                }
             }
 
             console.log('처리된 학생 수:', processedCount);
@@ -1405,64 +1485,146 @@
             });
         }
 
-        // 담당자별 통계 업데이트
-        function updateManagerStats(stats) {
-            const managersGrid = document.getElementById('managersGrid');
-            managersGrid.innerHTML = '';
+        // 구역별 담당자 통계 업데이트 (24개 구역)
+        function updateAreaManagerStats(stats) {
+            const areaManagersGrid = document.getElementById('areaManagersGrid');
+            areaManagersGrid.innerHTML = '';
 
-            Object.keys(managerInfo).forEach(manager => {
-                const managerData = stats.managers[manager];
-                const areas = managerData.areas.join(', ');
-
-                const managerCard = document.createElement('div');
-                managerCard.className = 'manager-card';
-                managerCard.innerHTML = `
-                    <div class="manager-header">
-                        <div class="manager-name">${manager}</div>
-                        <div class="manager-area">${areas}</div>
-                    </div>
-                    <div class="manager-stats-grid">
-                        <div class="manager-stat-card current" onclick="showManagerStudents('${manager}', 'current')">
-                            <div class="manager-stat-number">${managerData.current}</div>
-                            <div class="manager-stat-label">현재원</div>
-                        </div>
-                        <div class="manager-stat-card out" onclick="showManagerStudents('${manager}', 'out')">
-                            <div class="manager-stat-number">${managerData.out}</div>
-                            <div class="manager-stat-label">외박</div>
-                        </div>
-                        <div class="manager-stat-card new" onclick="showManagerStudents('${manager}', 'new')">
-                            <div class="manager-stat-number">${managerData.new}</div>
-                            <div class="manager-stat-label">신규</div>
-                        </div>
-                        <div class="manager-stat-card absent" onclick="showManagerStudents('${manager}', 'absent')">
-                            <div class="manager-stat-number">${managerData.absent}</div>
-                            <div class="manager-stat-label">등미</div>
-                        </div>
-                    </div>
-                    <div class="manager-stats-grid">
-                        <div class="manager-stat-card move-out" onclick="showManagerStudents('${manager}', 'moveOut')">
-                            <div class="manager-stat-number">${managerData.moveOut}</div>
-                            <div class="manager-stat-label">이동-</div>
-                        </div>
-                        <div class="manager-stat-card move-in" onclick="showManagerStudents('${manager}', 'moveIn')">
-                            <div class="manager-stat-number">${managerData.moveIn}</div>
-                            <div class="manager-stat-label">이동+</div>
-                        </div>
-                        <div class="manager-stat-card exit" onclick="showManagerStudents('${manager}', 'exit')">
-                            <div class="manager-stat-number">${managerData.exit}</div>
-                            <div class="manager-stat-label">퇴소</div>
-                        </div>
-                        <div class="manager-stat-card" onclick="showManagerStudents('${manager}', 'total')">
-                            <div class="manager-stat-number">${managerData.total}</div>
-                            <div class="manager-stat-label">전체</div>
-                        </div>
-                    </div>
-                    <div class="manager-total-info">
-                        총 담당 인원: ${managerData.total}명 | 현재 거주: ${managerData.current}명
-                    </div>
-                `;
-                managersGrid.appendChild(managerCard);
+            // 동별로 그룹화하여 표시
+            const buildings = ['A', 'B', 'C', 'D', 'E', 'F'];
+            
+            buildings.forEach(building => {
+                const buildingInfo_detail = buildingInfo[building];
+                
+                for (let floor = 1; floor <= 4; floor++) {
+                    const areaKey = `${building}동${floor}층`;
+                    const manager = Object.keys(managerInfo).find(mgr => 
+                        managerInfo[mgr].includes(areaKey)
+                    );
+                    
+                    // 각 구역별 독립적인 통계 사용
+                    const areaData = stats.areas[areaKey];
+                    
+                    if (manager && areaData) {
+                        const areaCard = document.createElement('div');
+                        areaCard.className = 'area-manager-card';
+                        areaCard.innerHTML = `
+                            <div class="area-building-indicator">${building}동</div>
+                            <div class="area-manager-header">
+                                <div class="area-manager-name">${manager}</div>
+                                <div class="area-manager-zone">${floor}층</div>
+                            </div>
+                            <div class="area-stats-compact">
+                                <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
+                                    <div class="area-stat-number">${areaData.current}</div>
+                                    <div class="area-stat-label">현재원</div>
+                                </div>
+                                <div class="area-stat-item out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'out')">
+                                    <div class="area-stat-number">${areaData.out}</div>
+                                    <div class="area-stat-label">외박</div>
+                                </div>
+                                <div class="area-stat-item new" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'new')">
+                                    <div class="area-stat-number">${areaData.new}</div>
+                                    <div class="area-stat-label">신규</div>
+                                </div>
+                                <div class="area-stat-item absent" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'absent')">
+                                    <div class="area-stat-number">${areaData.absent}</div>
+                                    <div class="area-stat-label">등미</div>
+                                </div>
+                            </div>
+                            <div class="area-stats-compact">
+                                <div class="area-stat-item move-out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveOut')">
+                                    <div class="area-stat-number">${areaData.moveOut}</div>
+                                    <div class="area-stat-label">이동-</div>
+                                </div>
+                                <div class="area-stat-item move-in" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveIn')">
+                                    <div class="area-stat-number">${areaData.moveIn}</div>
+                                    <div class="area-stat-label">이동+</div>
+                                </div>
+                                <div class="area-stat-item exit" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'exit')">
+                                    <div class="area-stat-number">${areaData.exit}</div>
+                                    <div class="area-stat-label">퇴소</div>
+                                </div>
+                                <div class="area-stat-item" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'total')">
+                                    <div class="area-stat-number">${areaData.total}</div>
+                                    <div class="area-stat-label">전체</div>
+                                </div>
+                            </div>
+                            <div class="area-total-summary">
+                                ${areaKey} 총 ${areaData.total}명 | ${buildingInfo_detail.type}
+                            </div>
+                        `;
+                        areaManagersGrid.appendChild(areaCard);
+                    }
+                }
             });
+        }
+
+        // 구역별 담당자 학생 보기
+        function showAreaManagerStudents(manager, areaKey, statusType) {
+            const students = getStudentsByAreaManager(manager, areaKey, statusType);
+            const statusText = getStatusText(statusType);
+            showStudentsModal(`${manager} - ${areaKey} ${statusText} 학생 목록`, students);
+        }
+
+        // 구역별 담당자 학생 데이터 가져오기
+        function getStudentsByAreaManager(manager, areaKey, statusType) {
+            const students = [];
+            
+            // areaKey에서 동과 층 추출 (예: "A동1층" -> A, 1)
+            const building = areaKey.charAt(0);
+            const floor = areaKey.charAt(2);
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const status = row[3] || '정상';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 해당 구역의 방인지 확인
+                const roomBuilding = room.toString().charAt(0).toUpperCase();
+                const roomFloor = room.toString().charAt(1);
+                
+                if (roomBuilding !== building || roomFloor !== floor) return;
+                
+                // 상태별 필터링
+                let shouldInclude = false;
+                switch (statusType) {
+                    case 'current':
+                        shouldInclude = (status === '정상' || status === '신규' || status === '이동+');
+                        break;
+                    case 'out':
+                        shouldInclude = (status === '외박');
+                        break;
+                    case 'new':
+                        shouldInclude = (status === '신규');
+                        break;
+                    case 'moveOut':
+                        shouldInclude = (status === '이동-');
+                        break;
+                    case 'moveIn':
+                        shouldInclude = (status === '이동+');
+                        break;
+                    case 'absent':
+                        shouldInclude = (status === '등미');
+                        break;
+                    case 'exit':
+                        shouldInclude = (status === '퇴소');
+                        break;
+                    case 'total':
+                        shouldInclude = true;
+                        break;
+                }
+                
+                if (shouldInclude) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
         }
 
         // 검색 기능
