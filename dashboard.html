@@ -733,7 +733,13 @@
         <!-- 헤더 -->
         <div class="header">
             <div class="header-content">
-                <img src="https://drive.google.com/uc?export=view&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ" alt="시대인재 로고" class="header-logo" onerror="this.style.display='none'">
+                <!-- 구글 드라이브 이미지를 여러 방법으로 시도 -->
+                <img src="https://lh3.googleusercontent.com/d/1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ" alt="시대인재 로고" class="header-logo" 
+                     onerror="this.onerror=null; this.src='https://drive.google.com/uc?export=download&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ'; 
+                              setTimeout(() => { if(!this.complete || this.naturalWidth === 0) { this.src='https://docs.google.com/uc?export=download&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ'; 
+                              setTimeout(() => { if(!this.complete || this.naturalWidth === 0) { this.style.display='none'; this.nextElementSibling.style.display='inline'; } }, 1000); } }, 1000);">
+                <!-- 로고 로드 실패시 대체 텍스트 -->
+                <span style="display: none; font-size: 2.5rem;">🏫</span>
                 <div class="header-text">
                     <h1>시대인재 기숙사 인원 현황</h1>
                     <p>실시간 인원 현황 모니터링 시스템</p>
@@ -905,7 +911,7 @@
 
         // 담당자별 담당 구역 정보 (24개 구역으로 확장)
         const managerInfo = {
-          '이상민T': ['A동1층'],
+      '이상민T': ['A동1층'],
             '김영현T': ['A동2층'],
             '조영권T': ['A동3층'],
             '남인달T': ['A동4층'],
@@ -929,6 +935,7 @@
             '신규T': ['F동2층'],
             '이시우T': ['F동3층'],
             '이영운T': ['F동4층']
+
         };
 
         // 3인실 셀 범위
@@ -2011,7 +2018,8 @@
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
             const librarySeats = row[8] || '';
-            const lifeTeacher = row[10] || '';
+            const group = row[9] || '';  // 그룹 정보 추가 (J열)
+            const lifeTeacher = row[10] || '';  // 생활담임은 K열로 이동
             const birthDate = row[11] || '';
             const gender = row[12] || '';
             const enrollDate = row[13] || '';
@@ -2034,6 +2042,10 @@
                         <div class="detail-item">
                             <div class="detail-label">성별</div>
                             <div class="detail-value">${gender}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">그룹</div>
+                            <div class="detail-value">${group}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">생년월일</div>
