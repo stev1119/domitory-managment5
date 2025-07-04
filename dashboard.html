@@ -363,8 +363,41 @@
 
         .area-managers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+        }
+
+        .building-group {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 5px solid #6366f1;
+        }
+
+        .building-group-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .building-group-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .building-group-subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .floors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
         }
 
         .area-manager-card {
@@ -833,30 +866,30 @@
 
         // 담당자별 담당 구역 정보 (24개 구역으로 확장)
         const managerInfo = {
-            '이상민T': ['A동1층'],
-            '김영현T': ['A동2층'],
-            '조영권T': ['A동3층'],
-            '남인달T': ['A동4층'],
-            '신규T': ['B동1층'],
-            '신규T': ['B동2층'],
-            '송인수T': ['B동3층'],
-            '김건희T': ['B동4층'],
-            '나정우T': ['C동1층'],
-            '강지훈T': ['C동2층'],
-            '황민철T': ['C동3층'],
-            '고승완T': ['C동4층'],
-            '신규T': ['D동1층'],
-            '김혜정T': ['D동2층'],
-            '유나경T': ['D동3층'],
-            '김미경T': ['D동4층'],
-            '김정아T': ['E동1층'],
-            '김지현T': ['E동2층'],
-            '원현주T': ['E동3층'],
-            '진정현T': ['E동4층'],
-            '상담층': ['F동1층'],
-            '신규T': ['F동2층'],
-            '이시우T': ['F동3층'],
-            '이영운T': ['F동4층']
+            '김담당': ['A동1층'],
+            '이담당': ['A동2층'],
+            '박담당': ['A동3층'],
+            '최담당': ['A동4층'],
+            '정담당': ['B동1층'],
+            '강담당': ['B동2층'],
+            '윤담당': ['B동3층'],
+            '조담당': ['B동4층'],
+            '장담당': ['C동1층'],
+            '한담당': ['C동2층'],
+            '오담당': ['C동3층'],
+            '신담당': ['C동4층'],
+            '홍담당': ['D동1층'],
+            '양담당': ['D동2층'],
+            '서담당': ['D동3층'],
+            '문담당': ['D동4층'],
+            '권담당': ['E동1층'],
+            '남담당': ['E동2층'],
+            '송담당': ['E동3층'],
+            '전담당': ['E동4층'],
+            '류담당': ['F동1층'],
+            '노담당': ['F동2층'],
+            '안담당': ['F동3층'],
+            '유담당': ['F동4층']
         };
 
         // 3인실 셀 범위
@@ -1480,6 +1513,24 @@
             buildings.forEach(building => {
                 const buildingInfo_detail = buildingInfo[building];
                 
+                // 동별 그룹 컨테이너 생성
+                const buildingGroup = document.createElement('div');
+                buildingGroup.className = 'building-group';
+                
+                // 동별 헤더
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'building-group-header';
+                groupHeader.innerHTML = `
+                    <div class="building-group-title">${building}동 (${buildingInfo_detail.type})</div>
+                    <div class="building-group-subtitle">1층~4층 담당자 현황</div>
+                `;
+                buildingGroup.appendChild(groupHeader);
+                
+                // 층별 그리드 컨테이너
+                const floorsGrid = document.createElement('div');
+                floorsGrid.className = 'floors-grid';
+                
+                // 각 층별 카드 생성
                 for (let floor = 1; floor <= 4; floor++) {
                     const areaKey = `${building}동${floor}층`;
                     const manager = Object.keys(managerInfo).find(mgr => 
@@ -1493,10 +1544,10 @@
                         const areaCard = document.createElement('div');
                         areaCard.className = 'area-manager-card';
                         areaCard.innerHTML = `
-                            <div class="area-building-indicator">${building}동</div>
+                            <div class="area-building-indicator">${floor}층</div>
                             <div class="area-manager-header">
                                 <div class="area-manager-name">${manager}</div>
-                                <div class="area-manager-zone">${floor}층</div>
+                                <div class="area-manager-zone">${building}동${floor}층</div>
                             </div>
                             <div class="area-stats-compact">
                                 <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
@@ -1535,12 +1586,15 @@
                                 </div>
                             </div>
                             <div class="area-total-summary">
-                                ${areaKey} 총 ${areaData.total}명 | ${buildingInfo_detail.type}
+                                총 ${areaData.total}명 담당
                             </div>
                         `;
-                        areaManagersGrid.appendChild(areaCard);
+                        floorsGrid.appendChild(areaCard);
                     }
                 }
+                
+                buildingGroup.appendChild(floorsGrid);
+                areaManagersGrid.appendChild(buildingGroup);
             });
         }
 
@@ -1654,7 +1708,7 @@
                 const room = row[1] || '';
                 const name = row[2] || '';
                 const status = row[3] || '정상';
-                const librarySeats = row[9] || '';
+                const librarySeats = row[8] || '';
                 const phone = row[7] || '';
                 const parentPhone = row[6] || '';
 
@@ -1917,8 +1971,8 @@
             const memo = row[5] || '';
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
-            const librarySeats = row[9] || '';
-            const lifeTeacher = row[8] || '';
+            const librarySeats = row[8] || '';
+            const lifeTeacher = row[9] || '';
             const birthDate = row[11] || '';
             const gender = row[12] || '';
             const enrollDate = row[13] || '';
