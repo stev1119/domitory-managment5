@@ -862,7 +862,7 @@
 
         <!-- 구역별 담당자 현황 (24개 구역) -->
         <div class="manager-stats">
-            <h3>👥 각 동,층별 담당자 현황 </h3>
+            <h3>👥 각 동,층별 인원 현황 </h3>
             <div class="area-info-summary">
                 <p>A동~F동까지 각 층별 담당자 및 현황</p>
             </div>
@@ -914,7 +914,7 @@
             '이상민T': ['A동1층'],
             '김영현T': ['A동2층'],
             '조영권T': ['A동3층'],
-            '남인달T(A동책임자)': ['A동4층'],
+            '남인달T(A동총괄)': ['A동4층'],
             '신규T1': ['B동1층'],
             '신규T2': ['B동2층'],
             '송인수T': ['B동3층'],
@@ -922,9 +922,9 @@
             '나정우T': ['C동1층'],
             '강지훈T': ['C동2층'],
             '황민철T': ['C동3층'],
-            '고승완T(C동책임자)': ['C동4층'],
+            '고승완T(C동총괄)': ['C동4층'],
             '신규T3': ['D동1층'],
-            '김혜정T(D,E책임자)': ['D동2층'],
+            '김혜정T(D,E총괄)': ['D동2층'],
             '유나경T': ['D동3층'],
             '김미경T': ['D동4층'],
             '김정아T': ['E동1층'],
@@ -933,7 +933,7 @@
             '진정현T': ['E동4층'],
             '상담층': ['F동1층'],
             '신규T4': ['F동2층'],
-            '이시우T(B,F책임자)': ['F동3층'],
+            '이시우T(B,F총괄)': ['F동3층'],
             '이영운T': ['F동4층']
 
         };
@@ -1568,7 +1568,7 @@
                 groupHeader.className = 'building-group-header';
                 groupHeader.innerHTML = `
                     <div class="building-group-title">${building}동 (${buildingInfo_detail.type})</div>
-                    <div class="building-group-subtitle">1층~4층 담당자 현황</div>
+                    <div class="building-group-subtitle">1층~4층 인원 현황황</div>
                 `;
                 buildingGroup.appendChild(groupHeader);
                 
