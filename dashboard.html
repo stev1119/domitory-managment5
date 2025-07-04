@@ -32,6 +32,24 @@
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .header-text {
+            text-align: left;
         }
 
         .header h1 {
@@ -41,11 +59,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
+            margin: 0;
         }
 
         .header p {
             font-size: 1.2rem;
             color: #6b7280;
+            margin: 5px 0 0 0;
         }
 
         /* 검색 섹션 */
@@ -638,6 +658,20 @@
                 font-size: 2.2rem;
             }
 
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-text {
+                text-align: center;
+            }
+
+            .header-logo {
+                width: 50px;
+                height: 50px;
+            }
+
             .total-stats {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 15px;
@@ -698,8 +732,13 @@
     <div class="dashboard-container">
         <!-- 헤더 -->
         <div class="header">
-            <h1>📊 시대인재 기숙사 인원 현황</h1>
-            <p>실시간 인원 현황 모니터링 시스템</p>
+            <div class="header-content">
+                <img src="https://drive.google.com/uc?export=view&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ" alt="시대인재 로고" class="header-logo" onerror="this.style.display='none'">
+                <div class="header-text">
+                    <h1>시대인재 기숙사 인원 현황</h1>
+                    <p>실시간 인원 현황 모니터링 시스템</p>
+                </div>
+            </div>
         </div>
 
         <!-- 검색 섹션 -->
@@ -866,19 +905,19 @@
 
         // 담당자별 담당 구역 정보 (24개 구역으로 확장)
         const managerInfo = {
-             '이상민T': ['A동1층'],
+          '이상민T': ['A동1층'],
             '김영현T': ['A동2층'],
             '조영권T': ['A동3층'],
             '남인달T': ['A동4층'],
-            '신규T1': ['B동1층'],
-            '신규T2': ['B동2층'],
+            '신규T': ['B동1층'],
+            '신규T': ['B동2층'],
             '송인수T': ['B동3층'],
             '김건희T': ['B동4층'],
             '나정우T': ['C동1층'],
             '강지훈T': ['C동2층'],
             '황민철T': ['C동3층'],
             '고승완T': ['C동4층'],
-            '신규T3': ['D동1층'],
+            '신규T': ['D동1층'],
             '김혜정T': ['D동2층'],
             '유나경T': ['D동3층'],
             '김미경T': ['D동4층'],
@@ -887,7 +926,7 @@
             '원현주T': ['E동3층'],
             '진정현T': ['E동4층'],
             '상담층': ['F동1층'],
-            '신규T4': ['F동2층'],
+            '신규T': ['F동2층'],
             '이시우T': ['F동3층'],
             '이영운T': ['F동4층']
         };
@@ -1971,8 +2010,8 @@
             const memo = row[5] || '';
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
-            const librarySeats = row[9] || '';
-            const lifeTeacher = row[8] || '';
+            const librarySeats = row[8] || '';
+            const lifeTeacher = row[9] || '';
             const birthDate = row[11] || '';
             const gender = row[12] || '';
             const enrollDate = row[13] || '';
