@@ -693,6 +693,7 @@
                             <option value="이동+" ${student.status === '이동+' ? 'selected' : ''}>이동+</option>
                             <option value="등미" ${student.status === '등미' ? 'selected' : ''}>등미</option>
                             <option value="퇴소" ${student.status === '퇴소' ? 'selected' : ''}>퇴소</option>
+                            <option value="미배정" ${student.status === '미배정' ? 'selected' : ''}>미배정</option>
                         </select>
                     </div>
                     <div class="student-memo">
@@ -816,26 +817,30 @@
             }
         }
 
-        // 구글 시트 업데이트 (행 번호만 수정)
+        // 구글 시트 업데이트 - 수정된 버전
         async function updateGoogleSheets() {
             try {
                 // 실제 Apps Script 웹앱 URL
-                const scriptUrl = 'https://script.google.com/macros/s/AKfycbxaXVyYcaOL-GYYkmqOKaWwubOSzKctrAwERV04fTPr5sBSPqsxGPhfVsuZqVOMw7d4vQ/exec';
+                const scriptUrl = 'https://script.google.com/macros/s/AKfycbx4p5ROFUsWe09qYu98MEmEQoMuf8U09u677KDta7ahJhZVVyEkFASLONJWZdvjQJSnow/exec';
                 
                 // 업데이트할 학생 데이터 준비
                 const updates = [];
                 
                 currentStudents.forEach(student => {
-                    if (student.name !== '미배정' && student.rowIndex >= 0) {
-                        // 행 번호 계산: rowIndex는 sheetsData 배열 인덱스이고, 실제 시트 행은 rowIndex + 3
-                        const actualSheetRow = student.rowIndex + 3;
+                    if (student.rowIndex >= 0) {
+                        // rowIndex는 sheetsData 배열 인덱스
+                        // sheetsData[0]는 헤더, sheetsData[1]부터 실제 데이터
+                        // sheetsData[i][0]은 실제 시트 행 번호를 저장하고 있음
+                        const actualSheetRow = sheetsData[student.rowIndex][0]; // 실제 시트 행 번호
                         
                         updates.push({
                             room: student.room,
                             status: student.status,
-                            memo: student.memo,
+                            memo: student.memo || '', // 빈 문자열도 전송
                             rowIndex: actualSheetRow - 1 // Apps Script는 0-based 인덱스 사용
                         });
+                        
+                        console.log(`준비된 업데이트: ${student.room} -> 행 ${actualSheetRow} (상태: ${student.status}, 메모: ${student.memo})`);
                     }
                 });
 
@@ -846,28 +851,47 @@
 
                 console.log('Apps Script로 전송할 데이터:', updates);
 
-                // Apps Script 웹앱 호출
+                // Apps Script 웹앱 호출 - CORS 해결을 위해 fetch 방식 변경
                 const response = await fetch(scriptUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain',
                     },
                     body: JSON.stringify({
                         action: 'updateStudents',
                         updates: updates
-                    }),
-                    mode: 'no-cors' // CORS 문제 해결
+                    })
                 });
 
-                // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 간주
-                console.log('Apps Script 호출 완료 (no-cors 모드)');
+                console.log('Apps Script 응답 상태:', response.status);
+                
+                if (response.ok) {
+                    try {
+                        const result = await response.text();
+                        console.log('Apps Script 응답:', result);
+                        
+                        // 응답이 JSON인지 확인
+                        try {
+                            const jsonResult = JSON.parse(result);
+                            if (jsonResult.success) {
+                                console.log('구글 시트 업데이트 성공');
+                            } else {
+                                console.error('Apps Script 오류:', jsonResult.message);
+                            }
+                        } catch (parseError) {
+                            console.log('JSON 파싱 실패, 텍스트 응답:', result);
+                        }
+                    } catch (textError) {
+                        console.log('응답 텍스트 읽기 실패:', textError);
+                    }
+                }
 
                 // 로컬 데이터 동기화
                 currentStudents.forEach(student => {
                     if (student.rowIndex >= 0 && sheetsData[student.rowIndex]) {
-                        sheetsData[student.rowIndex][4] = student.status; // D열
-                        sheetsData[student.rowIndex][5] = new Date().toISOString().split('T')[0]; // E열
-                        sheetsData[student.rowIndex][6] = student.memo; // F열
+                        sheetsData[student.rowIndex][4] = student.status; // D열 (상태)
+                        sheetsData[student.rowIndex][5] = new Date().toISOString().split('T')[0]; // E열 (날짜)
+                        sheetsData[student.rowIndex][6] = student.memo; // F열 (메모)
                     }
                 });
 
@@ -895,13 +919,13 @@
             }
         }
 
-        // 백업용 직접 API 호출 (행 번호만 수정)
+        // 백업용 직접 API 호출 - 수정된 버전
         async function updateSheetsDirectly() {
             const updates = [];
             
             currentStudents.forEach(student => {
-                if (student.name !== '미배정' && student.rowIndex >= 0) {
-                    const actualSheetRow = student.rowIndex + 3;
+                if (student.rowIndex >= 0) {
+                    const actualSheetRow = sheetsData[student.rowIndex][0]; // 실제 시트 행 번호
                     
                     // D열 (상태) 업데이트
                     updates.push({
@@ -916,13 +940,11 @@
                         values: [[today]]
                     });
                     
-                    // F열 (메모) 업데이트
-                    if (student.memo) {
-                        updates.push({
-                            range: `yulee!F${actualSheetRow}`,
-                            values: [[student.memo]]
-                        });
-                    }
+                    // F열 (메모) 업데이트 - 빈 문자열도 업데이트
+                    updates.push({
+                        range: `yulee!F${actualSheetRow}`,
+                        values: [[student.memo || '']]
+                    });
                 }
             });
 
