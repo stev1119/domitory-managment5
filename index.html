@@ -417,7 +417,7 @@
                         <option value="조영권">조영권</option>
                         <option value="황민철">황민철</option>
                         <option value="김건희">김건희</option>
-                        <option value="강지훈">강지훈</option>
+                        <option value="윤영호">윤영호</option>
                         <option value="송인수">송인수</option>
                         <option value="김영현">김영현</option>
                         <option value="이상민">이상민</option>
@@ -431,7 +431,7 @@
                         <option value="유나경">유나경</option>
                         <option value="이은영">이은영</option>
                         <option value="최문규">최문규</option>
-                        <option value="윤영호">윤영호</option>
+                        <option value="이윤민">이윤민</option>
                         <option value="김석진">김석진</option>
                         <option value="신규1">신규1</option>
                         <option value="신규2">신규2</option>
@@ -971,7 +971,7 @@
             }
         }
 
-        // 잔디 웹훅 전송 (원본 그대로)
+        // 잔디 웹훅 전송 - 시간 표시 추가
         async function sendToJandi(manager, building, floor, isModification) {
             const webhookUrl = 'https://wh.jandi.com/connect-api/webhook/29522216/3d9603c3b428b386c0d640758e236cb4';
          
@@ -995,7 +995,20 @@
                 퇴소: currentStudents.filter(s => s.status === '퇴소' && (s.name !== '미배정' || s.memo.trim()))
             };
 
+            // 현재 시간 포맷팅 (한국 시간)
+            const now = new Date();
+            const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000)); // UTC+9
+            const timeString = koreanTime.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+
             let message = `${isModification ? '🔄 수정보고' : '📋 인원보고'}\n\n`;
+            message += `⏰ 보고시간: ${timeString}\n`;
             message += `👤 담당자: ${manager}\n`;
             message += `🏢 위치: ${building}동 ${floor}층\n\n`;
             message += `📊 인원 현황\n`;
