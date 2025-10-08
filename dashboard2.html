@@ -859,7 +859,112 @@
                 </div>
             </div>
         </div>
+<!-- 라이브러리별 통계 -->
+        <div class="gender-stats">
+            <div class="gender-section" style="border-left: 5px solid #f59e0b;">
+                <h3>📚 A라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryAStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', 'total')">
+                        <div class="number" id="libraryACurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '외박')">
+                        <div class="number" id="libraryAOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '신규')">
+                        <div class="number" id="libraryANew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '등미')">
+                        <div class="number" id="libraryAAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '이동-')">
+                        <div class="number" id="libraryAMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '이동+')">
+                        <div class="number" id="libraryAMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '퇴소')">
+                        <div class="number" id="libraryAExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gender-section" style="border-left: 5px solid #10b981;">
+                <h3>📚 B라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryBStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', 'total')">
+                        <div class="number" id="libraryBCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '외박')">
+                        <div class="number" id="libraryBOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '신규')">
+                        <div class="number" id="libraryBNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '등미')">
+                        <div class="number" id="libraryBAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '이동-')">
+                        <div class="number" id="libraryBMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '이동+')">
+                        <div class="number" id="libraryBMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '퇴소')">
+                        <div class="number" id="libraryBExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- C라이브러리 통계 (전체 너비) -->
+        <div class="gender-stats" style="grid-template-columns: 1fr;">
+            <div class="gender-section" style="border-left: 5px solid #8b5cf6;">
+                <h3>📚 C라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryCStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', 'total')">
+                        <div class="number" id="libraryCCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '외박')">
+                        <div class="number" id="libraryCOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '신규')">
+                        <div class="number" id="libraryCNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '등미')">
+                        <div class="number" id="libraryCAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '이동-')">
+                        <div class="number" id="libraryCMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '이동+')">
+                        <div class="number" id="libraryCMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '퇴소')">
+                        <div class="number" id="libraryCExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- 구역별 담당자 현황 (24개 구역) -->
         <div class="manager-stats">
             <h3>👥 각 동,층별 인원 현황 </h3>
@@ -1066,6 +1171,7 @@
 
                 updateTotalStats(stats);
                 updateGenderStats(stats);
+                updateLibraryStats(stats);  // 라이브러리 통계 업데이트 추가
                 updateAreaManagerStats(stats);  // 구역별 담당자 통계 업데이트
                 
                 console.log('대시보드 업데이트 완료');
@@ -1365,6 +1471,9 @@
                 total: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryA: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryB: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryC: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 buildings: {},
                 managers: {},
                 areas: {}
@@ -1422,7 +1531,7 @@
                 const room = row[1]; // B열 (기숙사 번호)
                 const name = row[2]; // C열 (학생 이름)  
                 const status = row[3] || '정상'; // D열 (상태)
-
+                const librarySeats = row[8] || ''; // I열 (라이브러리 좌석)
                 // 데이터 유효성 검사
                 if (!room || !name || name === '미배정' || name.trim() === '') {
                     continue;
@@ -1451,7 +1560,22 @@
                 } else if (buildingGender === 'female') {
                     updateStatsByStatus(stats.female, status);
                 }
+// 라이브러리별 통계 업데이트
+                let library = '';
+                if (librarySeats) {
+                    const firstChar = librarySeats.toString().charAt(0).toUpperCase();
+                    if (firstChar === 'A') library = 'A';
+                    else if (firstChar === 'B') library = 'B';
+                    else if (firstChar === 'C') library = 'C';
+                }
 
+                if (library === 'A') {
+                    updateStatsByStatus(stats.libraryA, status);
+                } else if (library === 'B') {
+                    updateStatsByStatus(stats.libraryB, status);
+                } else if (library === 'C') {
+                    updateStatsByStatus(stats.libraryC, status);
+                }
                 // 동별 통계 업데이트 (현재원만)
                 if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
                     if (floor >= '1' && floor <= '4') {
@@ -1545,7 +1669,74 @@
             document.getElementById('femaleMoveIn').textContent = stats.female.moveIn;
             document.getElementById('femaleExit').textContent = stats.female.exit;
         }
+// 라이브러리별 통계 업데이트
+        function updateLibraryStats(stats) {
+            // A라이브러리
+            document.getElementById('libraryACurrent').textContent = stats.libraryA.current;
+            document.getElementById('libraryAOut').textContent = stats.libraryA.out;
+            document.getElementById('libraryANew').textContent = stats.libraryA.new;
+            document.getElementById('libraryAAbsent').textContent = stats.libraryA.absent;
+            document.getElementById('libraryAMoveOut').textContent = stats.libraryA.moveOut;
+            document.getElementById('libraryAMoveIn').textContent = stats.libraryA.moveIn;
+            document.getElementById('libraryAExit').textContent = stats.libraryA.exit;
 
+            // B라이브러리
+            document.getElementById('libraryBCurrent').textContent = stats.libraryB.current;
+            document.getElementById('libraryBOut').textContent = stats.libraryB.out;
+            document.getElementById('libraryBNew').textContent = stats.libraryB.new;
+            document.getElementById('libraryBAbsent').textContent = stats.libraryB.absent;
+            document.getElementById('libraryBMoveOut').textContent = stats.libraryB.moveOut;
+            document.getElementById('libraryBMoveIn').textContent = stats.libraryB.moveIn;
+            document.getElementById('libraryBExit').textContent = stats.libraryB.exit;
+
+            // C라이브러리
+            document.getElementById('libraryCCurrent').textContent = stats.libraryC.current;
+            document.getElementById('libraryCOut').textContent = stats.libraryC.out;
+            document.getElementById('libraryCNew').textContent = stats.libraryC.new;
+            document.getElementById('libraryCAbsent').textContent = stats.libraryC.absent;
+            document.getElementById('libraryCMoveOut').textContent = stats.libraryC.moveOut;
+            document.getElementById('libraryCMoveIn').textContent = stats.libraryC.moveIn;
+            document.getElementById('libraryCExit').textContent = stats.libraryC.exit;
+        }
+
+        // 라이브러리 + 상태별 학생 보기
+        function showStudentsByLibrary(library, status) {
+            const students = getStudentsByLibraryAndStatus(library, status);
+            const statusText = getStatusText(status);
+            showStudentsModal(`${library}라이브러리 ${statusText} 목록`, students);
+        }
+
+        // 라이브러리 + 상태별 학생 데이터 가져오기
+        function getStudentsByLibraryAndStatus(library, status) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const studentStatus = row[3] || '정상';
+                const librarySeats = row[8] || '';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 라이브러리 확인
+                if (!librarySeats) return;
+                const firstChar = librarySeats.toString().charAt(0).toUpperCase();
+                if (firstChar !== library) return;
+                
+                // 상태별 필터링
+                if (status === 'total') {
+                    if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (studentStatus === status) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
+        }
         // 동별 통계 업데이트 함수 제거됨
 
         // 구역별 담당자 통계 업데이트 (24개 구역)
