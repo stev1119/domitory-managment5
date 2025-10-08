@@ -1706,7 +1706,7 @@
             showStudentsModal(`${library}라이브러리 ${statusText} 목록`, students);
         }
 
-        // 라이브러리 + 상태별 학생 데이터 가져오기
+ // 라이브러리 + 상태별 학생 데이터 가져오기
         function getStudentsByLibraryAndStatus(library, status) {
             const students = [];
             
@@ -1733,6 +1733,18 @@
                 } else if (studentStatus === status) {
                     students.push(row);
                 }
+            });
+            
+            // 라이브러리 좌석 번호순으로 정렬
+            students.sort((a, b) => {
+                const seatA = a[8] || '';
+                const seatB = b[8] || '';
+                
+                // 좌석 번호에서 숫자 부분 추출하여 비교
+                const numA = parseInt(seatA.replace(/[^0-9]/g, '')) || 0;
+                const numB = parseInt(seatB.replace(/[^0-9]/g, '')) || 0;
+                
+                return numA - numB;
             });
             
             return students;
