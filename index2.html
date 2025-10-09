@@ -37,23 +37,26 @@
 }
 
 .header-content {
-    position: relative;
+   display: flex;
+    align-items: center;
+    justify-content: center; /* 가운데 정렬 */
     max-width: 1200px;
     margin: 0 auto;
+    position: relative; /* 기존 absolute 제거 */
+
 }
 
 .header-logo {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+     position: static; /* 기존 absolute 제거 */
+    margin-right: 24px; /* 텍스트와 간격 */
     width: 60px;
     height: auto;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+
 }
 
 .header-text {
-    text-align: center;
+    text-align: left;
 }
 
 .header h1 {
