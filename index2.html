@@ -388,10 +388,18 @@
     </style>
 </head>
 <body>
-    <div class="header">
-    <img src="https://drive.google.com/uc?export=view&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ" alt="시대인재 로고" class="header-logo">
-    <h1>시대인재 기숙사 인원보고</h1>
-    <p>실시간 인원 보고 시스템 </p>
+     <div class="header">
+            <div class="header-content">
+                <!-- 구글 드라이브 이미지를 여러 방법으로 시도 -->
+                <img src="https://lh3.googleusercontent.com/d/1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ" alt="시대인재 로고" class="header-logo" 
+                     onerror="this.onerror=null; this.src='https://drive.google.com/uc?export=download&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ'; 
+                              setTimeout(() => { if(!this.complete || this.naturalWidth === 0) { this.src='https://docs.google.com/uc?export=download&id=1Zt7J__aLz3uQF02JX3zs0BQtx60OC5bJ'; 
+                              setTimeout(() => { if(!this.complete || this.naturalWidth === 0) { this.style.display='none'; this.nextElementSibling.style.display='inline'; } }, 1000); } }, 1000);">
+                <!-- 로고 로드 실패시 대체 텍스트 -->
+                <span style="display: none; font-size: 2.5rem;">🏫</span>
+                <div class="header-text">
+                    <h1>시대인재 기숙사 인원 보고</h1>
+                    <p>실시간 인원 보고 시스템</p>
 </div>
 
         <div class="main-content">
