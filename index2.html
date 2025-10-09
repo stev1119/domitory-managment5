@@ -29,47 +29,24 @@
             overflow: hidden;
         }
 
-.header {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    padding: 30px;
-    text-align: center;
-    color: white;
-}
+ .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
 
-.header-content {
-   display: flex;
-    align-items: center;
-    justify-content: center; /* 가운데 정렬 */
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative; /* 기존 absolute 제거 */
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
 
-}
-
-.header-logo {
-     position: static; /* 기존 absolute 제거 */
-    margin-right: 24px; /* 텍스트와 간격 */
-    width: 60px;
-    height: auto;
-    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
-
-}
-
-.header-text {
-    text-align: left;
-}
-
-.header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
