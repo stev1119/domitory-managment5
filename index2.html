@@ -32,26 +32,28 @@
 .header {
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     padding: 30px;
+    text-align: center;
     color: white;
 }
 
 .header-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    position: relative;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .header-logo {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: 60px;
     height: auto;
-    flex-shrink: 0;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
 }
 
 .header-text {
-    text-align: left;
+    text-align: center;
 }
 
 .header h1 {
