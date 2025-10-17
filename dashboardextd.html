@@ -1987,14 +1987,17 @@ async function loadAFSheetData() {
         }
 
         // 실시간 검색 수행 (수정: 행 인덱스 추가)
-       function performSearch(query) {
+// 실시간 검색 수행 (수정: AF시트 직접 검색 추가)
+function performSearch(query) {
     const searchResults = document.getElementById('searchResults');
     const extendedSearch = document.getElementById('extendedSearchCheckbox').checked;
     const results = [];
     const lowerQuery = query.toLowerCase();
 
+    // 1. 기존 시트에서 검색
     sheetsData.forEach((row, index) => {
-        if (index === 0) return;
+        if (index === 0) return; // 헤더 제외
+
         const room = row[1] || '';
         const name = row[2] || '';
         const status = row[3] || '정상';
@@ -2002,12 +2005,20 @@ async function loadAFSheetData() {
         const phone = row[7] || '';
         const parentPhone = row[6] || '';
 
-        const searchFields = [room.toLowerCase(), name.toLowerCase(), librarySeats.toLowerCase(), phone, parentPhone].join(' ');
+        const searchFields = [
+            room.toLowerCase(),
+            name.toLowerCase(),
+            librarySeats.toLowerCase(),
+            phone,
+            parentPhone
+        ].join(' ');
 
         if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
             let additionalNote = '';
             if (extendedSearch && afSheetData.length > 0) {
-                const afMatch = afSheetData.find(afRow => afRow.nameB === name || afRow.nameG === name);
+                const afMatch = afSheetData.find(afRow => 
+                    afRow.nameB === name || afRow.nameG === name
+                );
                 if (afMatch && afMatch.note) {
                     additionalNote = afMatch.note;
                 }
@@ -2019,33 +2030,79 @@ async function loadAFSheetData() {
                 status: status,
                 rowData: row,
                 rowIndex: index,
-                additionalNote: additionalNote
+                additionalNote: additionalNote,
+                source: 'main' // 출처 표시
             });
         }
     });
+
+    // 2. 확장 검색 활성화 시 AF 시트에서 추가 검색
+    if (extendedSearch && afSheetData.length > 0) {
+        afSheetData.forEach((afRow, index) => {
+            const nameB = afRow.nameB.toLowerCase();
+            const nameG = afRow.nameG.toLowerCase();
+            const note = afRow.note;
+            
+            // AF 시트의 이름이 검색어와 일치하고, 이미 기존 시트에서 찾지 못한 경우
+            if ((nameB.includes(lowerQuery) || nameG.includes(lowerQuery)) && 
+                !results.some(r => r.name === afRow.nameB || r.name === afRow.nameG)) {
+                
+                // AF 시트에만 있는 학생 정보 추가
+                results.push({
+                    room: 'AF시트',
+                    name: afRow.nameB || afRow.nameG,
+                    status: 'AF정보',
+                    rowData: null,
+                    rowIndex: -1,
+                    additionalNote: note,
+                    source: 'af' // AF 시트 출처 표시
+                });
+            }
+        });
+    }
 
     displaySearchResults(results, extendedSearch);
 }
 
         // 검색 결과 표시 (수정: 행 인덱스 기반 클릭)
-        function displaySearchResults(results, extendedSearch) {
+       // 검색 결과 표시 (수정: AF시트 전용 결과 표시 추가)
+function displaySearchResults(results, extendedSearch) {
     const searchResults = document.getElementById('searchResults');
     
     if (results.length === 0) {
         searchResults.innerHTML = '<div class="search-result-item">검색 결과가 없습니다.</div>';
     } else {
-        searchResults.innerHTML = results.map((result, index) => `
-            <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex}, ${extendedSearch ? `'${result.additionalNote.replace(/'/g, "\\'")}'` : 'null'})">
-                <div class="result-room">${result.room}</div>
-                <div class="result-name">${result.name}</div>
-                <div class="result-status">상태: ${result.status}</div>
-                ${extendedSearch && result.additionalNote ? `
-                    <div style="margin-top: 5px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
-                        📌 ${result.additionalNote}
+        searchResults.innerHTML = results.map((result) => {
+            // AF 시트에만 있는 데이터인 경우
+            if (result.source === 'af') {
+                return `
+                    <div class="search-result-item" style="background: #fef3c7;">
+                        <div class="result-room" style="color: #f59e0b;">📌 AF시트 정보</div>
+                        <div class="result-name">${result.name}</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #92400e;">
+                            ${result.additionalNote || '상세 정보 없음'}
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.8rem; color: #6b7280;">
+                            ※ 기존 시트에 없는 정보입니다
+                        </div>
                     </div>
-                ` : ''}
-            </div>
-        `).join('');
+                `;
+            }
+            
+            // 기존 시트 데이터인 경우
+            return `
+                <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex}, ${extendedSearch ? `'${result.additionalNote.replace(/'/g, "\\'")}'` : 'null'})">
+                    <div class="result-room">${result.room}</div>
+                    <div class="result-name">${result.name}</div>
+                    <div class="result-status">상태: ${result.status}</div>
+                    ${extendedSearch && result.additionalNote ? `
+                        <div style="margin-top: 5px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
+                            📌 ${result.additionalNote}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
     }
     
     searchResults.style.display = 'block';
