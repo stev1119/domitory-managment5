@@ -758,7 +758,7 @@
 <div style="text-align: center; margin-top: 15px;">
     <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 1rem; color: #4f46e5; font-weight: 600;">
         <input type="checkbox" id="extendedSearchCheckbox" style="width: 18px; height: 18px; cursor: pointer;">
-        <span>🔍 확장 검색 (AF시트 추가 정보 포함)</span>
+        <span>🔍 확장 검색 (퇴소생 정보 포함)</span>
     </label>
 </div>
         <!-- 전체 통계 -->
@@ -2077,7 +2077,7 @@ function displaySearchResults(results, extendedSearch) {
             if (result.source === 'af') {
                 return `
                     <div class="search-result-item" style="background: #fef3c7;">
-                        <div class="result-room" style="color: #f59e0b;">📌 AF시트 정보</div>
+                        <div class="result-room" style="color: #f59e0b;">📌 퇴소생 포함 정보</div>
                         <div class="result-name">${result.name}</div>
                         <div style="margin-top: 5px; font-size: 0.9rem; color: #92400e;">
                             ${result.additionalNote || '상세 정보 없음'}
