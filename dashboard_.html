@@ -755,7 +755,12 @@
                 <div class="search-results" id="searchResults"></div>
             </div>
         </div>
-
+<div style="text-align: center; margin-top: 15px;">
+    <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 1rem; color: #f5f5f5; font-weight: 700;">
+        <input type="checkbox" id="extendedSearchCheckbox" style="width: 22px; height: 22px; cursor: pointer;">
+        <span>🔍 확장 검색 (이력 및 퇴소생 정보 포함)</span>
+    </label>
+</div>
         <!-- 전체 통계 -->
         <div class="total-stats" id="totalStats">
             <div class="stat-card total" onclick="showStudentsByStatus('total')">
@@ -1000,9 +1005,10 @@
 
     <script>
         // 전역 변수
-        let sheetsData = [];
-        let reportData = {};
-        let searchTimeout;
+let sheetsData = [];
+let afSheetData = [];
+let reportData = {};
+let searchTimeout;
 
         // 기숙사 정보 정의
         const buildingInfo = {
@@ -1028,12 +1034,12 @@
             '나정우T': ['C동2층'],
             '송인수T': ['C동3층'],
             '황민철T': ['C동4층'],
-            '김혜정T': ['D동1층'],
-            '이윤민T': ['D동2층'],
+            '이은영T': ['D동1층'],
+            '김혜정T': ['D동2층'],
             '유나경T(E동지원)': ['D동3층'],
             '김미경T': ['D동4층'],
             '김정아T': ['E동1층'],
-            '이은영T': ['E동2층'],
+            '이윤민T': ['E동2층'],
             '원현주T': ['E동3층'],
             '진정현T': ['E동4층'],
             '조영권T': ['F동1층'],
@@ -1064,6 +1070,8 @@
                 
                 // 시트 데이터 로드
                 const sheetsLoaded = await loadSheetsData();
+// AF시트 데이터 로드 (확장 검색용)
+await loadAFSheetData();
                 if (!sheetsLoaded) {
                     throw new Error('시트 데이터 로드 실패');
                 }
@@ -1415,7 +1423,41 @@
             
             return result;
         }
-
+// AF시트 데이터 로드
+async function loadAFSheetData() {
+    try {
+        console.log('AF시트 데이터 로드 시작...');
+        const csvUrl = `https://docs.google.com/spreadsheets/d/1jvpvDwXLEHAok31_cGaWintGgD0kSkoPIzxBquYgkIc/export?format=csv&gid=62521893`;
+        
+        const csvResponse = await fetch(csvUrl);
+        if (csvResponse.ok) {
+            const csvText = await csvResponse.text();
+            const allData = parseCSV(csvText);
+            afSheetData = [];
+            
+            for (let i = 0; i < allData.length; i++) {
+                if (allData[i].length > 6) {
+                    const bCol = allData[i][1] || '';
+                    const dCol = allData[i][3] || '';
+                    const gCol = allData[i][6] || '';
+                    
+                    if (bCol || gCol) {
+                        afSheetData.push({
+                            nameB: bCol.trim(),
+                            nameG: gCol.trim(),
+                            note: dCol.trim()
+                        });
+                    }
+                }
+            }
+            console.log('AF시트 로드 성공:', afSheetData.length, '행');
+            return true;
+        }
+    } catch (error) {
+        console.error('AF시트 로드 실패:', error);
+        return false;
+    }
+}
         // 데모 데이터로 테스트하는 함수
         function tryDemoData() {
             console.log('데모 데이터로 테스트 시작...');
@@ -1945,64 +1987,148 @@
         }
 
         // 실시간 검색 수행 (수정: 행 인덱스 추가)
-        function performSearch(query) {
-            const searchResults = document.getElementById('searchResults');
-            const results = [];
+// 실시간 검색 수행 (수정: AF시트 직접 검색 추가)
+// 실시간 검색 수행 (수정: AF시트의 모든 매칭 항목 표시)
+function performSearch(query) {
+    const searchResults = document.getElementById('searchResults');
+    const extendedSearch = document.getElementById('extendedSearchCheckbox').checked;
+    const results = [];
+    const lowerQuery = query.toLowerCase();
 
-            const lowerQuery = query.toLowerCase();
+    // 1. 기존 시트에서 검색
+    sheetsData.forEach((row, index) => {
+        if (index === 0) return; // 헤더 제외
 
-            sheetsData.forEach((row, index) => {
-                if (index === 0) return; // 헤더 제외
+        const room = row[1] || '';
+        const name = row[2] || '';
+        const status = row[3] || '정상';
+        const librarySeats = row[8] || '';
+        const phone = row[7] || '';
+        const parentPhone = row[6] || '';
 
-                const room = row[1] || '';
-                const name = row[2] || '';
-                const status = row[3] || '정상';
-                const librarySeats = row[8] || '';
-                const phone = row[7] || '';
-                const parentPhone = row[6] || '';
+        const searchFields = [
+            room.toLowerCase(),
+            name.toLowerCase(),
+            librarySeats.toLowerCase(),
+            phone,
+            parentPhone
+        ].join(' ');
 
-                // 검색 조건들
-                const searchFields = [
-                    room.toLowerCase(),
-                    name.toLowerCase(),
-                    librarySeats.toLowerCase(),
-                    phone,
-                    parentPhone
-                ].join(' ');
-
-                if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
-                    results.push({
-                        room: room,
-                        name: name,
-                        status: status,
-                        rowData: row,
-                        rowIndex: index  // 행 인덱스 추가
-                    });
-                }
-            });
-
-            displaySearchResults(results);
-        }
-
-        // 검색 결과 표시 (수정: 행 인덱스 기반 클릭)
-        function displaySearchResults(results) {
-            const searchResults = document.getElementById('searchResults');
-            
-            if (results.length === 0) {
-                searchResults.innerHTML = '<div class="search-result-item">검색 결과가 없습니다.</div>';
-            } else {
-                searchResults.innerHTML = results.map((result, index) => `
-                    <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex})">
-                        <div class="result-room">${result.room}</div>
-                        <div class="result-name">${result.name}</div>
-                        <div class="result-status">상태: ${result.status}</div>
-                    </div>
-                `).join('');
+        if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
+            let additionalNotes = []; // 배열로 변경
+            if (extendedSearch && afSheetData.length > 0) {
+                // 같은 이름의 모든 AF 데이터 찾기
+                const afMatches = afSheetData.filter(afRow => 
+                    afRow.nameB === name || afRow.nameG === name
+                );
+                additionalNotes = afMatches.map(match => match.note).filter(note => note);
             }
             
-            searchResults.style.display = 'block';
+            results.push({
+                room: room,
+                name: name,
+                status: status,
+                rowData: row,
+                rowIndex: index,
+                additionalNotes: additionalNotes, // 배열로 변경
+                source: 'main'
+            });
         }
+    });
 
+    // 2. 확장 검색 활성화 시 AF 시트에서 추가 검색
+    if (extendedSearch && afSheetData.length > 0) {
+        const foundNames = new Set(results.map(r => r.name));
+        
+        afSheetData.forEach((afRow, index) => {
+            const nameB = afRow.nameB.toLowerCase();
+            const nameG = afRow.nameG.toLowerCase();
+            const note = afRow.note;
+            
+            // AF 시트의 이름이 검색어와 일치하고, 이미 기존 시트에서 찾지 못한 경우
+            if ((nameB.includes(lowerQuery) || nameG.includes(lowerQuery))) {
+                const displayName = afRow.nameB || afRow.nameG;
+                
+                if (!foundNames.has(displayName)) {
+                    // 같은 이름의 모든 정보 수집
+                    const allNotes = afSheetData
+                        .filter(af => af.nameB === displayName || af.nameG === displayName)
+                        .map(af => af.note)
+                        .filter(n => n);
+                    
+                    results.push({
+                        room: 'AF시트',
+                        name: displayName,
+                        status: 'AF정보',
+                        rowData: null,
+                        rowIndex: -1,
+                        additionalNotes: allNotes, // 모든 노트 포함
+                        source: 'af'
+                    });
+                    
+                    foundNames.add(displayName);
+                }
+            }
+        });
+    }
+
+    displaySearchResults(results, extendedSearch);
+}
+
+        // 검색 결과 표시 (수정: 행 인덱스 기반 클릭)
+       // 검색 결과 표시 (수정: AF시트 전용 결과 표시 추가)
+// 검색 결과 표시 (수정: 여러 AF시트 정보 표시)
+function displaySearchResults(results, extendedSearch) {
+    const searchResults = document.getElementById('searchResults');
+    
+    if (results.length === 0) {
+        searchResults.innerHTML = '<div class="search-result-item">검색 결과가 없습니다.</div>';
+    } else {
+        searchResults.innerHTML = results.map((result) => {
+            // AF 시트에만 있는 데이터인 경우
+            if (result.source === 'af') {
+                const notesHtml = result.additionalNotes.length > 0 
+                    ? result.additionalNotes.map((note, idx) => `
+                        <div style="margin-top: 5px; padding: 5px 10px; background: white; border-radius: 6px; font-size: 0.85rem; color: #92400e; border-left: 3px solid #f59e0b;">
+                            <strong>${idx + 1}.</strong> ${note}
+                        </div>
+                    `).join('')
+                    : '<div style="margin-top: 5px; font-size: 0.9rem; color: #92400e;">상세 정보 없음</div>';
+                
+                return `
+                    <div class="search-result-item" style="background: #fef3c7;">
+                        <div class="result-room" style="color: #f59e0b;">📌 기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
+                        <div class="result-name">${result.name}</div>
+                        ${notesHtml}
+                        <div style="margin-top: 5px; font-size: 0.8rem; color: #6b7280;">
+                            ※ 기존 시트에 없는 정보입니다
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 기존 시트 데이터인 경우
+            const additionalNotesHtml = extendedSearch && result.additionalNotes && result.additionalNotes.length > 0
+                ? result.additionalNotes.map((note, idx) => `
+                    <div style="margin-top: 3px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
+                        📌 ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
+                    </div>
+                `).join('')
+                : '';
+            
+            return `
+                <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex}, ${extendedSearch && result.additionalNotes ? `'${result.additionalNotes.join(' | ').replace(/'/g, "\\'")}'` : 'null'})">
+                    <div class="result-room">${result.room}</div>
+                    <div class="result-name">${result.name}</div>
+                    <div class="result-status">상태: ${result.status}</div>
+                    ${additionalNotesHtml}
+                </div>
+            `;
+        }).join('');
+    }
+    
+    searchResults.style.display = 'block';
+}
         // 상태별 학생 보기
         function showStudentsByStatus(status) {
             const students = getStudentsByStatus(status);
@@ -2039,15 +2165,15 @@
         }
 
         // 인덱스로 특정 학생 상세 정보 보기 (새로운 방식 - 정확한 학생 선택)
-        function showStudentDetailByIndex(rowIndex) {
-            const student = sheetsData[rowIndex];
-            if (student) {
-                const room = student[1] || '';
-                const name = student[2] || '';
-                showStudentsModal(`${room} ${name} 학생 정보`, [student]);
-            }
-            document.getElementById('searchResults').style.display = 'none';
-        }
+        function showStudentDetailByIndex(rowIndex, additionalNote = null) {
+    const student = sheetsData[rowIndex];
+    if (student) {
+        const room = student[1] || '';
+        const name = student[2] || '';
+        showStudentsModal(`${room} ${name} 학생 정보`, [student], additionalNote);
+    }
+    document.getElementById('searchResults').style.display = 'none';
+}
 
         // 상태별 학생 데이터 가져오기
         function getStudentsByStatus(status) {
@@ -2204,20 +2330,24 @@
         }
 
         // 학생 모달 표시
-        function showStudentsModal(title, students) {
-            document.getElementById('modalTitle').textContent = title;
-            const modalStudentsGrid = document.getElementById('modalStudentsGrid');
-            
-            modalStudentsGrid.innerHTML = students.map(row => createStudentCard(row)).join('');
-            document.getElementById('studentModal').style.display = 'block';
-        }
+       function showStudentsModal(title, students, additionalNote = null) {
+    document.getElementById('modalTitle').textContent = title;
+    const modalStudentsGrid = document.getElementById('modalStudentsGrid');
+    
+    modalStudentsGrid.innerHTML = students.map(row => createStudentCard(row, additionalNote)).join('');
+    document.getElementById('studentModal').style.display = 'block';
+}
 
         // 학생 정보 카드 생성
-        function createStudentCard(row) {
+       function createStudentCard(row, additionalNote = null) {
             const room = row[1] || '';
             const name = row[2] || '';
             const status = row[3] || '정상';
             const memo = row[5] || '';
+let finalMemo = memo;
+    if (additionalNote && additionalNote !== 'null') {
+        finalMemo = memo ? `${memo} | 📌 ${additionalNote}` : `📌 ${additionalNote}`;
+    }
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
             const librarySeats = row[8] || '';
@@ -2282,12 +2412,12 @@
                             <div class="detail-label">반</div>
                             <div class="detail-value">${classroom}</div>
                         </div>
-                        ${memo ? `
-                        <div class="detail-item">
-                            <div class="detail-label">비고</div>
-                            <div class="detail-value">${memo}</div>
-                        </div>
-                        ` : ''}
+                       ${finalMemo ? `
+        <div class="detail-item" style="grid-column: 1 / -1;">
+            <div class="detail-label">비고</div>
+            <div class="detail-value" style="background: ${additionalNote && additionalNote !== 'null' ? '#fef3c7' : 'transparent'}; padding: ${additionalNote && additionalNote !== 'null' ? '8px' : '0'}; border-radius: 6px;">${finalMemo}</div>
+        </div>
+    ` : ''}
                     </div>
                 </div>
             `;
