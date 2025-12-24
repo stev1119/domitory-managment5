@@ -1794,102 +1794,99 @@ async function loadAFSheetData() {
         // 동별 통계 업데이트 함수 제거됨
 
         // 구역별 담당자 통계 업데이트 (24개 구역)
-        function updateAreaManagerStats(stats) {
-            const areaManagersGrid = document.getElementById('areaManagersGrid');
-            areaManagersGrid.innerHTML = '';
+       // 구역별 담당자 통계 업데이트 (호실 표시 포함)
+function updateAreaManagerStats(stats) {
+    const areaManagersGrid = document.getElementById('areaManagersGrid');
+    areaManagersGrid.innerHTML = '';
 
-            // 동별로 그룹화하여 표시
-            const buildings = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const buildings = ['A', 'B', 'C', 'D', 'E', 'F'];
+    
+    buildings.forEach(building => {
+        const buildingInfo_detail = buildingInfo[building];
+        const buildingGroup = document.createElement('div');
+        buildingGroup.className = 'building-group';
+        
+        const groupHeader = document.createElement('div');
+        groupHeader.className = 'building-group-header';
+        groupHeader.innerHTML = `
+            <div class="building-group-title">${building}동 (${buildingInfo_detail.type})</div>
+            <div class="building-group-subtitle">1층~4층 인원 현황</div>
+        `;
+        buildingGroup.appendChild(groupHeader);
+        
+        const floorsGrid = document.createElement('div');
+        floorsGrid.className = 'floors-grid';
+        floorsGrid.style.gridTemplateColumns = '1fr';
+        
+        for (let floor = 1; floor <= 4; floor++) {
+            const areaKey = `${building}동${floor}층`;
+            const manager = Object.keys(managerInfo).find(mgr => 
+                managerInfo[mgr].includes(areaKey)
+            );
+            const areaData = stats.areas[areaKey];
             
-            buildings.forEach(building => {
-                const buildingInfo_detail = buildingInfo[building];
+            if (manager && areaData) {
+                const areaCard = document.createElement('div');
+                areaCard.className = 'area-manager-card';
                 
-                // 동별 그룹 컨테이너 생성
-                const buildingGroup = document.createElement('div');
-                buildingGroup.className = 'building-group';
+                // 호실 그리드 HTML 생성 - 이 줄이 중요합니다!
+                const roomsGridHTML = createRoomsGrid(building, floor);
                 
-                // 동별 헤더
-                const groupHeader = document.createElement('div');
-                groupHeader.className = 'building-group-header';
-                groupHeader.innerHTML = `
-                    <div class="building-group-title">${building}동 (${buildingInfo_detail.type})</div>
-                    <div class="building-group-subtitle">1층~4층 인원 현황</div>
+                areaCard.innerHTML = `
+                    <div class="area-building-indicator">${floor}층</div>
+                    <div class="area-manager-header">
+                        <div class="area-manager-name">${manager}</div>
+                        <div class="area-manager-zone">${building}동${floor}층</div>
+                    </div>
+                    <div class="area-stats-compact">
+                        <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
+                            <div class="area-stat-number">${areaData.current}</div>
+                            <div class="area-stat-label">현재원</div>
+                        </div>
+                        <div class="area-stat-item out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'out')">
+                            <div class="area-stat-number">${areaData.out}</div>
+                            <div class="area-stat-label">외박</div>
+                        </div>
+                        <div class="area-stat-item new" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'new')">
+                            <div class="area-stat-number">${areaData.new}</div>
+                            <div class="area-stat-label">신규</div>
+                        </div>
+                        <div class="area-stat-item absent" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'absent')">
+                            <div class="area-stat-number">${areaData.absent}</div>
+                            <div class="area-stat-label">등미</div>
+                        </div>
+                    </div>
+                    <div class="area-stats-compact">
+                        <div class="area-stat-item move-out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveOut')">
+                            <div class="area-stat-number">${areaData.moveOut}</div>
+                            <div class="area-stat-label">이동-</div>
+                        </div>
+                        <div class="area-stat-item move-in" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveIn')">
+                            <div class="area-stat-number">${areaData.moveIn}</div>
+                            <div class="area-stat-label">이동+</div>
+                        </div>
+                        <div class="area-stat-item exit" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'exit')">
+                            <div class="area-stat-number">${areaData.exit}</div>
+                            <div class="area-stat-label">퇴소</div>
+                        </div>
+                        <div class="area-stat-item" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'total')">
+                            <div class="area-stat-number">${areaData.total}</div>
+                            <div class="area-stat-label">전체</div>
+                        </div>
+                    </div>
+                    ${roomsGridHTML}
+                    <div class="area-total-summary">
+                        총 ${areaData.total}명 담당
+                    </div>
                 `;
-                buildingGroup.appendChild(groupHeader);
-                
-                // 층별 그리드 컨테이너
-                const floorsGrid = document.createElement('div');
-                floorsGrid.className = 'floors-grid';
-                
-                // 각 층별 카드 생성
-                for (let floor = 1; floor <= 4; floor++) {
-                    const areaKey = `${building}동${floor}층`;
-                    const manager = Object.keys(managerInfo).find(mgr => 
-                        managerInfo[mgr].includes(areaKey)
-                    );
-                    
-                    // 각 구역별 독립적인 통계 사용
-                    const areaData = stats.areas[areaKey];
-                    
-                    if (manager && areaData) {
-                        const areaCard = document.createElement('div');
-                        areaCard.className = 'area-manager-card';
-                        areaCard.innerHTML = `
-                            <div class="area-building-indicator">${floor}층</div>
-                            <div class="area-manager-header">
-                                <div class="area-manager-name">${manager}</div>
-                                <div class="area-manager-zone">${building}동${floor}층</div>
-                            </div>
-                            <div class="area-stats-compact">
-                                <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
-                                    <div class="area-stat-number">${areaData.current}</div>
-                                    <div class="area-stat-label">현재원</div>
-                                </div>
-                                <div class="area-stat-item out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'out')">
-                                    <div class="area-stat-number">${areaData.out}</div>
-                                    <div class="area-stat-label">외박</div>
-                                </div>
-                                <div class="area-stat-item new" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'new')">
-                                    <div class="area-stat-number">${areaData.new}</div>
-                                    <div class="area-stat-label">신규</div>
-                                </div>
-                                <div class="area-stat-item absent" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'absent')">
-                                    <div class="area-stat-number">${areaData.absent}</div>
-                                    <div class="area-stat-label">등미</div>
-                                </div>
-                            </div>
-                            <div class="area-stats-compact">
-                                <div class="area-stat-item move-out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveOut')">
-                                    <div class="area-stat-number">${areaData.moveOut}</div>
-                                    <div class="area-stat-label">이동-</div>
-                                </div>
-                                <div class="area-stat-item move-in" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveIn')">
-                                    <div class="area-stat-number">${areaData.moveIn}</div>
-                                    <div class="area-stat-label">이동+</div>
-                                </div>
-                                <div class="area-stat-item exit" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'exit')">
-                                    <div class="area-stat-number">${areaData.exit}</div>
-                                    <div class="area-stat-label">퇴소</div>
-                                </div>
-                                <div class="area-stat-item" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'total')">
-                                    <div class="area-stat-number">${areaData.total}</div>
-                                    <div class="area-stat-label">전체</div>
-                                </div>
-                            </div>
-                            ${roomsGridHTML}
-                            <div class="area-total-summary">
-                                총 ${areaData.total}명 담당
-                            </div>
-                        `;
-                        floorsGrid.appendChild(areaCard);
-                    }
-                }
-                
-                buildingGroup.appendChild(floorsGrid);
-                areaManagersGrid.appendChild(buildingGroup);
-            });
+                floorsGrid.appendChild(areaCard);
+            }
         }
-
+        
+        buildingGroup.appendChild(floorsGrid);
+        areaManagersGrid.appendChild(buildingGroup);
+    });
+}
         // 구역별 담당자 학생 보기
         function showAreaManagerStudents(manager, areaKey, statusType) {
             const students = getStudentsByAreaManager(manager, areaKey, statusType);
