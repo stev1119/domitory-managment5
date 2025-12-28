@@ -179,6 +179,48 @@
 }
 
 /* 호실 상태별 색상 */
+//.room-normal {
+//    background: white;
+//    color: #1f2937;
+//    border-color: #d1d5db;
+//}
+
+//.room-out {
+//    background: #3b82f6;
+//    color: white;
+//    border-color: #2563eb;
+//}
+
+//.room-new {
+//    background: white;
+//    color: #1f2937;
+//    border-color: #d1d5db;
+//}
+
+//.room-move {
+//    background: #fbbf24;
+//    color: #78350f;
+//    border-color: #f59e0b;
+//}
+
+//.room-exit {
+//    background: #ef4444;
+//    color: white;
+//    border-color: #dc2626;
+//}
+
+//.room-absent {
+//    background: white;
+//    color: #1f2937;
+//    border-color: #d1d5db;
+//}
+
+//.room-empty {
+//    background: white;
+//    color: #9ca3af;
+//    border-color: #e5e7eb;
+//}
+        /* 호실 상태별 색상 */
 .room-normal {
     background: white;
     color: #1f2937;
@@ -189,12 +231,6 @@
     background: #3b82f6;
     color: white;
     border-color: #2563eb;
-}
-
-.room-new {
-    background: white;
-    color: #1f2937;
-    border-color: #d1d5db;
 }
 
 .room-move {
@@ -209,16 +245,60 @@
     border-color: #dc2626;
 }
 
+.room-empty {
+    background: #9ca3af;
+    color: white;
+    border-color: #6b7280;
+}
+
+/* 3인실 전체 상태 */
+.room-out-full {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+}
+
+.room-move-full {
+    background: #fbbf24;
+    color: #78350f;
+    border-color: #f59e0b;
+}
+
+.room-exit-full {
+    background: #ef4444;
+    color: white;
+    border-color: #dc2626;
+}
+
+/* 3인실 부분 상태 (그라데이션) */
+.room-out-partial {
+    background: linear-gradient(135deg, white 0%, white 50%, #3b82f6 50%, #3b82f6 100%);
+    color: #1f2937;
+    border-color: #2563eb;
+}
+
+.room-move-partial {
+    background: linear-gradient(135deg, white 0%, white 50%, #fbbf24 50%, #fbbf24 100%);
+    color: #1f2937;
+    border-color: #f59e0b;
+}
+
+.room-exit-partial {
+    background: linear-gradient(135deg, white 0%, white 50%, #ef4444 50%, #ef4444 100%);
+    color: #1f2937;
+    border-color: #dc2626;
+}
+
+.room-partial-empty {
+    background: linear-gradient(135deg, white 0%, white 50%, #9ca3af 50%, #9ca3af 100%);
+    color: #1f2937;
+    border-color: #6b7280;
+}
+
 .room-absent {
     background: white;
     color: #1f2937;
     border-color: #d1d5db;
-}
-
-.room-empty {
-    background: white;
-    color: #9ca3af;
-    border-color: #e5e7eb;
 }
         /* 전체 통계 카드 */
         .total-stats {
@@ -2578,16 +2658,84 @@ function getRoomsForFloor(building, floor) {
 }
 
 // 호실 상태 확인
+//function getRoomStatus(roomId) {
+//    const students = sheetsData.filter((row, idx) => idx > 0 && row[1] === roomId);
+//    if (students.length === 0) return { class: 'room-empty', tooltip: '미배정' };
+    
+//    const statuses = students.map(s => s[3] || '정상');
+//    if (statuses.includes('퇴소')) return { class: 'room-exit', tooltip: '퇴소' };
+ //   if (statuses.includes('외박')) return { class: 'room-out', tooltip: '외박' };
+//    if (statuses.includes('이동-') || statuses.includes('이동+')) return { class: 'room-move', tooltip: '이동' };
+ //   if (statuses.includes('신규')) return { class: 'room-new', tooltip: '신규' };
+//    if (statuses.includes('등미')) return { class: 'room-absent', tooltip: '등미' };
+//    return { class: 'room-normal', tooltip: '정상' };
+        // 호실 상태 확인 (3인실 고려)
 function getRoomStatus(roomId) {
     const students = sheetsData.filter((row, idx) => idx > 0 && row[1] === roomId);
-    if (students.length === 0) return { class: 'room-empty', tooltip: '미배정' };
     
+    // 빈 호실
+    if (students.length === 0) {
+        return { class: 'room-empty', tooltip: '미배정' };
+    }
+    
+    // 3인실 여부 확인 (4층)
+    const floor = roomId.charAt(1);
+    const isTripleRoom = (floor === '4');
+    
+    if (isTripleRoom) {
+        // 3인실 처리
+        const totalCapacity = 3;
+        const statuses = students.map(s => s[3] || '정상');
+        
+        // 현재 재실 중인 학생 수 (정상, 신규, 이동+ 포함)
+        const presentCount = statuses.filter(s => s === '정상' || s === '신규' || s === '이동+').length;
+        
+        // 우선순위가 높은 상태 확인
+        let priorityStatus = null;
+        if (statuses.includes('퇴소')) priorityStatus = 'exit';
+        else if (statuses.includes('외박')) priorityStatus = 'out';
+        else if (statuses.includes('이동-') || statuses.includes('이동+')) priorityStatus = 'move';
+        
+        // 3명 전부 정상
+        if (presentCount === 3 && !priorityStatus) {
+            return { class: 'room-normal', tooltip: '3명 재실' };
+        }
+        
+        // 3명 전부 비어있거나 나간 경우
+        if (presentCount === 0) {
+            if (priorityStatus === 'exit') return { class: 'room-exit-full', tooltip: '3명 퇴소' };
+            if (priorityStatus === 'out') return { class: 'room-out-full', tooltip: '3명 외박' };
+            if (priorityStatus === 'move') return { class: 'room-move-full', tooltip: '3명 이동' };
+            return { class: 'room-empty', tooltip: '3명 미배정' };
+        }
+        
+        // 1-2명만 재실 (부분 상태)
+        if (presentCount === 1) {
+            if (priorityStatus === 'exit') return { class: 'room-exit-partial', tooltip: `1명 재실, ${statuses.filter(s => s === '퇴소').length}명 퇴소` };
+            if (priorityStatus === 'out') return { class: 'room-out-partial', tooltip: `1명 재실, ${statuses.filter(s => s === '외박').length}명 외박` };
+            if (priorityStatus === 'move') return { class: 'room-move-partial', tooltip: `1명 재실, 이동 있음` };
+            return { class: 'room-partial-empty', tooltip: '1명 재실, 2명 미배정' };
+        }
+        
+        if (presentCount === 2) {
+            if (priorityStatus === 'exit') return { class: 'room-exit-partial', tooltip: `2명 재실, ${statuses.filter(s => s === '퇴소').length}명 퇴소` };
+            if (priorityStatus === 'out') return { class: 'room-out-partial', tooltip: `2명 재실, ${statuses.filter(s => s === '외박').length}명 외박` };
+            if (priorityStatus === 'move') return { class: 'room-move-partial', tooltip: `2명 재실, 이동 있음` };
+            return { class: 'room-partial-empty', tooltip: '2명 재실, 1명 미배정' };
+        }
+        
+        return { class: 'room-normal', tooltip: `${presentCount}명 재실` };
+    }
+    
+    // 일반 호실 (2인실)
     const statuses = students.map(s => s[3] || '정상');
+    
     if (statuses.includes('퇴소')) return { class: 'room-exit', tooltip: '퇴소' };
     if (statuses.includes('외박')) return { class: 'room-out', tooltip: '외박' };
     if (statuses.includes('이동-') || statuses.includes('이동+')) return { class: 'room-move', tooltip: '이동' };
-    if (statuses.includes('신규')) return { class: 'room-new', tooltip: '신규' };
-    if (statuses.includes('등미')) return { class: 'room-absent', tooltip: '등미' };
+    if (statuses.includes('신규')) return { class: 'room-normal', tooltip: '신규' };
+    if (statuses.includes('등미')) return { class: 'room-normal', tooltip: '등미' };
+    
     return { class: 'room-normal', tooltip: '정상' };
 }
 
