@@ -1012,41 +1012,40 @@ let searchTimeout;
 
         // 기숙사 정보 정의
         const buildingInfo = {
-            'A': { name: 'A동', type: '(남)총괄:남인달T/지원:김영현T', gender: 'male' },
+            'A': { name: 'A동', type: '(여)총괄:김혜정T', gender: 'female' },
             'B': { name: 'B동', type: '(남)총괄:이시우T', gender: 'male' },
             'C': { name: 'C동', type: '(남)총괄:고승완T', gender: 'male' },
-            'D': { name: 'D동', type: '(여)총괄:김혜정T', gender: 'female' },
+            'D': { name: 'D동', type: '(남)총괄:남인달T', gender: 'male' },
             'E': { name: 'E동', type: '(여)총괄:김혜정T', gender: 'female' },
             'F': { name: 'F동', type: '(남)총괄:이시우T', gender: 'male' }
         };
 
         // 담당자별 담당 구역 정보 (24개 구역으로 확장)
         const managerInfo = {
-            '이상민T': ['A동1층'],
-            '최금주T': ['A동2층'],
-            '김석진T': ['A동3층'],
-            '남인달T': ['A동4층'],
-            '최문규T': ['B동1층'],
-            '홍성모T': ['B동2층'],
-            '홍성모T2': ['B동3층'],
-            '김건희T': ['B동4층'],
-            '이준수T': ['C동1층'],
-            '나정우T': ['C동2층'],
-            '송인수T': ['C동3층'],
-            '황민철T': ['C동4층'],
-            '이은영T': ['D동1층'],
-            '김혜정T': ['D동2층'],
-            '유나경T(E동지원)': ['D동3층'],
-            '김미경T': ['D동4층'],
-            '김정아T': ['E동1층'],
-            '이윤민T': ['E동2층'],
-            '원현주T': ['E동3층'],
-            '진정현T': ['E동4층'],
+            '이윤민T': ['A동1층'],
+            '김정아T': ['A동2층'],
+            '김미경T': ['A동3층'],
+            '유나경T': ['A동4층'],
+            '홍성모T': ['B동1층'],
+            '홍성모T2': ['B동2층'],
+            '김건희T': ['B동3층'],
+            '최문규T': ['B동4층'],
+            '황민철T': ['C동1층'],
+            '최서우T': ['C동2층'],
+            '나정우T': ['C동3층'],
+            '고승완T': ['C동4층'],
+            '최금주T': ['D동1층'],
+            '김석진T': ['D동2층'],
+            '남인달T': ['D동3층'],
+            '김영현T': ['D동4층'],
+            '이은영T': ['E동1층'],
+            '원현주T': ['E동2층'],
+            '진정현T': ['E동3층'],
+            '김혜정T': ['E동4층'],
             '조영권T': ['F동1층'],
-            '조영권T2': ['F동2층'],
+            '이상민T': ['F동2층'],
             '이시우T': ['F동3층'],
             '이영운T': ['F동4층']
-
         };
 
         // 3인실 셀 범위
@@ -1297,14 +1296,14 @@ await loadAFSheetData();
                         
                         // 헤더 (B3:P3)
                         if (allData.length > 2 && allData[2].length > 1) {
-                            const header = allData[2].slice(1, 16); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
+                            const header = allData[2].slice(1, 17); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
                             sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
                         }
                         
                         // 데이터 (B4부터)
                         for (let i = 3; i < allData.length; i++) {
                             if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 16); // B열:P열
+                                const row = allData[i].slice(1, 17); // B열:P열
                                 if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
                                     sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
                                 }
@@ -1319,7 +1318,7 @@ await loadAFSheetData();
                 }
                 
                 // 방법 2: Google Sheets API 방식 (올바른 범위)
-                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:P1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
+                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:Q1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
                 
                 console.log('API 방식으로 시도 중... (범위: B3:P1000)');
                 const response = await fetch(apiUrl);
@@ -2005,13 +2004,15 @@ function performSearch(query) {
         const librarySeats = row[8] || '';
         const phone = row[7] || '';
         const parentPhone = row[6] || '';
+        const qColumn = row[16] || '';
 
         const searchFields = [
             room.toLowerCase(),
             name.toLowerCase(),
             librarySeats.toLowerCase(),
             phone,
-            parentPhone
+            parentPhone,
+            qColumn.toLowerCase()
         ].join(' ');
 
         if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
@@ -2358,6 +2359,7 @@ let finalMemo = memo;
             const enrollDate = row[13] || '';
             const school = row[14] || '';
             const classroom = row[15] || '';
+           const qColumnData = row[16] || '';
 
             const statusClass = getStatusClass(status);
 
@@ -2397,7 +2399,7 @@ let finalMemo = memo;
                             <div class="detail-value">${librarySeats}</div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">생활담임</div>
+                            <div class="detail-label">담임선생님</div>
                             <div class="detail-value">${lifeTeacher}</div>
                         </div>
                         <div class="detail-item">
@@ -2412,6 +2414,12 @@ let finalMemo = memo;
                             <div class="detail-label">반</div>
                             <div class="detail-value">${classroom}</div>
                         </div>
+                        ${qColumnData ? `
+                    <div class="detail-item">
+                        <div class="detail-label">부담임선생님</div>
+                        <div class="detail-value">${qColumnData}</div>
+                    </div>
+                ` : ''}
                        ${finalMemo ? `
         <div class="detail-item" style="grid-column: 1 / -1;">
             <div class="detail-label">비고</div>
