@@ -1267,7 +1267,7 @@ await loadAFSheetData();
             setInterval(async () => {
                 console.log('자동 새로고침 실행...');
                 await refreshData();
-            }, 5 * 60 * 1000);
+            }, 15 * 60 * 1000);
         });
 
         // 데이터 로드 (오류 처리 강화)
@@ -1447,14 +1447,14 @@ await loadAFSheetData();
                         
                         // 헤더 (B3:P3)
                         if (allData.length > 2 && allData[2].length > 1) {
-                            const header = allData[2].slice(1, 16); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
+                            const header = allData[2].slice(1, 17); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
                             sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
                         }
                         
                         // 데이터 (B4부터)
                         for (let i = 3; i < allData.length; i++) {
                             if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 16); // B열:P열
+                                const row = allData[i].slice(1, 17); // B열:P열
                                 if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
                                     sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
                                 }
@@ -1469,9 +1469,9 @@ await loadAFSheetData();
                 }
                 
                 // 방법 2: Google Sheets API 방식 (올바른 범위)
-                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:P1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
+                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:Q1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
                 
-                console.log('API 방식으로 시도 중... (범위: B3:P1000)');
+                console.log('API 방식으로 시도 중... (범위: B3:Q1000)');
                 const response = await fetch(apiUrl);
                 
                 if (!response.ok) {
@@ -2153,6 +2153,7 @@ function performSearch(query) {
         const librarySeats = row[8] || '';
         const phone = row[7] || '';
         const parentPhone = row[6] || '';
+        const qColumn = row[16] || '';
 
         const searchFields = [
             room.toLowerCase(),
@@ -2160,6 +2161,7 @@ function performSearch(query) {
             librarySeats.toLowerCase(),
             phone,
             parentPhone
+            qColumn.toLowerCase() 
         ].join(' ');
 
         if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
@@ -2506,6 +2508,7 @@ let finalMemo = memo;
             const enrollDate = row[13] || '';
             const school = row[14] || '';
             const classroom = row[15] || '';
+           const qColumnData = row[16] || '';
 
             const statusClass = getStatusClass(status);
 
@@ -2560,6 +2563,12 @@ let finalMemo = memo;
                             <div class="detail-label">반</div>
                             <div class="detail-value">${classroom}</div>
                         </div>
+                         ${qColumnData ? `
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">부담임 선생님</div>
+                        <div class="detail-value" style="background: #f0f9ff; padding: 8px; border-radius: 6px; border-left: 3px solid #3b82f6;">${qColumnData}</div>
+                    </div>
+                ` : ''}
                        ${finalMemo ? `
         <div class="detail-item" style="grid-column: 1 / -1;">
             <div class="detail-label">비고</div>
