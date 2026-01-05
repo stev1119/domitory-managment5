@@ -2006,7 +2006,7 @@ function getStudentsByLibraryGroup(group, statusType) {
             students.push(row);
         }
     });
-    
+        console.log('찾은 학생 수:', students.length); // 디버깅용
     // 라이브러리 좌석 번호순 정렬
     students.sort((a, b) => {
         const seatA = a[8] || '';
@@ -2661,7 +2661,19 @@ function displaySearchResults(results, extendedSearch) {
     document.getElementById('modalTitle').textContent = title;
     const modalStudentsGrid = document.getElementById('modalStudentsGrid');
     
-    modalStudentsGrid.innerHTML = students.map(row => createStudentCard(row, additionalNote)).join('');
+   // 학생이 없을 때 처리 추가
+    if (!students || students.length === 0) {
+        modalStudentsGrid.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #6b7280;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📭</div>
+                <h3 style="color: #374151; margin-bottom: 10px;">해당 조건의 학생이 없습니다</h3>
+                <p>다른 조건으로 검색해보세요.</p>
+            </div>
+        `;
+    } else {
+        modalStudentsGrid.innerHTML = students.map(row => createStudentCard(row, additionalNote)).join('');
+    }
+    
     document.getElementById('studentModal').style.display = 'block';
 }
 
