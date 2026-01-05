@@ -2003,19 +2003,18 @@ function getStudentsByLibraryGroup(group, statusType) {
                 break;
         }
         
-        if (shouldInclude)students.push(row);
+        if (shouldInclude)
+            students.push(row);
         
     });
         console.log('찾은 학생 수:', students.length); // 디버깅용
     // 라이브러리 좌석 번호순 정렬
     students.sort((a, b) => {
-        const seatA = a[8] || '';
-        const seatB = b[8] || '';
-        const numA = parseInt(seatA.replace(/[^0-9]/g, '')) || 0;
-        const numB = parseInt(seatB.replace(/[^0-9]/g, '')) || 0;
+        const numA = parseInt((a[8] || '').replace(/[^0-9]/g, '')) || 0;
+        const numB = parseInt((b[8] || '').replace(/[^0-9]/g, '')) || 0;
         return numA - numB;
     });
-    
+
     return students;
 }
             
