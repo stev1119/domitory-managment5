@@ -1960,11 +1960,7 @@ function showLibraryGroupStudents(group, statusType) {
     const statusText = getStatusText(statusType);
     showStudentsModal(`${group} ${statusText} 학생 목록`, students);
 }
-// 라이브러리 그룹별 학생 보기
-function showLibraryGroupStudents(group, statusType) {
-    const students = getStudentsByLibraryGroup(group, statusType);
-    const statusText = getStatusText(statusType);
-    showStudentsModal(`${group} ${statusText} 학생 목록`, students);
+
 }
 // 라이브러리 그룹별 학생 데이터 가져오기
 function getStudentsByLibraryGroup(group, statusType) {
@@ -2007,9 +2003,8 @@ function getStudentsByLibraryGroup(group, statusType) {
                 break;
         }
         
-        if (shouldInclude) {
-            students.push(row);
-        }
+        if (shouldInclude)students.push(row);
+        
     });
         console.log('찾은 학생 수:', students.length); // 디버깅용
     // 라이브러리 좌석 번호순 정렬
