@@ -1919,70 +1919,56 @@ if (group && stats.libraryGroups[group]) {
             document.getElementById('libraryCExit').textContent = stats.libraryC.exit;
         }
 
-     // 라이브러리 + 상태별 학생 보기
-function showStudentsByLibrary(library, status) {
-    const students = getStudentsByLibraryAndStatus(library, status);
-    const statusText = getStatusText(status);
-    showStudentsModal(`${library}라이브러리 ${statusText} 목록`, students);  // ← 괄호 수정!
-}
-
-// 라이브러리 + 상태별 학생 데이터 가져오기
-function getStudentsByLibraryAndStatus(library, status) {
-    const students = [];
-    
-    sheetsData.forEach((row, index) => {
-        if (index === 0) return;
-        
-        const room = row[1];
-        const name = row[2];
-        const studentStatus = row[3] || '정상';
-        const librarySeats = row[8] || '';
-        
-        if (!room || !name || name === '미배정') return;
-        
-        // 라이브러리 확인
-        if (!librarySeats) return;
-        const firstChar = librarySeats.toString().charAt(0).toUpperCase();
-        if (firstChar !== library) return;
-        
-        // 상태별 필터링
-        if (status === 'total') {
-            if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
-                students.push(row);
-            }
-        } else if (studentStatus === status) {
-            students.push(row);
+        // 라이브러리 + 상태별 학생 보기
+        function showStudentsByLibrary(library, status) {
+            const students = getStudentsByLibraryAndStatus(library, status);
+            const statusText = getStatusText(status);
+            showStudentsModal(`${library}라이브러리 ${statusText} 목록`, students);
         }
-    });
-    
-    // 라이브러리 좌석 번호순으로 정렬
-    students.sort((a, b) => {
-        const seatA = a[8] || '';
-        const seatB = b[8] || '';
-        
-        // 좌석 번호에서 숫자 부분 추출하여 비교
-        const numA = parseInt(seatA.replace(/[^0-9]/g, '')) || 0;
-        const numB = parseInt(seatB.replace(/[^0-9]/g, '')) || 0;
-        
-        return numA - numB;
-    });
-    
-    return students;
-}  // ← 함수 닫기 추가!
 
+ // 라이브러리 + 상태별 학생 데이터 가져오기
+        function getStudentsByLibraryAndStatus(library, status) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const studentStatus = row[3] || '정상';
+                const librarySeats = row[8] || '';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 라이브러리 확인
+                if (!librarySeats) return;
+                const firstChar = librarySeats.toString().charAt(0).toUpperCase();
+                if (firstChar !== library) return;
+                
+                // 상태별 필터링
+                if (status === 'total') {
+                    if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (studentStatus === status) {
+                    students.push(row);
+                }
+            });
 // 라이브러리 그룹별 학생 보기
 function showLibraryGroupStudents(group, statusType) {
-    console.log('showLibraryGroupStudents 호출:', group, statusType);
     const students = getStudentsByLibraryGroup(group, statusType);
     const statusText = getStatusText(statusType);
-    showStudentsModal(`${group} ${statusText} 학생 목록`, students);  // ← 괄호 수정!
+    showStudentsModal(`${group} ${statusText} 학생 목록`, students);
 }
-
+// 라이브러리 그룹별 학생 보기
+function showLibraryGroupStudents(group, statusType) {
+    const students = getStudentsByLibraryGroup(group, statusType);
+    const statusText = getStatusText(statusType);
+    showStudentsModal(`${group} ${statusText} 학생 목록`, students);
+}
 // 라이브러리 그룹별 학생 데이터 가져오기
 function getStudentsByLibraryGroup(group, statusType) {
     const students = [];
-    
-    console.log('검색 중:', group, statusType);
     
     sheetsData.forEach((row, index) => {
         if (index === 0) return;
@@ -2025,9 +2011,7 @@ function getStudentsByLibraryGroup(group, statusType) {
             students.push(row);
         }
     });
-    
-    console.log('찾은 학생 수:', students.length);
-    
+        console.log('찾은 학생 수:', students.length); // 디버깅용
     // 라이브러리 좌석 번호순 정렬
     students.sort((a, b) => {
         const seatA = a[8] || '';
