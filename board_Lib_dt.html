@@ -1956,24 +1956,36 @@ if (group && stats.libraryGroups[group]) {
             });
 // 라이브러리 그룹별 학생 보기
 function showLibraryGroupStudents(group, statusType) {
+    console.log(`showLibraryGroupStudents 호출됨: group=${group}, statusType=${statusType}`);
     const students = getStudentsByLibraryGroup(group, statusType);
+    console.log(`찾은 학생 수: ${students.length}`);
     const statusText = getStatusText(statusType);
     showStudentsModal(`${group} ${statusText} 학생 목록`, students);
 }
-
 
 // 라이브러리 그룹별 학생 데이터 가져오기
 function getStudentsByLibraryGroup(group, statusType) {
     const students = [];
     
+    console.log(`그룹 검색 시작: ${group}, 상태: ${statusType}`);
+    console.log(`전체 데이터 행 수: ${sheetsData.length}`);
+    
     sheetsData.forEach((row, index) => {
-        if (index === 0) return;
+        if (index === 0) return; // 헤더 제외
         
         const name = row[2];
         const status = row[3] || '정상';
-        const studentGroup = row[9] || ''; // J열
+        const studentGroup = (row[9] || '').trim(); // J열 (앞뒤 공백 제거)
         
-        if (!name || name === '미배정' || studentGroup !== group) return;
+        // 디버깅: 처음 5개 행의 그룹 정보 출력
+        if (index <= 5) {
+            console.log(`행 ${index}: 이름=${name}, 그룹=${studentGroup}, 상태=${status}`);
+        }
+        
+        if (!name || name === '미배정' || name.trim() === '') return;
+        
+        // 그룹 매칭 확인 (대소문자 구분 없이)
+        if (studentGroup.toUpperCase() !== group.toUpperCase()) return;
         
         let shouldInclude = false;
         switch (statusType) {
@@ -2003,15 +2015,19 @@ function getStudentsByLibraryGroup(group, statusType) {
                 break;
         }
         
-        if (shouldInclude)
+        if (shouldInclude) {
             students.push(row);
-        
+        }
     });
-        console.log('찾은 학생 수:', students.length); // 디버깅용
+    
+    console.log(`${group} 그룹에서 찾은 학생 수: ${students.length}`);
+    
     // 라이브러리 좌석 번호순 정렬
     students.sort((a, b) => {
-        const numA = parseInt((a[8] || '').replace(/[^0-9]/g, '')) || 0;
-        const numB = parseInt((b[8] || '').replace(/[^0-9]/g, '')) || 0;
+        const seatA = (a[8] || '').replace(/[^0-9]/g, '');
+        const seatB = (b[8] || '').replace(/[^0-9]/g, '');
+        const numA = parseInt(seatA) || 0;
+        const numB = parseInt(seatB) || 0;
         return numA - numB;
     });
 
