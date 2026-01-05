@@ -2136,6 +2136,7 @@ function updateAreaManagerStats(stats) {
     });
 }
 // updateDashboard() 함수 내에서 호출
+// updateDashboard() 함수 내에서 호출
 function updateLibraryGroupStats(stats) {
     const container = document.getElementById('libraryGroupsGrid');
     if (!container) return;
@@ -2166,17 +2167,7 @@ function updateLibraryGroupStats(stats) {
             const card = document.createElement('div');
             card.className = 'area-manager-card';
             card.style.borderLeftColor = library === 'A' ? '#f59e0b' : library === 'B' ? '#10b981' : '#8b5cf6';
-             // 통계 항목들 배열
-            const statItems = [
-                { type: 'current', label: '현재원', count: groupData.current, class: 'current' },
-                { type: 'out', label: '외박', count: groupData.out, class: 'out' },
-                { type: 'new', label: '신규', count: groupData.new, class: 'new' },
-                { type: 'absent', label: '등미', count: groupData.absent, class: 'absent' },
-                { type: 'moveOut', label: '이동-', count: groupData.moveOut, class: 'move-out' },
-                { type: 'moveIn', label: '이동+', count: groupData.moveIn, class: 'move-in' },
-                { type: 'exit', label: '퇴소', count: groupData.exit, class: 'exit' },
-                { type: 'total', label: '전체', count: groupData.current + groupData.out + groupData.new + groupData.moveOut + groupData.moveIn + groupData.absent + groupData.exit, class: '' }
-            ];
+            
             card.innerHTML = `
                 <div class="area-building-indicator" style="background: ${library === 'A' ? 'rgba(245, 158, 11, 0.2)' : library === 'B' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(139, 92, 246, 0.2)'}; color: ${library === 'A' ? '#d97706' : library === 'B' ? '#059669' : '#7c3aed'};">${group}</div>
                 <div class="area-manager-header">
@@ -2222,36 +2213,6 @@ function updateLibraryGroupStats(stats) {
             `;
             
             groupsGrid.appendChild(card);
-            // 첫 번째 행 (현재원, 외박, 신규, 등미)
-            const row1 = document.getElementById(`stats-row1-${group}`);
-            statItems.slice(0, 4).forEach(item => {
-                const statDiv = document.createElement('div');
-                statDiv.className = `area-stat-item ${item.class}`;
-                statDiv.innerHTML = `
-                    <div class="area-stat-number">${item.count}</div>
-                    <div class="area-stat-label">${item.label}</div>
-                `;
-                statDiv.addEventListener('click', () => {
-                    showLibraryGroupStudents(group, item.type);
-                });
-                row1.appendChild(statDiv);
-            });
-            
-            // 두 번째 행 (이동-, 이동+, 퇴소, 전체)
-            const row2 = document.getElementById(`stats-row2-${group}`);
-            statItems.slice(4).forEach(item => {
-                const statDiv = document.createElement('div');
-                statDiv.className = `area-stat-item ${item.class}`;
-                statDiv.innerHTML = `
-                    <div class="area-stat-number">${item.count}</div>
-                    <div class="area-stat-label">${item.label}</div>
-                `;
-                statDiv.addEventListener('click', () => {
-                    showLibraryGroupStudents(group, item.type);
-                });
-                row2.appendChild(statDiv);
-            });
-        });
         });
         
         section.appendChild(groupsGrid);
