@@ -2033,22 +2033,6 @@ function getStudentsByLibraryGroup(group, statusType) {
 
     return students;
 }
-            
-            
-            // 라이브러리 좌석 번호순으로 정렬
-            students.sort((a, b) => {
-                const seatA = a[8] || '';
-                const seatB = b[8] || '';
-                
-                // 좌석 번호에서 숫자 부분 추출하여 비교
-                const numA = parseInt(seatA.replace(/[^0-9]/g, '')) || 0;
-                const numB = parseInt(seatB.replace(/[^0-9]/g, '')) || 0;
-                
-                return numA - numB;
-            });
-            
-            return students;
-        }
         // 동별 통계 업데이트 함수 제거됨
 
         // 구역별 담당자 통계 업데이트 (24개 구역)
