@@ -1872,11 +1872,11 @@ async function loadAFSheetData() {
                 } else if (library === 'C') {
                     updateStatsByStatus(stats.libraryC, status);
                 }
-                // 라브 그룹별 통계 업데이트 (J열)
-const labGroup = row[9] || ''; // J열 (라브 그룹)
-                console.log('Row:', index, 'Name:', row[2], 'J열 값:', labGroup, 'Raw:', row[9]); // 디버깅용
-                
-if (labGroup) {
+           // 라브 그룹별 통계 업데이트 (J열)
+const labGroup = (row[9] || '').toString().trim(); // J열 (라브 그룹), 공백 제거
+console.log('라브 데이터:', labGroup, '이름:', row[2]); // 디버깅용
+
+if (labGroup && labGroup.length > 0) {
     if (!stats.labDetails[labGroup]) {
         stats.labDetails[labGroup] = {
             current: 0,
@@ -1888,6 +1888,7 @@ if (labGroup) {
             exit: 0,
             total: 0
         };
+        console.log('새 라브 그룹 생성:', labGroup); // 디버깅용
     }
     updateStatsByStatus(stats.labDetails[labGroup], status);
     stats.labDetails[labGroup].total++;
@@ -1918,6 +1919,7 @@ if (labGroup) {
 
             console.log('처리된 학생 수:', processedCount);
             console.log('계산된 통계:', stats);
+            console.log('라브 상세 데이터:', stats.labDetails);
             
             return stats;
         }
@@ -2014,10 +2016,22 @@ if (labGroup) {
             document.getElementById('libraryCMoveIn').textContent = stats.libraryC.moveIn;
             document.getElementById('libraryCExit').textContent = stats.libraryC.exit;
         }
-        // 라브 상세 통계 업데이트
+// 라브 상세 통계 업데이트
 function updateLabDetailStats(stats) {
     const labDetailGrid = document.getElementById('labDetailGrid');
+    
+    // 요소가 없으면 함수 종료
+    if (!labDetailGrid) {
+        console.warn('labDetailGrid 요소를 찾을 수 없습니다.');
+        return;
+    }
+    
     labDetailGrid.innerHTML = '';
+    
+    // stats.labDetails가 없으면 빈 객체로 초기화
+    if (!stats.labDetails) {
+        stats.labDetails = {};
+    }
     
     // A1~A8, B1~B6, C1~C8 순서로 정렬
     const labOrder = [];
@@ -2026,10 +2040,22 @@ function updateLabDetailStats(stats) {
     for (let i = 1; i <= 8; i++) labOrder.push(`C${i}`);
     
     labOrder.forEach(labGroup => {
-        const labData = stats.labDetails[labGroup];
-        if (!labData) return; // 데이터가 없으면 스킵
+        // 데이터가 없으면 기본값 사용
+        const labData = stats.labDetails[labGroup] || {
+            current: 0,
+            out: 0,
+            new: 0,
+            moveOut: 0,
+            moveIn: 0,
+            absent: 0,
+            exit: 0,
+            total: 0
+        };
         
-        const labType = labGroup.charAt(0); // A, B, C
+        // 학생이 없는 라브는 표시하지 않음 (선택사항 - 주석 처리하면 모두 표시)
+        // if (labData.total === 0) return;
+        
+        const labType = labGroup.charAt(0);
         const labClass = `lab-${labType.toLowerCase()}`;
         
         const card = document.createElement('div');
@@ -2079,6 +2105,8 @@ function updateLabDetailStats(stats) {
         
         labDetailGrid.appendChild(card);
     });
+    
+    console.log('라브 상세 통계 업데이트 완료. 총', labDetailGrid.children.length, '개 카드 생성');
 }
 
 // 라브 그룹별 학생 보기
