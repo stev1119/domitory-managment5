@@ -1874,6 +1874,8 @@ async function loadAFSheetData() {
                 }
                 // 라브 그룹별 통계 업데이트 (J열)
 const labGroup = row[9] || ''; // J열 (라브 그룹)
+                console.log('Row:', index, 'Name:', row[2], 'J열 값:', labGroup, 'Raw:', row[9]); // 디버깅용
+                
 if (labGroup) {
     if (!stats.labDetails[labGroup]) {
         stats.labDetails[labGroup] = {
