@@ -675,7 +675,102 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
+/* 라브 상세 통계 */
+.lab-detail-stats {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
 
+.lab-detail-stats h3 {
+    text-align: center;
+    font-size: 1.6rem;
+    margin-bottom: 25px;
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.lab-groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.lab-group-card {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-radius: 15px;
+    padding: 20px;
+    border-left: 5px solid #6366f1;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.lab-group-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.lab-group-card.lab-a { border-left-color: #f59e0b; }
+.lab-group-card.lab-b { border-left-color: #10b981; }
+.lab-group-card.lab-c { border-left-color: #8b5cf6; }
+
+.lab-group-header {
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.lab-group-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.lab-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.lab-stat-item {
+    background: white;
+    border-radius: 8px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.lab-stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.lab-stat-item.current { border-color: #10b981; }
+.lab-stat-item.out { border-color: #f59e0b; }
+.lab-stat-item.new { border-color: #3b82f6; }
+.lab-stat-item.absent { border-color: #6b7280; }
+.lab-stat-item.move-out { border-color: #ef4444; }
+.lab-stat-item.move-in { border-color: #8b5cf6; }
+.lab-stat-item.exit { border-color: #dc2626; }
+
+.lab-stat-number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 3px;
+}
+
+.lab-stat-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+}
         /* 학생 정보 모달 */
         .modal {
             display: none;
@@ -1120,6 +1215,13 @@
                 </div>
             </div>
         </div>
+        <!-- 라브 상세 통계 (A1~C8) -->
+<div class="lab-detail-stats">
+    <h3>📚 라이브러리 상세 현황 (A1~C8)</h3>
+    <div class="lab-groups-grid" id="labDetailGrid">
+        <!-- JavaScript로 동적 생성 -->
+    </div>
+</div>
         <!-- 구역별 담당자 현황 (24개 구역) -->
         <div class="manager-stats">
             <h3>각 동,층별 인원 현황 </h3>
@@ -1330,6 +1432,7 @@ await loadAFSheetData();
                 updateTotalStats(stats);
                 updateGenderStats(stats);
                 updateLibraryStats(stats);  // 라이브러리 통계 업데이트 추가
+                updateLabDetailStats(stats);
                 updateAreaManagerStats(stats);  // 구역별 담당자 통계 업데이트
                 
                 console.log('대시보드 업데이트 완료');
@@ -1655,7 +1758,8 @@ async function loadAFSheetData() {
                     female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                     buildings: {},
                     managers: {},
-                    areas: {}
+                    areas: {},
+                    labDetails: {}
                 };
             }
             
@@ -1768,6 +1872,24 @@ async function loadAFSheetData() {
                 } else if (library === 'C') {
                     updateStatsByStatus(stats.libraryC, status);
                 }
+                // 라브 그룹별 통계 업데이트 (J열)
+const labGroup = row[9] || ''; // J열 (라브 그룹)
+if (labGroup) {
+    if (!stats.labDetails[labGroup]) {
+        stats.labDetails[labGroup] = {
+            current: 0,
+            out: 0,
+            new: 0,
+            moveOut: 0,
+            moveIn: 0,
+            absent: 0,
+            exit: 0,
+            total: 0
+        };
+    }
+    updateStatsByStatus(stats.labDetails[labGroup], status);
+    stats.labDetails[labGroup].total++;
+}
                 // 동별 통계 업데이트 (현재원만)
                 if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
                     if (floor >= '1' && floor <= '4') {
@@ -1890,6 +2012,129 @@ async function loadAFSheetData() {
             document.getElementById('libraryCMoveIn').textContent = stats.libraryC.moveIn;
             document.getElementById('libraryCExit').textContent = stats.libraryC.exit;
         }
+        // 라브 상세 통계 업데이트
+function updateLabDetailStats(stats) {
+    const labDetailGrid = document.getElementById('labDetailGrid');
+    labDetailGrid.innerHTML = '';
+    
+    // A1~A8, B1~B6, C1~C8 순서로 정렬
+    const labOrder = [];
+    for (let i = 1; i <= 8; i++) labOrder.push(`A${i}`);
+    for (let i = 1; i <= 6; i++) labOrder.push(`B${i}`);
+    for (let i = 1; i <= 8; i++) labOrder.push(`C${i}`);
+    
+    labOrder.forEach(labGroup => {
+        const labData = stats.labDetails[labGroup];
+        if (!labData) return; // 데이터가 없으면 스킵
+        
+        const labType = labGroup.charAt(0); // A, B, C
+        const labClass = `lab-${labType.toLowerCase()}`;
+        
+        const card = document.createElement('div');
+        card.className = `lab-group-card ${labClass}`;
+        
+        card.innerHTML = `
+            <div class="lab-group-header">
+                <div class="lab-group-name">라브${labGroup}</div>
+            </div>
+            <div class="lab-stats-grid">
+                <div class="lab-stat-item current" onclick="showLabGroupStudents('${labGroup}', 'current')">
+                    <div class="lab-stat-number">${labData.current}</div>
+                    <div class="lab-stat-label">현재원</div>
+                </div>
+                <div class="lab-stat-item out" onclick="showLabGroupStudents('${labGroup}', 'out')">
+                    <div class="lab-stat-number">${labData.out}</div>
+                    <div class="lab-stat-label">외박</div>
+                </div>
+                <div class="lab-stat-item new" onclick="showLabGroupStudents('${labGroup}', 'new')">
+                    <div class="lab-stat-number">${labData.new}</div>
+                    <div class="lab-stat-label">신규</div>
+                </div>
+                <div class="lab-stat-item absent" onclick="showLabGroupStudents('${labGroup}', 'absent')">
+                    <div class="lab-stat-number">${labData.absent}</div>
+                    <div class="lab-stat-label">등미</div>
+                </div>
+            </div>
+            <div class="lab-stats-grid" style="margin-top: 8px;">
+                <div class="lab-stat-item move-out" onclick="showLabGroupStudents('${labGroup}', 'moveOut')">
+                    <div class="lab-stat-number">${labData.moveOut}</div>
+                    <div class="lab-stat-label">이동-</div>
+                </div>
+                <div class="lab-stat-item move-in" onclick="showLabGroupStudents('${labGroup}', 'moveIn')">
+                    <div class="lab-stat-number">${labData.moveIn}</div>
+                    <div class="lab-stat-label">이동+</div>
+                </div>
+                <div class="lab-stat-item exit" onclick="showLabGroupStudents('${labGroup}', 'exit')">
+                    <div class="lab-stat-number">${labData.exit}</div>
+                    <div class="lab-stat-label">퇴소</div>
+                </div>
+                <div class="lab-stat-item" onclick="showLabGroupStudents('${labGroup}', 'total')" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;">
+                    <div class="lab-stat-number" style="color: white;">${labData.total}</div>
+                    <div class="lab-stat-label" style="color: white;">전체</div>
+                </div>
+            </div>
+        `;
+        
+        labDetailGrid.appendChild(card);
+    });
+}
+
+// 라브 그룹별 학생 보기
+function showLabGroupStudents(labGroup, statusType) {
+    const students = getStudentsByLabGroup(labGroup, statusType);
+    const statusText = getStatusText(statusType);
+    showStudentsModal(`라브${labGroup} ${statusText} 목록`, students);
+}
+
+// 라브 그룹별 학생 데이터 가져오기
+function getStudentsByLabGroup(labGroup, statusType) {
+    const students = [];
+    
+    sheetsData.forEach((row, index) => {
+        if (index === 0) return;
+        
+        const name = row[2];
+        const status = row[3] || '정상';
+        const group = row[9] || ''; // J열
+        
+        if (!name || name === '미배정' || group !== labGroup) return;
+        
+        // 상태별 필터링
+        let shouldInclude = false;
+        switch (statusType) {
+            case 'current':
+                shouldInclude = (status === '정상' || status === '신규' || status === '이동+');
+                break;
+            case 'out':
+                shouldInclude = (status === '외박');
+                break;
+            case 'new':
+                shouldInclude = (status === '신규');
+                break;
+            case 'moveOut':
+                shouldInclude = (status === '이동-');
+                break;
+            case 'moveIn':
+                shouldInclude = (status === '이동+');
+                break;
+            case 'absent':
+                shouldInclude = (status === '등미');
+                break;
+            case 'exit':
+                shouldInclude = (status === '퇴소');
+                break;
+            case 'total':
+                shouldInclude = true;
+                break;
+        }
+        
+        if (shouldInclude) {
+            students.push(row);
+        }
+    });
+    
+    return students;
+}
 
         // 라이브러리 + 상태별 학생 보기
         function showStudentsByLibrary(library, status) {
