@@ -1872,11 +1872,11 @@ async function loadAFSheetData() {
                 } else if (library === 'C') {
                     updateStatsByStatus(stats.libraryC, status);
                 }
-           // 라브 그룹별 통계 업데이트 (J열)
-const labGroup = (row[9] || '').toString().trim(); // J열 (라브 그룹), 공백 제거
-console.log('라브 데이터:', labGroup, '이름:', row[2]); // 디버깅용
+ // 라브 그룹별 통계 업데이트 (J열)
+const labGroup = row[9] ? row[9].toString().trim() : ''; // J열이 있을 때만 처리
 
-if (labGroup && labGroup.length > 0) {
+// J열에 데이터가 있고, 비어있지 않을 때만 처리
+if (labGroup && labGroup !== '' && labGroup !== 'undefined') {
     if (!stats.labDetails[labGroup]) {
         stats.labDetails[labGroup] = {
             current: 0,
@@ -1888,11 +1888,11 @@ if (labGroup && labGroup.length > 0) {
             exit: 0,
             total: 0
         };
-        console.log('새 라브 그룹 생성:', labGroup); // 디버깅용
     }
     updateStatsByStatus(stats.labDetails[labGroup], status);
     stats.labDetails[labGroup].total++;
 }
+// J열이 비어있는 경우는 조용히 스킵 (에러 없음)
                 // 동별 통계 업데이트 (현재원만)
                 if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
                     if (floor >= '1' && floor <= '4') {
