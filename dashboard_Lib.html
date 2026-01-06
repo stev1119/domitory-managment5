@@ -1772,7 +1772,8 @@ async function loadAFSheetData() {
                 libraryC: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
                 buildings: {},
                 managers: {},
-                areas: {}
+                areas: {},
+                labDetails: {}
             };
 
             // 각 동별로 초기화
@@ -1873,26 +1874,40 @@ async function loadAFSheetData() {
                     updateStatsByStatus(stats.libraryC, status);
                 }
  // 라브 그룹별 통계 업데이트 (J열)
-const labGroup = row[9] ? row[9].toString().trim() : ''; // J열이 있을 때만 처리
-
-// J열에 데이터가 있고, 비어있지 않을 때만 처리
-if (labGroup && labGroup !== '' && labGroup !== 'undefined') {
-    if (!stats.labDetails[labGroup]) {
-        stats.labDetails[labGroup] = {
-            current: 0,
-            out: 0,
-            new: 0,
-            moveOut: 0,
-            moveIn: 0,
-            absent: 0,
-            exit: 0,
-            total: 0
-        };
+try {
+    const rawLabGroup = row[9];
+    if (rawLabGroup !== undefined && rawLabGroup !== null && rawLabGroup !== '') {
+        const labGroup = rawLabGroup.toString().trim();
+        
+        if (labGroup.length > 0) {
+            // stats.labDetails가 없으면 초기화
+            if (!stats.labDetails) {
+                stats.labDetails = {};
+            }
+            
+            // 해당 라브 그룹이 없으면 초기화
+            if (!stats.labDetails[labGroup]) {
+                stats.labDetails[labGroup] = {
+                    current: 0,
+                    out: 0,
+                    new: 0,
+                    moveOut: 0,
+                    moveIn: 0,
+                    absent: 0,
+                    exit: 0,
+                    total: 0
+                };
+            }
+            
+            // 통계 업데이트
+            updateStatsByStatus(stats.labDetails[labGroup], status);
+            stats.labDetails[labGroup].total++;
+        }
     }
-    updateStatsByStatus(stats.labDetails[labGroup], status);
-    stats.labDetails[labGroup].total++;
+} catch (error) {
+    // J열 처리 중 오류는 무시하고 계속 진행
+    console.warn('라브 그룹 처리 오류 (스킵):', error.message, '행:', index);
 }
-// J열이 비어있는 경우는 조용히 스킵 (에러 없음)
                 // 동별 통계 업데이트 (현재원만)
                 if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
                     if (floor >= '1' && floor <= '4') {
@@ -1919,8 +1934,13 @@ if (labGroup && labGroup !== '' && labGroup !== 'undefined') {
 
             console.log('처리된 학생 수:', processedCount);
             console.log('계산된 통계:', stats);
-            console.log('라브 상세 데이터:', stats.labDetails);
-            
+           // stats.labDetails가 없으면 빈 객체로 초기화
+        if (!stats.labDetails) {
+            stats.labDetails = {};
+            console.warn('stats.labDetails가 없어서 빈 객체로 초기화함');
+        }
+        
+        console.log('라브 상세 데이터:', stats.labDetails);
             return stats;
         }
 
@@ -2029,8 +2049,10 @@ function updateLabDetailStats(stats) {
     labDetailGrid.innerHTML = '';
     
     // stats.labDetails가 없으면 빈 객체로 초기화
-    if (!stats.labDetails) {
-        stats.labDetails = {};
+    if (!stats || !stats.labDetails) {
+        console.warn('stats.labDetails가 없습니다. 라브 통계를 표시할 수 없습니다.');
+        labDetailGrid.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">라브 그룹 데이터를 불러올 수 없습니다.</div>';
+        return;
     }
     
     // A1~A8, B1~B6, C1~C8 순서로 정렬
@@ -2053,7 +2075,7 @@ function updateLabDetailStats(stats) {
         };
         
         // 학생이 없는 라브는 표시하지 않음 (선택사항 - 주석 처리하면 모두 표시)
-        // if (labData.total === 0) return;
+       if (labData.total === 0) return;
         
         const labType = labGroup.charAt(0);
         const labClass = `lab-${labType.toLowerCase()}`;
