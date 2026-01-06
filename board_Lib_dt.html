@@ -2147,6 +2147,7 @@ function updateAreaManagerStats(stats) {
 }
 // updateDashboard() 함수 내에서 호출
 // updateDashboard() 함수 내에서 호출
+// updateDashboard() 함수 내에서 호출
 function updateLibraryGroupStats(stats) {
     const container = document.getElementById('libraryGroupsGrid');
     if (!container) return;
@@ -2177,6 +2178,7 @@ function updateLibraryGroupStats(stats) {
             const card = document.createElement('div');
             card.className = 'area-manager-card';
             card.style.borderLeftColor = library === 'A' ? '#f59e0b' : library === 'B' ? '#10b981' : '#8b5cf6';
+            card.style.cursor = 'default'; // 카드 자체는 클릭 불가
             
             card.innerHTML = `
                 <div class="area-building-indicator" style="background: ${library === 'A' ? 'rgba(245, 158, 11, 0.2)' : library === 'B' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(139, 92, 246, 0.2)'}; color: ${library === 'A' ? '#d97706' : library === 'B' ? '#059669' : '#7c3aed'};">${group}</div>
@@ -2185,37 +2187,37 @@ function updateLibraryGroupStats(stats) {
                     <div class="area-manager-zone">그룹</div>
                 </div>
                 <div class="area-stats-compact">
-                    <div class="area-stat-item current" onclick="showLibraryGroupStudents('${group}', 'current')">
+                    <div class="area-stat-item current" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'current');">
                         <div class="area-stat-number">${groupData.current}</div>
                         <div class="area-stat-label">현재원</div>
                     </div>
-                    <div class="area-stat-item out" onclick="showLibraryGroupStudents('${group}', 'out')">
+                    <div class="area-stat-item out" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'out');">
                         <div class="area-stat-number">${groupData.out}</div>
                         <div class="area-stat-label">외박</div>
                     </div>
-                    <div class="area-stat-item new" onclick="showLibraryGroupStudents('${group}', 'new')">
+                    <div class="area-stat-item new" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'new');">
                         <div class="area-stat-number">${groupData.new}</div>
                         <div class="area-stat-label">신규</div>
                     </div>
-                    <div class="area-stat-item absent" onclick="showLibraryGroupStudents('${group}', 'absent')">
+                    <div class="area-stat-item absent" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'absent');">
                         <div class="area-stat-number">${groupData.absent}</div>
                         <div class="area-stat-label">등미</div>
                     </div>
                 </div>
                 <div class="area-stats-compact">
-                    <div class="area-stat-item move-out" onclick="showLibraryGroupStudents('${group}', 'moveOut')">
+                    <div class="area-stat-item move-out" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'moveOut');">
                         <div class="area-stat-number">${groupData.moveOut}</div>
                         <div class="area-stat-label">이동-</div>
                     </div>
-                    <div class="area-stat-item move-in" onclick="showLibraryGroupStudents('${group}', 'moveIn')">
+                    <div class="area-stat-item move-in" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'moveIn');">
                         <div class="area-stat-number">${groupData.moveIn}</div>
                         <div class="area-stat-label">이동+</div>
                     </div>
-                    <div class="area-stat-item exit" onclick="showLibraryGroupStudents('${group}', 'exit')">
+                    <div class="area-stat-item exit" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'exit');">
                         <div class="area-stat-number">${groupData.exit}</div>
                         <div class="area-stat-label">퇴소</div>
                     </div>
-                    <div class="area-stat-item" onclick="showLibraryGroupStudents('${group}', 'total')">
+                    <div class="area-stat-item" onclick="event.stopPropagation(); showLibraryGroupStudents('${group}', 'total');">
                         <div class="area-stat-number">${groupData.current + groupData.out + groupData.new + groupData.moveOut + groupData.moveIn + groupData.absent + groupData.exit}</div>
                         <div class="area-stat-label">전체</div>
                     </div>
