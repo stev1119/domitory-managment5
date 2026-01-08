@@ -1217,7 +1217,7 @@
         </div>
         <!-- 라브 상세 통계 (A1~C8) -->
 <div class="lab-detail-stats">
-    <h3>📚 라이브러리 상세 현황 (A1~C8)</h3>
+    <h3> 라이브러리 상세 현황 (A1~C8)</h3>
     <div class="lab-groups-grid" id="labDetailGrid">
         <!-- JavaScript로 동적 생성 -->
     </div>
@@ -1529,12 +1529,12 @@ await loadAFSheetData();
             }
         }, 2000);
 
-        // 구글 시트 데이터 로드 (올바른 범위로 수정)
+        // 구글 시트 데이터 로드 
         async function loadSheetsData() {
             try {
                 console.log('시트 데이터 로드 시도 중...');
                 
-                // 방법 1: 공개 시트 CSV 방식 (더 안정적)
+                // 방법 1: 공개 시트 CSV 방식 
                 const csvUrl = `https://docs.google.com/spreadsheets/d/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/export?format=csv&gid=0`;
                 
                 try {
@@ -1571,7 +1571,7 @@ await loadAFSheetData();
                     console.log('CSV 방식 실패, API 방식으로 전환:', csvError);
                 }
                 
-                // 방법 2: Google Sheets API 방식 (올바른 범위)
+                // 방법 2: Google Sheets API 방식 
                 const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:Q1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
                 
                 console.log('API 방식으로 시도 중... (범위: B3:Q1000)');
@@ -1614,7 +1614,7 @@ await loadAFSheetData();
             } catch (error) {
                 console.error('시트 데이터 로드 실패:', error);
                 
-                // 사용자에게 구체적인 해결 방법 제시
+                //  구체적인 해결 방법 이게 좀..헷갈리네네
                 const loadingEl = document.getElementById('loading');
                 loadingEl.innerHTML = `
                     <div style="text-align: center; padding: 40px; max-width: 600px; margin: 0 auto;">
@@ -1653,7 +1653,7 @@ await loadAFSheetData();
             
             lines.forEach(line => {
                 if (line.trim()) {
-                    // 간단한 CSV 파싱 (따옴표 내 쉼표 고려)
+                    // 간단한 CSV 파싱 
                     const row = [];
                     let current = '';
                     let inQuotes = false;
@@ -1730,7 +1730,7 @@ async function loadAFSheetData() {
             document.getElementById('loading').style.display = 'none';
             updateDashboard();
             
-            // 사용자에게 데모 모드임을 알림
+            // 데모 모드임 알림
             const header = document.querySelector('.header');
             const demoNotice = document.createElement('div');
             demoNotice.style.cssText = `
@@ -1944,7 +1944,7 @@ try {
             return stats;
         }
 
-        // 상태별 통계 업데이트 (수정된 로직)
+        // 상태별 통계 업데이트 
         function updateStatsByStatus(statObj, status) {
             switch (status) {
                 case '정상':
@@ -2544,7 +2544,7 @@ function displaySearchResults(results, extendedSearch) {
                 
                 return `
                     <div class="search-result-item" style="background: #fef3c7;">
-                        <div class="result-room" style="color: #f59e0b;">📌 기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
+                        <div class="result-room" style="color: #f59e0b;">◆ 기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
                         <div class="result-name">${result.name}</div>
                         ${notesHtml}
                         <div style="margin-top: 5px; font-size: 0.8rem; color: #6b7280;">
@@ -2558,7 +2558,7 @@ function displaySearchResults(results, extendedSearch) {
             const additionalNotesHtml = extendedSearch && result.additionalNotes && result.additionalNotes.length > 0
                 ? result.additionalNotes.map((note, idx) => `
                     <div style="margin-top: 3px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
-                        📌 ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
+                        ◆ ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
                     </div>
                 `).join('')
                 : '';
@@ -2793,7 +2793,7 @@ function displaySearchResults(results, extendedSearch) {
             const memo = row[5] || '';
 let finalMemo = memo;
     if (additionalNote && additionalNote !== 'null') {
-        finalMemo = memo ? `${memo} | 📌 ${additionalNote}` : `📌 ${additionalNote}`;
+        finalMemo = memo ? `${memo} | ◆ ${additionalNote}` : `◆ ${additionalNote}`;
     }
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
