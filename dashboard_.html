@@ -2098,7 +2098,7 @@ function displaySearchResults(results, extendedSearch) {
                 
                 return `
                     <div class="search-result-item" style="background: #fef3c7;">
-                        <div class="result-room" style="color: #f59e0b;">📌 기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
+                        <div class="result-room" style="color: #f59e0b;"> ◆기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
                         <div class="result-name">${result.name}</div>
                         ${notesHtml}
                         <div style="margin-top: 5px; font-size: 0.8rem; color: #6b7280;">
@@ -2112,7 +2112,7 @@ function displaySearchResults(results, extendedSearch) {
             const additionalNotesHtml = extendedSearch && result.additionalNotes && result.additionalNotes.length > 0
                 ? result.additionalNotes.map((note, idx) => `
                     <div style="margin-top: 3px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
-                        📌 ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
+                        ◆ ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
                     </div>
                 `).join('')
                 : '';
@@ -2347,7 +2347,7 @@ function displaySearchResults(results, extendedSearch) {
             const memo = row[5] || '';
 let finalMemo = memo;
     if (additionalNote && additionalNote !== 'null') {
-        finalMemo = memo ? `${memo} | 📌 ${additionalNote}` : `📌 ${additionalNote}`;
+        finalMemo = memo ? `${memo} | ◆ ${additionalNote}` : `◆ ${additionalNote}`;
     }
             const parentPhone = row[6] || '';
             const phone = row[7] || '';
