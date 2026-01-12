@@ -2969,7 +2969,7 @@ let finalMemo = memo;
             // 버튼 텍스트 초기화
             const textViewBtn = document.querySelector('.text-view-btn');
             if (textViewBtn) {
-                textViewBtn.textContent = '📝 텍스트로 보기';
+                textViewBtn.textContent = ' 텍스트로 보기';
             }
         }
 
@@ -2993,12 +2993,12 @@ let finalMemo = memo;
                 document.getElementById('textViewContent').textContent = textContent;
                 textViewContainer.style.display = 'block';
                 studentsGrid.style.display = 'none';
-                btn.textContent = '📋 카드로 보기';
+                btn.textContent = '카드로 보기';
             } else {
                 // 카드 뷰로 전환
                 textViewContainer.style.display = 'none';
                 studentsGrid.style.display = 'grid';
-                btn.textContent = '📝 텍스트로 보기';
+                btn.textContent = '텍스트로 보기';
             }
         }
 
