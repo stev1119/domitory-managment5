@@ -1309,7 +1309,7 @@
 <div class="modal-body">
     <div class="text-view-container" id="textViewContainer">
         <div class="text-view-content" id="textViewContent"></div>
-        <button class="copy-text-btn" onclick="copyTextContent()">📋 복사하기</button>
+<button class="copy-text-btn" onclick="copyTextContent(event)">복사하기</button>
     </div>
     <div class="students-grid" id="modalStudentsGrid">
         <!-- 학생 정보 카드들이 여기에 추가됩니다 -->
@@ -3034,12 +3034,13 @@ let finalMemo = memo;
             return textContent.trim();
         }
 
-        // 텍스트 내용 복사
-        function copyTextContent() {
+       
+// 텍스트 내용 복사
+        function copyTextContent(event) {  // ✅ event 매개변수 추가
             const textContent = document.getElementById('textViewContent').textContent;
             
             navigator.clipboard.writeText(textContent).then(() => {
-                const btn = event.target;
+                const btn = event.target;  // ✅ 이제 정상 작동
                 const originalText = btn.textContent;
                 btn.textContent = '✅ 복사완료!';
                 btn.style.background = '#10b981';
