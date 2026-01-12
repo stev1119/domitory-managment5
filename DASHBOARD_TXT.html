@@ -971,7 +971,65 @@
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(100%); opacity: 0; }
         }
+        /* 텍스트 보기 버튼 */
+        .text-view-btn {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .text-view-btn:hover {
+            background: white;
+            color: #4f46e5;
+        }
+
+        /* 텍스트 뷰 컨테이너 */
+        .text-view-container {
+            display: none;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .text-view-content {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #1f2937;
+            white-space: pre-wrap;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .copy-text-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .copy-text-btn:hover {
+            background: #4338ca;
+        }
     </style>
+    
 </head>
 <body>
     <div class="dashboard-container">
@@ -1243,14 +1301,20 @@
     <!-- 학생 정보 모달 -->
     <div class="modal" id="studentModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle">학생 상세 정보</h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="students-grid" id="modalStudentsGrid">
-                    <!-- 학생 정보 카드들이 여기에 추가됩니다 -->
-                </div>
+<div class="modal-header">
+    <button class="text-view-btn" onclick="toggleTextView(event)">◆텍스트로 보기</button>
+    <h2 id="modalTitle">학생 상세 정보</h2>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="text-view-container" id="textViewContainer">
+        <div class="text-view-content" id="textViewContent"></div>
+        <button class="copy-text-btn" onclick="copyTextContent()">📋 복사하기</button>
+    </div>
+    <div class="students-grid" id="modalStudentsGrid">
+        <!-- 학생 정보 카드들이 여기에 추가됩니다 -->
+    </div>
+</div>
             </div>
         </div>
     </div>
@@ -2892,8 +2956,21 @@ let finalMemo = memo;
         }
 
         // 모달 닫기
+// 모달 닫기
         function closeModal() {
             document.getElementById('studentModal').style.display = 'none';
+            
+            // 텍스트 뷰 초기화
+            const textViewContainer = document.getElementById('textViewContainer');
+            const studentsGrid = document.getElementById('modalStudentsGrid');
+            textViewContainer.style.display = 'none';
+            studentsGrid.style.display = 'grid';
+            
+            // 버튼 텍스트 초기화
+            const textViewBtn = document.querySelector('.text-view-btn');
+            if (textViewBtn) {
+                textViewBtn.textContent = '📝 텍스트로 보기';
+            }
         }
 
         // 모달 외부 클릭 시 닫기
@@ -2903,7 +2980,78 @@ let finalMemo = memo;
                 closeModal();
             }
         });
+// 텍스트 보기 토글
+        function toggleTextView(event) {
+            event.stopPropagation();
+            const textViewContainer = document.getElementById('textViewContainer');
+            const studentsGrid = document.getElementById('modalStudentsGrid');
+            const btn = event.target;
+            
+            if (textViewContainer.style.display === 'none' || !textViewContainer.style.display) {
+                // 텍스트 뷰로 전환
+                const textContent = generateTextViewContent();
+                document.getElementById('textViewContent').textContent = textContent;
+                textViewContainer.style.display = 'block';
+                studentsGrid.style.display = 'none';
+                btn.textContent = '📋 카드로 보기';
+            } else {
+                // 카드 뷰로 전환
+                textViewContainer.style.display = 'none';
+                studentsGrid.style.display = 'grid';
+                btn.textContent = '📝 텍스트로 보기';
+            }
+        }
 
+        // 텍스트 내용 생성
+        function generateTextViewContent() {
+            const modalStudentsGrid = document.getElementById('modalStudentsGrid');
+            const studentCards = modalStudentsGrid.querySelectorAll('.student-info-card');
+            
+            let textContent = '';
+            
+            studentCards.forEach((card, index) => {
+                // 각 카드에서 필요한 정보 추출
+                const detailItems = card.querySelectorAll('.detail-item');
+                let room = '', name = '', librarySeat = '', group = '', gender = '';
+                
+                detailItems.forEach(item => {
+                    const label = item.querySelector('.detail-label')?.textContent;
+                    const value = item.querySelector('.detail-value')?.textContent;
+                    
+                    if (label === '이름') name = value;
+                    else if (label === '라이브러리 좌석') librarySeat = value;
+                    else if (label === '그룹') group = value;
+                    else if (label === '성별') gender = value;
+                });
+                
+                // 기숙사 번호는 student-room에서 추출
+                room = card.querySelector('.student-room')?.textContent || '';
+                
+                // 한 줄로 조합
+                textContent += `${room}, ${name}, ${librarySeat}, ${group}, ${gender}\n`;
+            });
+            
+            return textContent.trim();
+        }
+
+        // 텍스트 내용 복사
+        function copyTextContent() {
+            const textContent = document.getElementById('textViewContent').textContent;
+            
+            navigator.clipboard.writeText(textContent).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ 복사완료!';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#4f46e5';
+                }, 2000);
+            }).catch(err => {
+                alert('복사 실패: ' + err);
+            });
+        }
         // 로딩 표시/숨김
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
