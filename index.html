@@ -367,7 +367,7 @@
     <div class="container">
         <div class="header">
             <h1>시대인재 기숙사 인원보고</h1>
-            <p>실시간 인원 보고 시스템 </p>
+            <p>기숙팀 인원현황 보고 </p>
         </div>
 
         <div class="main-content">
@@ -1007,11 +1007,11 @@
                 hour12: false
             });
 
-            let message = `${isModification ? '🔄 수정보고' : '📋 인원보고'}\n\n`;
-            message += `⏰ 보고시간: ${timeString}\n`;
-            message += `👤 담당자: ${manager}\n`;
-            message += `🏢 위치: ${building}동 ${floor}층\n\n`;
-            message += `📊 인원 현황\n`;
+            let message = `${isModification ? '🔄수정보고' : '◆ 인원보고◆'}\n\n`;
+            message += `◆ 보고시간: ${timeString}\n`;
+            message += `◆ 담당자: ${manager}\n`;
+            message += `◆ 위치: ${building}동 ${floor}층\n\n`;
+            message += `◆ 인원 현황\n`ㅁ
             message += `• 현재원: ${stats.current}명\n`;
             message += `• 외박: ${stats.out}명\n`;
             message += `• 신규: ${stats.new}명\n`;
@@ -1023,7 +1023,7 @@
             // 특별 상태 학생 상세 정보
             Object.keys(specialStudents).forEach(status => {
                 if (specialStudents[status].length > 0) {
-                    message += `📝 ${status} 학생 목록:\n`;
+                    message += `◆ ${status} 학생 목록:\n`;
                     specialStudents[status].forEach(student => {
                         message += `   • ${student.room}`;
                         if (student.name !== '미배정') {
