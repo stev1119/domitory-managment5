@@ -367,7 +367,7 @@
     <div class="container">
         <div class="header">
             <h1>시대인재 기숙사 인원보고</h1>
-            <p>기숙팀 인원현황 보고 </p>
+            <p>기숙팀 층별 인원현황 보고 </p>
         </div>
 
         <div class="main-content">
@@ -431,8 +431,8 @@
                         <option value="최문규">최문규</option>                       
                         <option value="이은영">이은영</option>
                         <option value="이윤민">이윤민</option>
+                        <option value="이준수">이준수</option>
                         <option value="최금주">최금주</option>
-                        <option value="신규3">신규3</option>
                         <option value="신규">신규</option>
                         <option value="신규2">신규2</option>
                     </select>
@@ -441,10 +441,10 @@
                     <label>동</label>
                     <select id="building-select">
                         <option value="">동 선택</option>
-                        <option value="A">A동 (여학생)</option>
+                        <option value="A">A동 (남학생)</option>
                         <option value="B">B동 (남학생)</option>
                         <option value="C">C동 (남학생)</option>
-                        <option value="D">D동 (남학생)</option>
+                        <option value="D">D동 (여학생)</option>
                         <option value="E">E동 (여학생)</option>
                         <option value="F">F동 (남학생)</option>
                     </select>
@@ -1007,11 +1007,11 @@
                 hour12: false
             });
 
-            let message = `${isModification ? '🔄수정보고' : '◆ 인원보고◆'}\n\n`;
+            let message = `${isModification ? '🔄 수정보고' : '◆ 인원보고◆'}\n\n`;
             message += `◆ 보고시간: ${timeString}\n`;
             message += `◆ 담당자: ${manager}\n`;
             message += `◆ 위치: ${building}동 ${floor}층\n\n`;
-            message += `◆ 인원 현황\n`ㅁ
+            message += `◆ 인원 현황\n`;
             message += `• 현재원: ${stats.current}명\n`;
             message += `• 외박: ${stats.out}명\n`;
             message += `• 신규: ${stats.new}명\n`;
@@ -1023,7 +1023,7 @@
             // 특별 상태 학생 상세 정보
             Object.keys(specialStudents).forEach(status => {
                 if (specialStudents[status].length > 0) {
-                    message += `◆ ${status} 학생 목록:\n`;
+                    message += `📝 ${status} 학생 목록:\n`;
                     specialStudents[status].forEach(student => {
                         message += `   • ${student.room}`;
                         if (student.name !== '미배정') {
