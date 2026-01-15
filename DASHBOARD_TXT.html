@@ -2345,12 +2345,11 @@ function updateAreaManagerStats(stats) {
                 // 호실 그리드 HTML 생성 - 이 줄이 중요합니다!
                 const roomsGridHTML = createRoomsGrid(building, floor);
                 
-                areaCard.innerHTML = `
-                   
-                    <div class="area-manager-header">
-                        <div class="area-manager-name">${manager}</div>
-                        <div class="area-manager-zone">${building}동${floor}층</div>
-                    </div>
+               areaCard.innerHTML = `
+    <div class="area-manager-header">
+        <div class="area-manager-name">${manager}</div>
+        <div class="area-manager-zone" style="font-size: 1.8rem; font-weight: 800;">${building}동${floor}층</div>
+    </div>
                     <div class="area-stats-compact">
                         <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
                             <div class="area-stat-number">${areaData.current}</div>
