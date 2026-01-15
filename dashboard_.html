@@ -514,16 +514,20 @@
             font-size: 0.9rem;
         }
 
-        .area-building-indicator {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: rgba(99, 102, 241, 0.2);
-            color: #4f46e5;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
+ .area-building-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(99, 102, 241, 0.15);
+    color: #4f46e5;
+    padding: 8px 20px;
+    border-radius: 16px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    pointer-events: none;
+    /* display: none; */  /* 이 줄을 추가하면 완전히 숨김 */
+}
         }
 
         /* 학생 정보 모달 */
@@ -1833,12 +1837,11 @@ async function loadAFSheetData() {
                     if (manager && areaData) {
                         const areaCard = document.createElement('div');
                         areaCard.className = 'area-manager-card';
-                        areaCard.innerHTML = `
-                            <div class="area-building-indicator">${floor}층</div>
-                            <div class="area-manager-header">
-                                <div class="area-manager-name">${manager}</div>
-                                <div class="area-manager-zone">${building}동${floor}층</div>
-                            </div>
+areaCard.innerHTML = `
+    <div class="area-manager-header">
+        <div class="area-manager-name">${manager}</div>
+        <div class="area-manager-zone" style="font-size: 1.8rem; font-weight: 800;">${building}동${floor}층</div>
+    </div>
                             <div class="area-stats-compact">
                                 <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
                                     <div class="area-stat-number">${areaData.current}</div>
