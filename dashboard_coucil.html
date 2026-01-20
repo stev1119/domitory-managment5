@@ -2459,14 +2459,17 @@ let finalMemo = memo;
                         <div class="detail-label" style="font-size: 1.1rem; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">
                             📋 상담 기록 (${counselData.length}건)
                         </div>
-                        <div class="counsel-section">
-                        
+                        <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 15px; border-radius: 12px; border-left: 4px solid #3b82f6;">
                             ${counselData.map((counsel, index) => `
                                 <div style="margin-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; padding-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; border-bottom: ${index < counselData.length - 1 ? '1px solid #cbd5e1' : 'none'};">
                                     <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-bottom: 4px;">
                                         ${index + 1}차 상담
                                     </div>
-                                    <div class="counsel-text">${counsel}</div> </div> ).join('')}
+                                    <div style="font-size: 0.9rem; color: #1e293b; line-height: 1.6; white-space: pre-wrap;">
+                                        ${counsel}
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 ` : ''}
