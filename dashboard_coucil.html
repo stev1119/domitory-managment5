@@ -646,15 +646,24 @@
             margin-bottom: 2px;
         }
 
-        .detail-value {
-            font-size: 0.9rem;
-            color: #1f2937;
-            font-weight: 500;
-        }
-        .detail-value {
+.detail-value {
     white-space: pre-wrap;
+    word-wrap: break-word;
     word-break: break-word;
-    overflow-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.6;
+    min-height: auto;
+    overflow: visible;
+}
+
+.counsel-record {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    border-left: 3px solid #3b82f6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
         /* 반응형 디자인 */
