@@ -1300,14 +1300,14 @@ await loadAFSheetData();
                         
                         // 헤더 (B3:P3)
                         if (allData.length > 2 && allData[2].length > 1) {
-                            const header = allData[2].slice(1, 17); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
+                            const header = allData[2].slice(1, 23); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
                             sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
                         }
                         
                         // 데이터 (B4부터)
                         for (let i = 3; i < allData.length; i++) {
                             if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 17); // B열:P열
+                                const row = allData[i].slice(1, 23); // B열:P열
                                 if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
                                     sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
                                 }
@@ -1322,7 +1322,7 @@ await loadAFSheetData();
                 }
                 
                 // 방법 2: Google Sheets API 방식 (올바른 범위)
-                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:Q1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
+                const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/1RqPfs1VbguAP85a9uswfLeUdYVAGye6GIKr0tvg4oYc/values/yulee!B3:V1000?key=AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY`;
                 
                 console.log('API 방식으로 시도 중... (범위: B3:P1000)');
                 const response = await fetch(apiUrl);
@@ -2348,6 +2348,16 @@ function displaySearchResults(results, extendedSearch) {
             const name = row[2] || '';
             const status = row[3] || '정상';
             const memo = row[5] || '';
+           // ===== 상담 내용 추가 (R~V열 = 인덱스 17~21) =====
+    const counsel1 = row[17] || ''; // R열
+    const counsel2 = row[18] || ''; // S열
+    const counsel3 = row[19] || ''; // T열
+    const counsel4 = row[20] || ''; // U열
+    const counsel5 = row[21] || ''; // V열
+ // 상담 내용 배열로 정리
+    const counselData = [counsel1, counsel2, counsel3, counsel4, counsel5]
+        .filter(c => c && c.trim() !== '');
+           
 let finalMemo = memo;
     if (additionalNote && additionalNote !== 'null') {
         finalMemo = memo ? `${memo} | ◆ ${additionalNote}` : `◆ ${additionalNote}`;
@@ -2429,11 +2439,30 @@ let finalMemo = memo;
             <div class="detail-value" style="background: ${additionalNote && additionalNote !== 'null' ? '#fef3c7' : 'transparent'}; padding: ${additionalNote && additionalNote !== 'null' ? '8px' : '0'}; border-radius: 6px;">${finalMemo}</div>
         </div>
     ` : ''}
+     <!-- ===== 상담 내용 섹션 추가 ===== -->
+                ${counselData.length > 0 ? `
+                    <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
+                        <div class="detail-label" style="font-size: 1.1rem; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">
+                            📋 상담 기록 (${counselData.length}건)
+                        </div>
+                        <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 15px; border-radius: 12px; border-left: 4px solid #3b82f6;">
+                            ${counselData.map((counsel, index) => `
+                                <div style="margin-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; padding-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; border-bottom: ${index < counselData.length - 1 ? '1px solid #cbd5e1' : 'none'};">
+                                    <div style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin-bottom: 4px;">
+                                        ${index + 1}차 상담
+                                    </div>
+                                    <div style="font-size: 0.9rem; color: #1e293b; line-height: 1.6; white-space: pre-wrap;">
+                                        ${counsel}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `;
-        }
-
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
         // 상태 CSS 클래스 반환
         function getStatusClass(status) {
             switch (status) {
