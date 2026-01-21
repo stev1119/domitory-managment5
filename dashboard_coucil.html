@@ -156,10 +156,379 @@
         }
 
         /* 전체 통계 카드 */
-     
+        .total-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-     
-    
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 5px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.total { border-left-color: #10b981; }
+        .stat-card.out { border-left-color: #f59e0b; }
+        .stat-card.new { border-left-color: #3b82f6; }
+        .stat-card.move { border-left-color: #8b5cf6; }
+        .stat-card.absent { border-left-color: #6b7280; }
+        .stat-card.exit { border-left-color: #ef4444; }
+
+        .stat-card h3 {
+            font-size: 1rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        /* 성별 통계 */
+        .gender-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .gender-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .gender-section h3 {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .gender-section.male {
+            border-left: 5px solid #3b82f6;
+        }
+
+        .gender-section.female {
+            border-left: 5px solid #ec4899;
+        }
+
+        .gender-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .gender-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gender-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gender-card .number {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .gender-card .label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* 동별 통계 */
+        .building-stats {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .building-stats h3 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .building-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #4f46e5;
+        }
+
+        .building-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .building-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .building-type {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .floor-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .floor-card {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .floor-card:hover {
+            border-color: #4f46e5;
+            background: #fefefe;
+        }
+
+        .floor-card .floor-name {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .floor-card .floor-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* 구역별 담당자 현황 스타일 */
+        .manager-stats {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .manager-stats h3 {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .area-info-summary {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border-radius: 12px;
+        }
+
+        .area-info-summary p {
+            color: #6b7280;
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .area-managers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+        }
+
+        .building-group {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 5px solid #6366f1;
+        }
+
+        .building-group-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .building-group-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .building-group-subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .floors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .area-manager-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid #6366f1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .area-manager-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-left-color: #4f46e5;
+        }
+
+        .area-manager-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .area-manager-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .area-manager-zone {
+            font-size: 0.9rem;
+            color: #6366f1;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .area-stats-compact {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .area-stat-item {
+            background: white;
+            border-radius: 8px;
+            padding: 8px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .area-stat-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .area-stat-item.current { border-color: #10b981; }
+        .area-stat-item.out { border-color: #f59e0b; }
+        .area-stat-item.new { border-color: #3b82f6; }
+        .area-stat-item.absent { border-color: #6b7280; }
+        .area-stat-item.move-out { border-color: #ef4444; }
+        .area-stat-item.move-in { border-color: #8b5cf6; }
+        .area-stat-item.exit { border-color: #dc2626; }
+
+        .area-stat-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+
+        .area-stat-label {
+            font-size: 0.65rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .area-total-summary {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+ .area-building-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(99, 102, 241, 0.15);
+    color: #4f46e5;
+    padding: 8px 20px;
+    border-radius: 16px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    pointer-events: none;
+   
+}
+      
 
         /* 학생 정보 모달 */
         .modal {
@@ -390,8 +759,8 @@
                 <!-- 로고 로드 실패시 대체 텍스트 -->
                 <span style="display: none; font-size: 2.5rem;">🏫</span>
                 <div class="header-text">
-                    <h1>시대인재 기숙사 학생정보 검색</h1>
-                    <p>실시간 학생 정보 및 상담내용 검색</p>
+                    <h1>시대인재 기숙사 인원 현황</h1>
+                    <p>실시간 인원 현황 모니터링 시스템</p>
                 </div>
             </div>
         </div>
@@ -407,15 +776,235 @@
 <div style="text-align: center; margin-top: 15px;">
     <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 1rem; color: #f5f5f5; font-weight: 700;">
         <input type="checkbox" id="extendedSearchCheckbox" style="width: 22px; height: 22px; cursor: pointer;">
-        <span>🔍 확장 검색 (기숙사 이력,퇴소생은 체크후 이름입력)</span>
+        <span>🔍 확장 검색 (이력 및 퇴소생 정보 포함)</span>
     </label>
 </div>
-     
+        <!-- 전체 통계 -->
+        <div class="total-stats" id="totalStats">
+            <div class="stat-card total" onclick="showStudentsByStatus('total')">
+                <h3>총 현재원</h3>
+                <div class="number" id="totalCurrent">0</div>
+                <div class="label">전체 재학생</div>
+            </div>
+            <div class="stat-card out" onclick="showStudentsByStatus('외박')">
+                <h3>외박</h3>
+                <div class="number" id="totalOut">0</div>
+                <div class="label">외박 중인 학생</div>
+            </div>
+            <div class="stat-card new" onclick="showStudentsByStatus('신규')">
+                <h3>신규</h3>
+                <div class="number" id="totalNew">0</div>
+                <div class="label">신규 입소</div>
+            </div>
+            <div class="stat-card move" onclick="showStudentsByStatus('이동')">
+                <h3>이동</h3>
+                <div class="number" id="totalMove">0</div>
+                <div class="label">이동 예정/완료</div>
+            </div>
+            <div class="stat-card absent" onclick="showStudentsByStatus('등미')">
+                <h3>등미</h3>
+                <div class="number" id="totalAbsent">0</div>
+                <div class="label">등록 미입소</div>
+            </div>
+            <div class="stat-card exit" onclick="showStudentsByStatus('퇴소')">
+                <h3>퇴소</h3>
+                <div class="number" id="totalExit">0</div>
+                <div class="label">퇴소 처리</div>
+            </div>
+        </div>
+
+        <!-- 성별 통계 -->
+        <div class="gender-stats">
+            <div class="gender-section male">
+                <h3>남학생 현황</h3>
+                <div class="gender-cards" id="maleStats">
+                    <div class="gender-card" onclick="showStudentsByGender('male', 'total')">
+                        <div class="number" id="maleCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '외박')">
+                        <div class="number" id="maleOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '신규')">
+                        <div class="number" id="maleNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '등미')">
+                        <div class="number" id="maleAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '이동-')">
+                        <div class="number" id="maleMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '이동+')">
+                        <div class="number" id="maleMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('male', '퇴소')">
+                        <div class="number" id="maleExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gender-section female">
+                <h3>여학생 현황</h3>
+                <div class="gender-cards" id="femaleStats">
+                    <div class="gender-card" onclick="showStudentsByGender('female', 'total')">
+                        <div class="number" id="femaleCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '외박')">
+                        <div class="number" id="femaleOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '신규')">
+                        <div class="number" id="femaleNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '등미')">
+                        <div class="number" id="femaleAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '이동-')">
+                        <div class="number" id="femaleMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '이동+')">
+                        <div class="number" id="femaleMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByGender('female', '퇴소')">
+                        <div class="number" id="femaleExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 <!-- 라이브러리별 통계 -->
-      
+        <div class="gender-stats">
+            <div class="gender-section" style="border-left: 5px solid #f59e0b;">
+                <h3>A라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryAStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', 'total')">
+                        <div class="number" id="libraryACurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '외박')">
+                        <div class="number" id="libraryAOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '신규')">
+                        <div class="number" id="libraryANew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '등미')">
+                        <div class="number" id="libraryAAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '이동-')">
+                        <div class="number" id="libraryAMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '이동+')">
+                        <div class="number" id="libraryAMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('A', '퇴소')">
+                        <div class="number" id="libraryAExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gender-section" style="border-left: 5px solid #10b981;">
+                <h3>B라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryBStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', 'total')">
+                        <div class="number" id="libraryBCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '외박')">
+                        <div class="number" id="libraryBOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '신규')">
+                        <div class="number" id="libraryBNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '등미')">
+                        <div class="number" id="libraryBAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '이동-')">
+                        <div class="number" id="libraryBMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '이동+')">
+                        <div class="number" id="libraryBMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('B', '퇴소')">
+                        <div class="number" id="libraryBExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- C라이브러리 통계 (전체 너비) -->
+        <div class="gender-stats" style="grid-template-columns: 1fr;">
+            <div class="gender-section" style="border-left: 5px solid #8b5cf6;">
+                <h3>C라이브러리 현황</h3>
+                <div class="gender-cards" id="libraryCStats">
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', 'total')">
+                        <div class="number" id="libraryCCurrent">0</div>
+                        <div class="label">현재원</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '외박')">
+                        <div class="number" id="libraryCOut">0</div>
+                        <div class="label">외박</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '신규')">
+                        <div class="number" id="libraryCNew">0</div>
+                        <div class="label">신규</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '등미')">
+                        <div class="number" id="libraryCAbsent">0</div>
+                        <div class="label">등미</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '이동-')">
+                        <div class="number" id="libraryCMoveOut">0</div>
+                        <div class="label">이동-</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '이동+')">
+                        <div class="number" id="libraryCMoveIn">0</div>
+                        <div class="label">이동+</div>
+                    </div>
+                    <div class="gender-card" onclick="showStudentsByLibrary('C', '퇴소')">
+                        <div class="number" id="libraryCExit">0</div>
+                        <div class="label">퇴소</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 구역별 담당자 현황 (24개 구역) -->
+        <div class="manager-stats">
+            <h3>각 동,층별 인원 현황 </h3>
+            <div class="area-info-summary">
+                <p>A동~F동까지 각 층별 담당자 및 현황</p>
+            </div>
+            <div class="area-managers-grid" id="areaManagersGrid">
+                <!-- 구역별 담당자 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
 
-
+        <!-- 로딩 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>데이터를 불러오는 중...</p>
+        </div>
+    </div>
 
     <!-- 학생 정보 모달 -->
     <div class="modal" id="studentModal">
@@ -515,7 +1104,7 @@ await loadAFSheetData();
                 }
                 
                 // 대시보드 업데이트
-               
+                updateDashboard();
                 
                 showLoading(false);
                 console.log('데이터 로드 완료');
@@ -549,7 +1138,29 @@ await loadAFSheetData();
         });
 
         // 데이터 로드 (오류 처리 강화)
-       
+        async function loadData() {
+            showLoading(true);
+            try {
+                console.log('데이터 로드 시작...');
+                
+                // 시트 데이터 로드
+                const sheetsLoaded = await loadSheetsData();
+                if (!sheetsLoaded) {
+                    throw new Error('시트 데이터 로드 실패');
+                }
+                
+                // 보고 데이터 로드
+                loadReportData();
+                
+                // 대시보드 업데이트
+                updateDashboard();
+                
+                showLoading(false);
+                console.log('데이터 로드 완료');
+                
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+                showLoading(false);
                 
                 // 사용자에게 오류 메시지 표시
                 const loadingEl = document.getElementById('loading');
@@ -567,7 +1178,33 @@ await loadAFSheetData();
         }
 
         // 대시보드 업데이트 (오류 처리 강화)
-     
+        function updateDashboard() {
+            try {
+                console.log('대시보드 업데이트 시작...');
+                
+                if (!sheetsData || sheetsData.length === 0) {
+                    console.error('시트 데이터가 없습니다.');
+                    throw new Error('시트 데이터가 없습니다.');
+                }
+
+                const stats = calculateStats();
+                
+                if (!stats) {
+                    console.error('통계 계산 실패');
+                    throw new Error('통계 계산 실패');
+                }
+
+                updateTotalStats(stats);
+                updateGenderStats(stats);
+                updateLibraryStats(stats);  // 라이브러리 통계 업데이트 추가
+                updateAreaManagerStats(stats);  // 구역별 담당자 통계 업데이트
+                
+                console.log('대시보드 업데이트 완료');
+            } catch (error) {
+                console.error('대시보드 업데이트 오류:', error);
+                throw error; // 상위로 오류 전파
+            }
+        }
 
         // 데이터 새로고침
         async function refreshData() {
@@ -575,7 +1212,7 @@ await loadAFSheetData();
                 console.log('데이터 새로고침 시작...');
                 const sheetsLoaded = await loadSheetsData();
                 if (sheetsLoaded) {
-                    
+                    updateDashboard();
                     console.log('데이터 새로고침 완료');
                     
                     // 성공 메시지 표시 (선택사항)
@@ -903,7 +1540,466 @@ async function loadAFSheetData() {
         }
 
         // 통계 계산 (D열 상태 기준으로 수정)
-       
+        function calculateStats() {
+            console.log('통계 계산 시작, 데이터 행 수:', sheetsData.length);
+            
+            if (!sheetsData || sheetsData.length <= 1) {
+                console.warn('데이터가 없거나 헤더만 있습니다.');
+                return {
+                    total: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                    male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                    female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                    buildings: {},
+                    managers: {},
+                    areas: {}
+                };
+            }
+            
+            const stats = {
+                total: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                male: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                female: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryA: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryB: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                libraryC: { current: 0, out: 0, new: 0, moveOut: 0, moveIn: 0, absent: 0, exit: 0 },
+                buildings: {},
+                managers: {},
+                areas: {}
+            };
+
+            // 각 동별로 초기화
+            Object.keys(buildingInfo).forEach(building => {
+                stats.buildings[building] = {
+                    floors: { '1': 0, '2': 0, '3': 0, '4': 0 },
+                    total: 0,
+                    gender: buildingInfo[building].gender
+                };
+            });
+
+            // 담당자별 통계 초기화
+            Object.keys(managerInfo).forEach(manager => {
+                stats.managers[manager] = {
+                    areas: managerInfo[manager],
+                    current: 0,
+                    out: 0,
+                    new: 0,
+                    moveOut: 0,
+                    moveIn: 0,
+                    absent: 0,
+                    exit: 0,
+                    total: 0
+                };
+            });
+
+            // 구역별(층별) 통계 초기화
+            stats.areas = {};
+            Object.keys(managerInfo).forEach(manager => {
+                const area = managerInfo[manager][0]; // 각 담당자는 하나의 구역만 담당
+                stats.areas[area] = {
+                    manager: manager,
+                    current: 0,
+                    out: 0,
+                    new: 0,
+                    moveOut: 0,
+                    moveIn: 0,
+                    absent: 0,
+                    exit: 0,
+                    total: 0
+                };
+            });
+
+            let processedCount = 0;
+
+            // 시트 데이터 분석 (헤더 제외하고 1번 인덱스부터)
+            for (let index = 1; index < sheetsData.length; index++) {
+                const row = sheetsData[index];
+                
+                // CSV에서 변환된 데이터 구조: [인덱스, B열, C열, D열, E열, ...]
+                // 원래 시트: B열=기숙사번호, C열=이름, D열=상태
+                const room = row[1]; // B열 (기숙사 번호)
+                const name = row[2]; // C열 (학생 이름)  
+                const status = row[3] || '정상'; // D열 (상태)
+                const librarySeats = row[8] || ''; // I열 (라이브러리 좌석)
+                // 데이터 유효성 검사
+                if (!room || !name || name === '미배정' || name.trim() === '') {
+                    continue;
+                }
+
+                processedCount++;
+
+                // 건물과 층 추출
+                const building = room.toString().charAt(0).toUpperCase();
+                const floor = room.toString().charAt(1);
+
+                // 건물 정보 확인
+                if (!buildingInfo[building]) {
+                    console.warn('알 수 없는 건물:', building, 'in room:', room);
+                    continue;
+                }
+
+                const buildingGender = buildingInfo[building].gender;
+
+                // 전체 통계 업데이트
+                updateStatsByStatus(stats.total, status);
+                
+                // 성별 통계 업데이트
+                if (buildingGender === 'male') {
+                    updateStatsByStatus(stats.male, status);
+                } else if (buildingGender === 'female') {
+                    updateStatsByStatus(stats.female, status);
+                }
+// 라이브러리별 통계 업데이트
+                let library = '';
+                if (librarySeats) {
+                    const firstChar = librarySeats.toString().charAt(0).toUpperCase();
+                    if (firstChar === 'A') library = 'A';
+                    else if (firstChar === 'B') library = 'B';
+                    else if (firstChar === 'C') library = 'C';
+                }
+
+                if (library === 'A') {
+                    updateStatsByStatus(stats.libraryA, status);
+                } else if (library === 'B') {
+                    updateStatsByStatus(stats.libraryB, status);
+                } else if (library === 'C') {
+                    updateStatsByStatus(stats.libraryC, status);
+                }
+                // 동별 통계 업데이트 (현재원만)
+                if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
+                    if (floor >= '1' && floor <= '4') {
+                        stats.buildings[building].floors[floor]++;
+                        stats.buildings[building].total++;
+                    }
+                }
+
+                // 담당자별 통계 업데이트
+                const areaKey = `${building}동${floor}층`;
+                Object.keys(managerInfo).forEach(manager => {
+                    if (managerInfo[manager].includes(areaKey)) {
+                        updateStatsByStatus(stats.managers[manager], status);
+                        stats.managers[manager].total++;
+                    }
+                });
+
+                // 구역별 통계 업데이트
+                if (stats.areas[areaKey]) {
+                    updateStatsByStatus(stats.areas[areaKey], status);
+                    stats.areas[areaKey].total++;
+                }
+            }
+
+            console.log('처리된 학생 수:', processedCount);
+            console.log('계산된 통계:', stats);
+            
+            return stats;
+        }
+
+        // 상태별 통계 업데이트 (수정된 로직)
+        function updateStatsByStatus(statObj, status) {
+            switch (status) {
+                case '정상':
+                    statObj.current++;
+                    break;
+                case '신규':
+                    statObj.current++;
+                    statObj.new++;
+                    break;
+                case '이동+':
+                    statObj.current++;
+                    statObj.moveIn++;
+                    break;
+                case '외박':
+                    statObj.out++;
+                    break;
+                case '이동-':
+                    statObj.moveOut++;
+                    break;
+                case '등미':
+                    statObj.absent++;
+                    break;
+                case '퇴소':
+                    statObj.exit++;
+                    break;
+                default:
+                    // 기본값 처리 (정상으로 간주)
+                    statObj.current++;
+                    break;
+            }
+        }
+
+        // 전체 통계 업데이트
+        function updateTotalStats(stats) {
+            document.getElementById('totalCurrent').textContent = stats.total.current;
+            document.getElementById('totalOut').textContent = stats.total.out;
+            document.getElementById('totalNew').textContent = stats.total.new;
+            document.getElementById('totalMove').textContent = stats.total.moveOut + stats.total.moveIn;
+            document.getElementById('totalAbsent').textContent = stats.total.absent;
+            document.getElementById('totalExit').textContent = stats.total.exit;
+        }
+
+        // 성별 통계 업데이트
+        function updateGenderStats(stats) {
+            // 남학생
+            document.getElementById('maleCurrent').textContent = stats.male.current;
+            document.getElementById('maleOut').textContent = stats.male.out;
+            document.getElementById('maleNew').textContent = stats.male.new;
+            document.getElementById('maleAbsent').textContent = stats.male.absent;
+            document.getElementById('maleMoveOut').textContent = stats.male.moveOut;
+            document.getElementById('maleMoveIn').textContent = stats.male.moveIn;
+            document.getElementById('maleExit').textContent = stats.male.exit;
+
+            // 여학생
+            document.getElementById('femaleCurrent').textContent = stats.female.current;
+            document.getElementById('femaleOut').textContent = stats.female.out;
+            document.getElementById('femaleNew').textContent = stats.female.new;
+            document.getElementById('femaleAbsent').textContent = stats.female.absent;
+            document.getElementById('femaleMoveOut').textContent = stats.female.moveOut;
+            document.getElementById('femaleMoveIn').textContent = stats.female.moveIn;
+            document.getElementById('femaleExit').textContent = stats.female.exit;
+        }
+// 라이브러리별 통계 업데이트
+        function updateLibraryStats(stats) {
+            // A라이브러리
+            document.getElementById('libraryACurrent').textContent = stats.libraryA.current;
+            document.getElementById('libraryAOut').textContent = stats.libraryA.out;
+            document.getElementById('libraryANew').textContent = stats.libraryA.new;
+            document.getElementById('libraryAAbsent').textContent = stats.libraryA.absent;
+            document.getElementById('libraryAMoveOut').textContent = stats.libraryA.moveOut;
+            document.getElementById('libraryAMoveIn').textContent = stats.libraryA.moveIn;
+            document.getElementById('libraryAExit').textContent = stats.libraryA.exit;
+
+            // B라이브러리
+            document.getElementById('libraryBCurrent').textContent = stats.libraryB.current;
+            document.getElementById('libraryBOut').textContent = stats.libraryB.out;
+            document.getElementById('libraryBNew').textContent = stats.libraryB.new;
+            document.getElementById('libraryBAbsent').textContent = stats.libraryB.absent;
+            document.getElementById('libraryBMoveOut').textContent = stats.libraryB.moveOut;
+            document.getElementById('libraryBMoveIn').textContent = stats.libraryB.moveIn;
+            document.getElementById('libraryBExit').textContent = stats.libraryB.exit;
+
+            // C라이브러리
+            document.getElementById('libraryCCurrent').textContent = stats.libraryC.current;
+            document.getElementById('libraryCOut').textContent = stats.libraryC.out;
+            document.getElementById('libraryCNew').textContent = stats.libraryC.new;
+            document.getElementById('libraryCAbsent').textContent = stats.libraryC.absent;
+            document.getElementById('libraryCMoveOut').textContent = stats.libraryC.moveOut;
+            document.getElementById('libraryCMoveIn').textContent = stats.libraryC.moveIn;
+            document.getElementById('libraryCExit').textContent = stats.libraryC.exit;
+        }
+
+        // 라이브러리 + 상태별 학생 보기
+        function showStudentsByLibrary(library, status) {
+            const students = getStudentsByLibraryAndStatus(library, status);
+            const statusText = getStatusText(status);
+            showStudentsModal(`${library}라이브러리 ${statusText} 목록`, students);
+        }
+
+ // 라이브러리 + 상태별 학생 데이터 가져오기
+        function getStudentsByLibraryAndStatus(library, status) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const studentStatus = row[3] || '정상';
+                const librarySeats = row[8] || '';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 라이브러리 확인
+                if (!librarySeats) return;
+                const firstChar = librarySeats.toString().charAt(0).toUpperCase();
+                if (firstChar !== library) return;
+                
+                // 상태별 필터링
+                if (status === 'total') {
+                    if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (studentStatus === status) {
+                    students.push(row);
+                }
+            });
+            
+            // 라이브러리 좌석 번호순으로 정렬
+            students.sort((a, b) => {
+                const seatA = a[8] || '';
+                const seatB = b[8] || '';
+                
+                // 좌석 번호에서 숫자 부분 추출하여 비교
+                const numA = parseInt(seatA.replace(/[^0-9]/g, '')) || 0;
+                const numB = parseInt(seatB.replace(/[^0-9]/g, '')) || 0;
+                
+                return numA - numB;
+            });
+            
+            return students;
+        }
+        // 동별 통계 업데이트 함수 제거됨
+
+        // 구역별 담당자 통계 업데이트 (24개 구역)
+        function updateAreaManagerStats(stats) {
+            const areaManagersGrid = document.getElementById('areaManagersGrid');
+            areaManagersGrid.innerHTML = '';
+
+            // 동별로 그룹화하여 표시
+            const buildings = ['A', 'B', 'C', 'D', 'E', 'F'];
+            
+            buildings.forEach(building => {
+                const buildingInfo_detail = buildingInfo[building];
+                
+                // 동별 그룹 컨테이너 생성
+                const buildingGroup = document.createElement('div');
+                buildingGroup.className = 'building-group';
+                
+                // 동별 헤더
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'building-group-header';
+                groupHeader.innerHTML = `
+                    <div class="building-group-title">${building}동 (${buildingInfo_detail.type})</div>
+                    <div class="building-group-subtitle">1층~4층 인원 현황</div>
+                `;
+                buildingGroup.appendChild(groupHeader);
+                
+                // 층별 그리드 컨테이너
+                const floorsGrid = document.createElement('div');
+                floorsGrid.className = 'floors-grid';
+                
+                // 각 층별 카드 생성
+                for (let floor = 1; floor <= 4; floor++) {
+                    const areaKey = `${building}동${floor}층`;
+                    const manager = Object.keys(managerInfo).find(mgr => 
+                        managerInfo[mgr].includes(areaKey)
+                    );
+                    
+                    // 각 구역별 독립적인 통계 사용
+                    const areaData = stats.areas[areaKey];
+                    
+                    if (manager && areaData) {
+                        const areaCard = document.createElement('div');
+                        areaCard.className = 'area-manager-card';
+areaCard.innerHTML = `
+    <div class="area-manager-header">
+        <div class="area-manager-name">${manager}</div>
+        <div class="area-manager-zone" style="font-size: 1.8rem; font-weight: 800;">${building}동${floor}층</div>
+    </div>
+                            <div class="area-stats-compact">
+                                <div class="area-stat-item current" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'current')">
+                                    <div class="area-stat-number">${areaData.current}</div>
+                                    <div class="area-stat-label">현재원</div>
+                                </div>
+                                <div class="area-stat-item out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'out')">
+                                    <div class="area-stat-number">${areaData.out}</div>
+                                    <div class="area-stat-label">외박</div>
+                                </div>
+                                <div class="area-stat-item new" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'new')">
+                                    <div class="area-stat-number">${areaData.new}</div>
+                                    <div class="area-stat-label">신규</div>
+                                </div>
+                                <div class="area-stat-item absent" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'absent')">
+                                    <div class="area-stat-number">${areaData.absent}</div>
+                                    <div class="area-stat-label">등미</div>
+                                </div>
+                            </div>
+                            <div class="area-stats-compact">
+                                <div class="area-stat-item move-out" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveOut')">
+                                    <div class="area-stat-number">${areaData.moveOut}</div>
+                                    <div class="area-stat-label">이동-</div>
+                                </div>
+                                <div class="area-stat-item move-in" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'moveIn')">
+                                    <div class="area-stat-number">${areaData.moveIn}</div>
+                                    <div class="area-stat-label">이동+</div>
+                                </div>
+                                <div class="area-stat-item exit" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'exit')">
+                                    <div class="area-stat-number">${areaData.exit}</div>
+                                    <div class="area-stat-label">퇴소</div>
+                                </div>
+                                <div class="area-stat-item" onclick="showAreaManagerStudents('${manager}', '${areaKey}', 'total')">
+                                    <div class="area-stat-number">${areaData.total}</div>
+                                    <div class="area-stat-label">전체</div>
+                                </div>
+                            </div>
+                            <div class="area-total-summary">
+                                총 ${areaData.total}명 담당
+                            </div>
+                        `;
+                        floorsGrid.appendChild(areaCard);
+                    }
+                }
+                
+                buildingGroup.appendChild(floorsGrid);
+                areaManagersGrid.appendChild(buildingGroup);
+            });
+        }
+
+        // 구역별 담당자 학생 보기
+        function showAreaManagerStudents(manager, areaKey, statusType) {
+            const students = getStudentsByAreaManager(manager, areaKey, statusType);
+            const statusText = getStatusText(statusType);
+            showStudentsModal(`${manager} - ${areaKey} ${statusText} 학생 목록`, students);
+        }
+
+        // 구역별 담당자 학생 데이터 가져오기
+        function getStudentsByAreaManager(manager, areaKey, statusType) {
+            const students = [];
+            
+            // areaKey에서 동과 층 추출 (예: "A동1층" -> A, 1)
+            const building = areaKey.charAt(0);
+            const floor = areaKey.charAt(2);
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const status = row[3] || '정상';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 해당 구역의 방인지 확인
+                const roomBuilding = room.toString().charAt(0).toUpperCase();
+                const roomFloor = room.toString().charAt(1);
+                
+                if (roomBuilding !== building || roomFloor !== floor) return;
+                
+                // 상태별 필터링
+                let shouldInclude = false;
+                switch (statusType) {
+                    case 'current':
+                        shouldInclude = (status === '정상' || status === '신규' || status === '이동+');
+                        break;
+                    case 'out':
+                        shouldInclude = (status === '외박');
+                        break;
+                    case 'new':
+                        shouldInclude = (status === '신규');
+                        break;
+                    case 'moveOut':
+                        shouldInclude = (status === '이동-');
+                        break;
+                    case 'moveIn':
+                        shouldInclude = (status === '이동+');
+                        break;
+                    case 'absent':
+                        shouldInclude = (status === '등미');
+                        break;
+                    case 'exit':
+                        shouldInclude = (status === '퇴소');
+                        break;
+                    case 'total':
+                        shouldInclude = true;
+                        break;
+                }
+                
+                if (shouldInclude) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
+        }
 
         // 검색 기능
         function setupEventListeners() {
@@ -1093,7 +2189,18 @@ function displaySearchResults(results, extendedSearch) {
             showStudentsModal(`${genderText} ${status} 목록`, students);
         }
 
-   
+        // 층별 학생 보기
+        function showFloorStudents(building, floor) {
+            const students = getStudentsByFloor(building, floor);
+            showStudentsModal(`${building}동 ${floor}층 학생 목록`, students);
+        }
+
+        // 담당자별 학생 보기
+        function showManagerStudents(manager, statusType) {
+            const students = getStudentsByManager(manager, statusType);
+            const statusText = getStatusText(statusType);
+            showStudentsModal(`${manager} - ${statusText} 학생 목록`, students);
+        }
 
         // 특정 학생 상세 정보 보기 (기존 방식 - 호실 기준)
         function showStudentDetail(room) {
@@ -1115,11 +2222,159 @@ function displaySearchResults(results, extendedSearch) {
     document.getElementById('searchResults').style.display = 'none';
 }
 
-   
-      
+        // 상태별 학생 데이터 가져오기
+        function getStudentsByStatus(status) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const name = row[2];
+                const studentStatus = row[3] || '정상';
+                
+                if (!name || name === '미배정') return;
+                
+                if (status === 'total') {
+                    if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (status === '이동') {
+                    if (studentStatus === '이동-' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (studentStatus === status) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
+        }
 
+        // 담당자별 학생 데이터 가져오기
+        function getStudentsByManager(manager, statusType) {
+            const students = [];
+            const managerAreas = managerInfo[manager] || [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const status = row[3] || '정상';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 담당 구역 확인
+                const building = room.toString().charAt(0).toUpperCase();
+                const floor = room.toString().charAt(1);
+                const areaKey = `${building}동${floor}층`;
+                
+                if (!managerAreas.includes(areaKey)) return;
+                
+                // 상태별 필터링
+                let shouldInclude = false;
+                switch (statusType) {
+                    case 'current':
+                        shouldInclude = (status === '정상' || status === '신규' || status === '이동+');
+                        break;
+                    case 'out':
+                        shouldInclude = (status === '외박');
+                        break;
+                    case 'new':
+                        shouldInclude = (status === '신규');
+                        break;
+                    case 'moveOut':
+                        shouldInclude = (status === '이동-');
+                        break;
+                    case 'moveIn':
+                        shouldInclude = (status === '이동+');
+                        break;
+                    case 'absent':
+                        shouldInclude = (status === '등미');
+                        break;
+                    case 'exit':
+                        shouldInclude = (status === '퇴소');
+                        break;
+                    case 'total':
+                        shouldInclude = true;
+                        break;
+                }
+                
+                if (shouldInclude) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
+        }
 
-     
+        // 상태 텍스트 반환
+        function getStatusText(statusType) {
+            const statusTexts = {
+                'current': '현재원',
+                'out': '외박',
+                'new': '신규',
+                'moveOut': '이동-',
+                'moveIn': '이동+',
+                'absent': '등미',
+                'exit': '퇴소',
+                'total': '전체'
+            };
+            return statusTexts[statusType] || statusType;
+        }
+
+        // 성별 + 상태별 학생 데이터 가져오기
+        function getStudentsByGenderAndStatus(gender, status) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const studentStatus = row[3] || '정상';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                // 성별 확인
+                const building = room.charAt(0);
+                if (!buildingInfo[building] || buildingInfo[building].gender !== gender) return;
+                
+                // 상태별 필터링
+                if (status === 'total') {
+                    if (studentStatus === '정상' || studentStatus === '신규' || studentStatus === '이동+') {
+                        students.push(row);
+                    }
+                } else if (studentStatus === status) {
+                    students.push(row);
+                }
+            });
+            
+            return students;
+        }
+
+        // 층별 학생 데이터 가져오기
+        function getStudentsByFloor(building, floor) {
+            const students = [];
+            
+            sheetsData.forEach((row, index) => {
+                if (index === 0) return;
+                
+                const room = row[1];
+                const name = row[2];
+                const status = row[3] || '정상';
+                
+                if (!room || !name || name === '미배정') return;
+                
+                if (room.startsWith(building + floor)) {
+                    if (status === '정상' || status === '신규' || status === '이동+') {
+                        students.push(row);
+                    }
+                }
+            });
+            
+            return students;
+        }
 
         // 학생 모달 표시
        function showStudentsModal(title, students, additionalNote = null) {
