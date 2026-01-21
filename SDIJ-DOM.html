@@ -780,7 +780,7 @@
     </label>
 </div>
         <!-- 전체 통계 -->
-        <div class="total-stats" id="totalStats">
+        <div class="total-stats" id="totalStats"style="display: none;">
             <div class="stat-card total" onclick="showStudentsByStatus('total')">
                 <h3>총 현재원</h3>
                 <div class="number" id="totalCurrent">0</div>
@@ -814,7 +814,7 @@
         </div>
 
         <!-- 성별 통계 -->
-        <div class="gender-stats">
+        <div class="gender-stats"style="display: none;">
             <div class="gender-section male">
                 <h3>남학생 현황</h3>
                 <div class="gender-cards" id="maleStats">
@@ -848,7 +848,7 @@
                     </div>
                 </div>
             </div>
-            <div class="gender-section female">
+            <div class="gender-section female" style="display: none;">
                 <h3>여학생 현황</h3>
                 <div class="gender-cards" id="femaleStats">
                     <div class="gender-card" onclick="showStudentsByGender('female', 'total')">
@@ -883,7 +883,7 @@
             </div>
         </div>
 <!-- 라이브러리별 통계 -->
-        <div class="gender-stats">
+        <div class="gender-stats" style="display: none;">
             <div class="gender-section" style="border-left: 5px solid #f59e0b;">
                 <h3>A라이브러리 현황</h3>
                 <div class="gender-cards" id="libraryAStats">
@@ -953,7 +953,7 @@
         </div>
 
         <!-- C라이브러리 통계 (전체 너비) -->
-        <div class="gender-stats" style="grid-template-columns: 1fr;">
+        <div class="gender-stats" style="grid-template-columns: 1fr;" style="display: none;">
             <div class="gender-section" style="border-left: 5px solid #8b5cf6;">
                 <h3>C라이브러리 현황</h3>
                 <div class="gender-cards" id="libraryCStats">
@@ -989,7 +989,7 @@
             </div>
         </div>
         <!-- 구역별 담당자 현황 (24개 구역) -->
-        <div class="manager-stats">
+        <div class="manager-stats"style="display: none;">
             <h3>각 동,층별 인원 현황 </h3>
             <div class="area-info-summary">
                 <p>A동~F동까지 각 층별 담당자 및 현황</p>
