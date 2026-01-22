@@ -1025,6 +1025,7 @@
         // 전역 변수
 let sheetsData = [];
 let afSheetData = [];
+let exitedStudentsData = [];  // 퇴소학생 데이터 추가
 let reportData = {};
 let searchTimeout;
 
@@ -1089,6 +1090,8 @@ let searchTimeout;
                 const sheetsLoaded = await loadSheetsData();
 // AF시트 데이터 로드 (확장 검색용)
 await loadAFSheetData();
+                // 퇴소학생 데이터 로드 (확장 검색용)
+await loadExitedStudentsData();
                 if (!sheetsLoaded) {
                     throw new Error('시트 데이터 로드 실패');
                 }
@@ -1501,6 +1504,45 @@ async function loadAFSheetData() {
         }
     } catch (error) {
         console.error('AF시트 로드 실패:', error);
+        return false;
+    }
+}
+        // 퇴소학생 시트 데이터 로드
+async function loadExitedStudentsData() {
+    try {
+        console.log('퇴소학생 시트 데이터 로드 시작...');
+        const csvUrl = `https://docs.google.com/spreadsheets/d/1NuB6N-kdJUXfQgYh3VM6TIfbIIMQj6NvvCNU4TGSJYw/export?format=csv&gid=0`;
+        
+        const csvResponse = await fetch(csvUrl);
+        if (csvResponse.ok) {
+            const csvText = await csvResponse.text();
+            const allData = parseCSV(csvText);
+            exitedStudentsData = [];
+            
+            // 헤더 확인 (첫 번째 행)
+            if (allData.length > 0) {
+                // 첫 번째 행은 헤더이므로 1번 인덱스부터 데이터
+                for (let i = 1; i < allData.length; i++) {
+                    const row = allData[i];
+                    if (row.length > 2) {
+                        const bCol = row[1] || '';  // B열 (이름)
+                        const cCol = row[2] || '';  // C열 (이름 또는 다른 정보)
+                        
+                        // B열이나 C열에 이름이 있으면 저장
+                        if (bCol.trim() || cCol.trim()) {
+                            exitedStudentsData.push({
+                                rowIndex: i,
+                                fullRow: row  // 전체 행 데이터 저장
+                            });
+                        }
+                    }
+                }
+            }
+            console.log('퇴소학생 시트 로드 성공:', exitedStudentsData.length, '행');
+            return true;
+        }
+    } catch (error) {
+        console.error('퇴소학생 시트 로드 실패:', error);
         return false;
     }
 }
@@ -2121,7 +2163,37 @@ function performSearch(query) {
 
     displaySearchResults(results, extendedSearch);
 }
-
+// 3. 확장 검색 활성화 시 퇴소학생 시트에서 추가 검색
+    if (extendedSearch && exitedStudentsData.length > 0) {
+        const foundNames = new Set(results.map(r => r.name));
+        
+        exitedStudentsData.forEach((exitedRow) => {
+            const row = exitedRow.fullRow;
+            const bColName = (row[1] || '').trim().toLowerCase();
+            const cColName = (row[2] || '').trim().toLowerCase();
+            
+            // B열 또는 C열의 이름이 검색어와 일치하는지 확인
+            if (bColName.includes(lowerQuery) || cColName.includes(lowerQuery)) {
+                const displayName = row[1] || row[2];
+                
+                if (!foundNames.has(displayName)) {
+                    // 퇴소학생 시트의 전체 행 데이터를 결과에 추가
+                    results.push({
+                        room: '퇴소(이전호실)',
+                        name: displayName,
+                        status: '퇴소',
+                        rowData: row,
+                        rowIndex: -2,  // 퇴소학생 시트임을 표시
+                        additionalNotes: [],
+                        source: 'exited',
+                        exitedFullRow: row  // 퇴소학생 전체 정보
+                    });
+                    
+                    foundNames.add(displayName);
+                }
+            }
+        });
+    }
         // 검색 결과 표시 (수정: 행 인덱스 기반 클릭)
        // 검색 결과 표시 (수정: AF시트 전용 결과 표시 추가)
 // 검색 결과 표시 (수정: 여러 AF시트 정보 표시)
@@ -2153,7 +2225,20 @@ function displaySearchResults(results, extendedSearch) {
                     </div>
                 `;
             }
-            
+            // 퇴소학생 시트에만 있는 데이터인 경우
+            if (result.source === 'exited') {
+                const exitedRow = result.exitedFullRow;
+                
+                return `
+                    <div class="search-result-item" style="background: #fee2e2;" onclick="showExitedStudentDetail(${JSON.stringify(exitedRow).replace(/"/g, '&quot;')})">
+                        <div class="result-room" style="color: #dc2626;">🚪 퇴소 학생 정보</div>
+                        <div class="result-name">${result.name}</div>
+                        <div style="margin-top: 5px; font-size: 0.85rem; color: #991b1b;">
+                            ※ 퇴소한 학생의 기록입니다. 클릭하여 상세정보 확인
+                        </div>
+                    </div>
+                `;
+            }
             // 기존 시트 데이터인 경우
             const additionalNotesHtml = extendedSearch && result.additionalNotes && result.additionalNotes.length > 0
                 ? result.additionalNotes.map((note, idx) => `
@@ -2219,6 +2304,78 @@ function displaySearchResults(results, extendedSearch) {
         const name = student[2] || '';
         showStudentsModal(`${room} ${name} 학생 정보`, [student], additionalNote);
     }
+    document.getElementById('searchResults').style.display = 'none';
+}
+        // 퇴소학생 상세 정보 표시
+function showExitedStudentDetail(exitedRow) {
+    document.getElementById('modalTitle').textContent = '퇴소 학생 상세 정보';
+    const modalStudentsGrid = document.getElementById('modalStudentsGrid');
+    
+    // 퇴소학생 시트의 열 구조에 맞게 정보 표시
+    // (시트의 실제 열 구조를 확인하여 인덱스 조정 필요)
+    const infoCard = `
+        <div class="student-info-card" style="border-left-color: #dc2626;">
+            <div class="student-info-header">
+                <div class="student-room">🚪 퇴소 학생</div>
+                <div class="student-status status-exit">퇴소</div>
+            </div>
+            <div class="student-details">
+                <div class="detail-item">
+                    <div class="detail-label">이름 (B열)</div>
+                    <div class="detail-value">${exitedRow[1] || ''}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">정보 (C열)</div>
+                    <div class="detail-value">${exitedRow[2] || ''}</div>
+                </div>
+                ${exitedRow[3] ? `
+                <div class="detail-item">
+                    <div class="detail-label">D열</div>
+                    <div class="detail-value">${exitedRow[3]}</div>
+                </div>
+                ` : ''}
+                ${exitedRow[4] ? `
+                <div class="detail-item">
+                    <div class="detail-label">E열</div>
+                    <div class="detail-value">${exitedRow[4]}</div>
+                </div>
+                ` : ''}
+                ${exitedRow[5] ? `
+                <div class="detail-item">
+                    <div class="detail-label">F열</div>
+                    <div class="detail-value">${exitedRow[5]}</div>
+                </div>
+                ` : ''}
+                ${exitedRow[6] ? `
+                <div class="detail-item">
+                    <div class="detail-label">G열</div>
+                    <div class="detail-value">${exitedRow[6]}</div>
+                </div>
+                ` : ''}
+                ${exitedRow[7] ? `
+                <div class="detail-item">
+                    <div class="detail-label">H열</div>
+                    <div class="detail-value">${exitedRow[7]}</div>
+                </div>
+                ` : ''}
+                ${exitedRow[8] ? `
+                <div class="detail-item">
+                    <div class="detail-label">I열</div>
+                    <div class="detail-value">${exitedRow[8]}</div>
+                </div>
+                ` : ''}
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                    <div class="detail-label">비고</div>
+                    <div class="detail-value" style="background: #fee2e2; padding: 8px; border-radius: 6px; color: #991b1b;">
+                        ⚠️ 이 학생은 퇴소 처리된 학생입니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modalStudentsGrid.innerHTML = infoCard;
+    document.getElementById('studentModal').style.display = 'block';
     document.getElementById('searchResults').style.display = 'none';
 }
 
