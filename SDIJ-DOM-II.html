@@ -1516,7 +1516,7 @@ async function loadExitedStudentsData() {
         // API 방식으로 시도 (퇴소학생 시트의 GID 확인 필요)
         const spreadsheetId = '1NuB6N-kdJUXfQgYh3VM6TIfbIIMQj6NvvCNU4TGSJYw';
         const sheetName = 'IF';  // 시트 이름
-        const range = 'B:AP';  // B열부터 Z열까지 모든 데이터
+        const range = 'B:Z';  // B열부터 Z열까지 모든 데이터
         const apiKey = 'AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY';
         
         const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${range}?key=${apiKey}`;
