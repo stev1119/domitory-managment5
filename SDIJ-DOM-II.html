@@ -769,7 +769,7 @@
         <div class="search-section">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="searchInput" placeholder="학생 이름, 기숙사 번호, 라브 좌석번호,전번 등으로 검색...">
+                <input type="text" class="search-input" id="searchInput" placeholder="이름,기숙사 번호, 라브 좌석번호,전화번호,연관된 어떤정보 입력.....">
                 <div class="search-results" id="searchResults"></div>
             </div>
         </div>
@@ -1516,7 +1516,7 @@ async function loadExitedStudentsData() {
         // API 방식으로 시도 (퇴소학생 시트의 GID 확인 필요)
         const spreadsheetId = '1NuB6N-kdJUXfQgYh3VM6TIfbIIMQj6NvvCNU4TGSJYw';
         const sheetName = 'IF';  // 시트 이름
-        const range = 'B:Z';  // B열부터 Z열까지 모든 데이터
+        const range = 'B:AP';  // B열부터 Z열까지 모든 데이터
         const apiKey = 'AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY';
         
         const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${range}?key=${apiKey}`;
@@ -2354,39 +2354,84 @@ function displaySearchResults(results, extendedSearch) {
 // 퇴소학생 상세 정보 표시
 function showExitedStudentDetail(exitedDataStr) {
     try {
+        console.log('퇴소학생 상세정보 표시:', exitedDataStr);
+        
         const exitedData = JSON.parse(exitedDataStr);
         
-        document.getElementById('modalTitle').textContent = '🚪 퇴소 학생 상세 정보';
+        document.getElementById('modalTitle').textContent = '🚪 퇴소 학생 상세 정보 - ' + exitedData.name;
         const modalStudentsGrid = document.getElementById('modalStudentsGrid');
         
         const headers = exitedData.headers || [];
         const row = exitedData.fullRow || [];
         
-        // 헤더와 데이터를 매칭하여 표시
-        let detailsHtml = '';
-        for (let i = 0; i < headers.length && i < row.length; i++) {
+        console.log('헤더:', headers);
+        console.log('데이터 행 길이:', row.length);
+        
+        // AL열 = 인덱스 36 (A=0, B=1, ..., AL=37-1=36, B열부터 시작이므로 -1)
+        // B열부터 시작하므로: AL=36, AM=37, AN=38, AO=39, AP=40
+        // 실제로는 B열이 인덱스 0이므로: AL=36-1=35, AM=36, AN=37, AO=38, AP=39
+        
+        // 상담 내용 추출 (AL~AP열)
+        // B열이 row[0]이므로 AL열은 row[35], AM열은 row[36], ... AP열은 row[39]
+        const counselData = [];
+        for (let i = 35; i <= 39; i++) {
             if (row[i] && row[i].trim()) {
+                counselData.push(row[i].trim());
+            }
+        }
+        
+        console.log('상담 내용 수:', counselData.length);
+        console.log('상담 내용:', counselData);
+        
+        // 기본 정보 표시 (AL~AP 제외)
+        let detailsHtml = '';
+        for (let i = 0; i < row.length && i < 35; i++) {  // AL열 전까지만
+            const headerName = headers[i] || `${String.fromCharCode(66 + i)}열`;  // B부터 시작
+            const cellValue = row[i] || '';
+            
+            if (cellValue && cellValue.trim()) {
                 detailsHtml += `
                     <div class="detail-item">
-                        <div class="detail-label">${headers[i] || `항목 ${i + 1}`}</div>
-                        <div class="detail-value">${row[i]}</div>
+                        <div class="detail-label">${headerName}</div>
+                        <div class="detail-value">${cellValue}</div>
                     </div>
                 `;
             }
         }
         
+        // 상담 내용 섹션 HTML
+        const counselHtml = counselData.length > 0 ? `
+            <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
+                <div class="detail-label" style="font-size: 1.1rem; font-weight: 700; color: #dc2626; margin-bottom: 10px;">
+                    ◆ 상담 기록 (${counselData.length}건) - 퇴소 전 상담
+                </div>
+                <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); padding: 15px; border-radius: 12px; border-left: 4px solid #dc2626;">
+                    ${counselData.map((counsel, index) => `
+                        <div style="margin-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; padding-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; border-bottom: ${index < counselData.length - 1 ? '1px solid #fecaca' : 'none'};">
+                            <div style="font-size: 0.75rem; color: #991b1b; font-weight: 600; margin-bottom: 4px;">
+                                ${index + 1}차 상담 (퇴소 전)
+                            </div>
+                            <div style="font-size: 0.9rem; color: #450a0a; line-height: 1.6; white-space: pre-wrap;">
+                                ${counsel}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        ` : '';
+        
         const infoCard = `
-            <div class="student-info-card" style="border-left-color: #dc2626;">
+            <div class="student-info-card" style="border-left-color: #dc2626; background: linear-gradient(135deg, #fee2e2, #fecaca);">
                 <div class="student-info-header">
-                    <div class="student-room">🚪 퇴소 학생</div>
+                    <div class="student-room" style="color: #dc2626;">🚪 퇴소 학생</div>
                     <div class="student-status status-exit">퇴소</div>
                 </div>
                 <div class="student-details">
                     ${detailsHtml}
+                    ${counselHtml}
                     <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
-                        <div class="detail-label">비고</div>
-                        <div class="detail-value" style="background: #fee2e2; padding: 12px; border-radius: 8px; color: #991b1b; font-weight: 600;">
-                            ⚠️ 이 학생은 퇴소 학생입니다.
+                        <div class="detail-value" style="background: #7f1d1d; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-align: center;">
+                            ⚠️ 이 학생은 퇴원한 학생입니다
                         </div>
                     </div>
                 </div>
@@ -2398,8 +2443,8 @@ function showExitedStudentDetail(exitedDataStr) {
         document.getElementById('searchResults').style.display = 'none';
         
     } catch (error) {
-        console.error('퇴소학생 정보 표시 오류:', error);
-        alert('퇴소학생 정보를 표시하는 중 오류가 발생했습니다.');
+        console.error('❌ 퇴소학생 정보 표시 오류:', error);
+        alert('퇴소학생 정보를 표시하는 중 오류가 발생했습니다: ' + error.message);
     }
 }
         // 상태별 학생 데이터 가져오기
