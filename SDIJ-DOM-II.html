@@ -2246,15 +2246,12 @@ function displaySearchResults(results, extendedSearch) {
             console.log('결과 표시:', result.name, 'source:', result.source);
             
             // 퇴소학생 시트에만 있는 데이터인 경우
-           if (result.source === 'exited') {
-    // JSON 데이터를 안전하게 인코딩
-    const exitedDataStr = JSON.stringify(result.exitedData)
-        .replace(/\\/g, '\\\\')
-        .replace(/`/g, '\\`')
-        .replace(/\$/g, '\\$');
+          if (result.source === 'exited') {
+    // 결과 배열의 인덱스를 저장
+    const resultIndex = results.indexOf(result);
     
     return `
-        <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick="showExitedStudentDetailSafe(this)" data-exited='${exitedDataStr}'>
+        <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick="showExitedStudentByIndex(${resultIndex})">
                         <div class="result-room" style="color: #dc2626; font-weight: 700;">🚪 퇴소 학생 정보</div>
                         <div class="result-name" style="font-size: 1.1rem; font-weight: 600; color: #7f1d1d;">${result.name}</div>
                         <div class="result-status" style="color: #991b1b; margin-top: 5px;">상태: 퇴소</div>
