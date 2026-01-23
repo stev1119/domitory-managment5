@@ -769,7 +769,7 @@
         <div class="search-section">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" id="searchInput" placeholder="이름,기숙사 번호, 라브 좌석번호,전화번호,연관된 어떤정보 입력.....">
+                <input type="text" class="search-input" id="searchInput" placeholder="학생 이름, 기숙사 번호, 라브 좌석번호,전번 등으로 검색...">
                 <div class="search-results" id="searchResults"></div>
             </div>
         </div>
@@ -1516,7 +1516,7 @@ async function loadExitedStudentsData() {
         // API 방식으로 시도 (퇴소학생 시트의 GID 확인 필요)
         const spreadsheetId = '1NuB6N-kdJUXfQgYh3VM6TIfbIIMQj6NvvCNU4TGSJYw';
         const sheetName = 'IF';  // 시트 이름
-        const range = 'B:AP';  // B열부터 Z열까지 모든 데이터
+        const range = 'B:Z';  // B열부터 Z열까지 모든 데이터
         const apiKey = 'AIzaSyAAaDiNQC3o779j_4pzVC4ouuZr48Y-PbY';
         
         const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${range}?key=${apiKey}`;
@@ -2246,12 +2246,11 @@ function displaySearchResults(results, extendedSearch) {
             console.log('결과 표시:', result.name, 'source:', result.source);
             
             // 퇴소학생 시트에만 있는 데이터인 경우
-          if (result.source === 'exited') {
-    // 결과 배열의 인덱스를 저장
-    const resultIndex = results.indexOf(result);
-    
-    return `
-        <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick="showExitedStudentByIndex(${resultIndex})">
+            if (result.source === 'exited') {
+                const exitedDataStr = JSON.stringify(result.exitedData);
+                
+                return `
+                    <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick='showExitedStudentDetail(\`${exitedDataStr}\`)'>
                         <div class="result-room" style="color: #dc2626; font-weight: 700;">🚪 퇴소 학생 정보</div>
                         <div class="result-name" style="font-size: 1.1rem; font-weight: 600; color: #7f1d1d;">${result.name}</div>
                         <div class="result-status" style="color: #991b1b; margin-top: 5px;">상태: 퇴소</div>
@@ -2351,97 +2350,43 @@ function displaySearchResults(results, extendedSearch) {
     }
     document.getElementById('searchResults').style.display = 'none';
 }
-        
-// 퇴소학생 정보를 안전하게 전달 확실하게!!!
-// 퇴소학생 상세 정보 표시 (데이터 객체를 직접 받음)
-function showExitedStudentDetailFromData(exitedData) {
+        // 퇴소학생 상세 정보 표시
+// 퇴소학생 상세 정보 표시
+function showExitedStudentDetail(exitedDataStr) {
     try {
-        console.log('퇴소학생 상세정보 표시');
-        console.log('학생 이름:', exitedData.name);
+        const exitedData = JSON.parse(exitedDataStr);
         
-        document.getElementById('modalTitle').textContent = '🚪 퇴소 학생 상세 정보 - ' + exitedData.name;
+        document.getElementById('modalTitle').textContent = '🚪 퇴소 학생 상세 정보';
         const modalStudentsGrid = document.getElementById('modalStudentsGrid');
         
         const headers = exitedData.headers || [];
         const row = exitedData.fullRow || [];
         
-        console.log('데이터 행 길이:', row.length);
-        
-        // 상담 내용 추출 (AL~AP열)
-        // B열이 row[0]이므로 AL열은 row[35], AM열은 row[36], ... AP열은 row[39]
-        const counselData = [];
-        for (let i = 35; i <= 39; i++) {
-            if (row[i] && row[i].trim()) {
-                // HTML 특수문자 이스케이프
-                const counselText = String(row[i])
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-                counselData.push(counselText);
-            }
-        }
-        
-        console.log('상담 내용 수:', counselData.length);
-        
-        // 기본 정보 표시 (AL~AP 제외)
+        // 헤더와 데이터를 매칭하여 표시
         let detailsHtml = '';
-        for (let i = 0; i < row.length && i < 35; i++) {
-            const headerName = headers[i] || `${String.fromCharCode(66 + i)}열`;
-            const cellValue = row[i] || '';
-            
-            if (cellValue && cellValue.trim()) {
-                // HTML 특수문자 이스케이프
-                const safeValue = String(cellValue)
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/'/g, '&#039;');
-                
+        for (let i = 0; i < headers.length && i < row.length; i++) {
+            if (row[i] && row[i].trim()) {
                 detailsHtml += `
                     <div class="detail-item">
-                        <div class="detail-label">${headerName}</div>
-                        <div class="detail-value">${safeValue}</div>
+                        <div class="detail-label">${headers[i] || `항목 ${i + 1}`}</div>
+                        <div class="detail-value">${row[i]}</div>
                     </div>
                 `;
             }
         }
         
-        // 상담 내용 섹션 HTML
-        const counselHtml = counselData.length > 0 ? `
-            <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
-                <div class="detail-label" style="font-size: 1.1rem; font-weight: 700; color: #dc2626; margin-bottom: 10px;">
-                    ◆ 상담 기록 (${counselData.length}건) - 퇴소 전 상담
-                </div>
-                <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); padding: 15px; border-radius: 12px; border-left: 4px solid #dc2626;">
-                    ${counselData.map((counsel, index) => `
-                        <div style="margin-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; padding-bottom: ${index < counselData.length - 1 ? '12px' : '0'}; border-bottom: ${index < counselData.length - 1 ? '1px solid #fecaca' : 'none'};">
-                            <div style="font-size: 0.75rem; color: #991b1b; font-weight: 600; margin-bottom: 4px;">
-                                ${index + 1}차 상담 (퇴소 전)
-                            </div>
-                            <div style="font-size: 0.9rem; color: #450a0a; line-height: 1.6; white-space: pre-wrap;">
-                                ${counsel}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        ` : '';
-        
         const infoCard = `
-            <div class="student-info-card" style="border-left-color: #dc2626; background: linear-gradient(135deg, #fee2e2, #fecaca);">
+            <div class="student-info-card" style="border-left-color: #dc2626;">
                 <div class="student-info-header">
-                    <div class="student-room" style="color: #dc2626;">🚪 퇴소 학생</div>
+                    <div class="student-room">🚪 퇴소 학생</div>
                     <div class="student-status status-exit">퇴소</div>
                 </div>
                 <div class="student-details">
                     ${detailsHtml}
-                    ${counselHtml}
                     <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
-                        <div class="detail-value" style="background: #7f1d1d; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-align: center;">
-                            ⚠️ 이 학생은 퇴소 처리된 학생입니다
+                        <div class="detail-label">비고</div>
+                        <div class="detail-value" style="background: #fee2e2; padding: 12px; border-radius: 8px; color: #991b1b; font-weight: 600;">
+                            ⚠️ 이 학생은 퇴소 학생입니다.
                         </div>
                     </div>
                 </div>
@@ -2453,8 +2398,8 @@ function showExitedStudentDetailFromData(exitedData) {
         document.getElementById('searchResults').style.display = 'none';
         
     } catch (error) {
-        console.error('❌ 퇴소학생 정보 표시 오류:', error);
-        alert('퇴소학생 정보를 표시하는 중 오류가 발생했습니다: ' + error.message);
+        console.error('퇴소학생 정보 표시 오류:', error);
+        alert('퇴소학생 정보를 표시하는 중 오류가 발생했습니다.');
     }
 }
         // 상태별 학생 데이터 가져오기
