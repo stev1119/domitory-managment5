@@ -2246,11 +2246,15 @@ function displaySearchResults(results, extendedSearch) {
             console.log('결과 표시:', result.name, 'source:', result.source);
             
             // 퇴소학생 시트에만 있는 데이터인 경우
-            if (result.source === 'exited') {
-                const exitedDataStr = JSON.stringify(result.exitedData);
-                
-                return `
-                    <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick='showExitedStudentDetail(\`${exitedDataStr}\`)'>
+           if (result.source === 'exited') {
+    // JSON 데이터를 안전하게 인코딩
+    const exitedDataStr = JSON.stringify(result.exitedData)
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\$/g, '\\$');
+    
+    return `
+        <div class="search-result-item" style="background: #fee2e2; border-left: 4px solid #dc2626;" onclick="showExitedStudentDetailSafe(this)" data-exited='${exitedDataStr}'>
                         <div class="result-room" style="color: #dc2626; font-weight: 700;">🚪 퇴소 학생 정보</div>
                         <div class="result-name" style="font-size: 1.1rem; font-weight: 600; color: #7f1d1d;">${result.name}</div>
                         <div class="result-status" style="color: #991b1b; margin-top: 5px;">상태: 퇴소</div>
@@ -2350,13 +2354,13 @@ function displaySearchResults(results, extendedSearch) {
     }
     document.getElementById('searchResults').style.display = 'none';
 }
-        // 퇴소학생 상세 정보 표시
-// 퇴소학생 상세 정보 표시
-function showExitedStudentDetail(exitedDataStr) {
-    try {
-        console.log('퇴소학생 상세정보 표시:', exitedDataStr);
         
-        const exitedData = JSON.parse(exitedDataStr);
+// 퇴소학생 정보를 안전하게 전달 확실하게!!!
+// 퇴소학생 상세 정보 표시 (데이터 객체를 직접 받음)
+function showExitedStudentDetailFromData(exitedData) {
+    try {
+        console.log('퇴소학생 상세정보 표시');
+        console.log('학생 이름:', exitedData.name);
         
         document.getElementById('modalTitle').textContent = '🚪 퇴소 학생 상세 정보 - ' + exitedData.name;
         const modalStudentsGrid = document.getElementById('modalStudentsGrid');
@@ -2364,36 +2368,45 @@ function showExitedStudentDetail(exitedDataStr) {
         const headers = exitedData.headers || [];
         const row = exitedData.fullRow || [];
         
-        console.log('헤더:', headers);
         console.log('데이터 행 길이:', row.length);
-        
-        // AL열 = 인덱스 36 (A=0, B=1, ..., AL=37-1=36, B열부터 시작이므로 -1)
-        // B열부터 시작하므로: AL=36, AM=37, AN=38, AO=39, AP=40
-        // 실제로는 B열이 인덱스 0이므로: AL=36-1=35, AM=36, AN=37, AO=38, AP=39
         
         // 상담 내용 추출 (AL~AP열)
         // B열이 row[0]이므로 AL열은 row[35], AM열은 row[36], ... AP열은 row[39]
         const counselData = [];
         for (let i = 35; i <= 39; i++) {
             if (row[i] && row[i].trim()) {
-                counselData.push(row[i].trim());
+                // HTML 특수문자 이스케이프
+                const counselText = String(row[i])
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+                counselData.push(counselText);
             }
         }
         
         console.log('상담 내용 수:', counselData.length);
-        console.log('상담 내용:', counselData);
         
         // 기본 정보 표시 (AL~AP 제외)
         let detailsHtml = '';
-        for (let i = 0; i < row.length && i < 35; i++) {  // AL열 전까지만
-            const headerName = headers[i] || `${String.fromCharCode(66 + i)}열`;  // B부터 시작
+        for (let i = 0; i < row.length && i < 35; i++) {
+            const headerName = headers[i] || `${String.fromCharCode(66 + i)}열`;
             const cellValue = row[i] || '';
             
             if (cellValue && cellValue.trim()) {
+                // HTML 특수문자 이스케이프
+                const safeValue = String(cellValue)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+                
                 detailsHtml += `
                     <div class="detail-item">
                         <div class="detail-label">${headerName}</div>
-                        <div class="detail-value">${cellValue}</div>
+                        <div class="detail-value">${safeValue}</div>
                     </div>
                 `;
             }
@@ -2431,7 +2444,7 @@ function showExitedStudentDetail(exitedDataStr) {
                     ${counselHtml}
                     <div class="detail-item" style="grid-column: 1 / -1; margin-top: 15px;">
                         <div class="detail-value" style="background: #7f1d1d; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-align: center;">
-                            ⚠️ 이 학생은 퇴원한 학생입니다
+                            ⚠️ 이 학생은 퇴소 처리된 학생입니다
                         </div>
                     </div>
                 </div>
