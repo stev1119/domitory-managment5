@@ -2474,5 +2474,58 @@ let finalMemo = memo;
         // 5분마다 자동 새로고침
         setInterval(refreshData, 60 * 60 * 1000);
     </script>
+        <!-- 개발자 도구 방지 코드 -->
+    <script>
+        // F12 키 방지
+        document.addEventListener('keydown', function(e) {
+            // F12 키
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+I (개발자 도구)
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+J (콘솔)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+C (요소 검사)
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+U (소스 보기)
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+I
+            if (e.metaKey && e.altKey && e.key === 'i') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+J
+            if (e.metaKey && e.altKey && e.key === 'j') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+C
+            if (e.metaKey && e.altKey && e.key === 'c') {
+                e.preventDefault();
+                return false;
+            }
+        });
+      </script>  
 </body>
 </html>
