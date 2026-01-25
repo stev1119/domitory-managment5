@@ -2726,5 +2726,97 @@ let finalMemo = memo;
         // 5분마다 자동 새로고침
         setInterval(refreshData, 60 * 60 * 1000);
     </script>
+    </script>
+    
+    <!-- 개발자 도구 방지 코드 -->
+    <script>
+        // F12 키 방지
+        document.addEventListener('keydown', function(e) {
+            // F12 키
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+I (개발자 도구)
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+J (콘솔)
+            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+Shift+C (요소 검사)
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Ctrl+U (소스 보기)
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+I
+            if (e.metaKey && e.altKey && e.key === 'i') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+J
+            if (e.metaKey && e.altKey && e.key === 'j') {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Mac용: Cmd+Option+C
+            if (e.metaKey && e.altKey && e.key === 'c') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // 우클릭 방지 (선택사항)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // 개발자 도구 열림 감지 및 경고
+        (function() {
+            const devtools = /./;
+            devtools.toString = function() {
+                this.opened = true;
+            };
+            
+            const checkStatus = setInterval(function() {
+                console.log('%c', devtools);
+                if (devtools.opened) {
+                    alert('⚠️ 개발자 도구 사용이 감지되었습니다.');
+                    // 원하면 페이지 리다이렉트도 가능
+                    // window.location.href = 'about:blank';
+                }
+                devtools.opened = false;
+            }, 1000);
+        })();
+        
+        // 창 크기 변화 감지 (개발자 도구가 열리면 창 크기가 변함)
+        let windowWidth = window.outerWidth - window.innerWidth;
+        let windowHeight = window.outerHeight - window.innerHeight;
+        
+        setInterval(function() {
+            if (window.outerWidth - window.innerWidth > windowWidth + 100 || 
+                window.outerHeight - window.innerHeight > windowHeight + 100) {
+                // 개발자 도구가 열린 것으로 추정
+                console.clear();
+            }
+        }, 500);
+    </script>
 </body>
 </html>
+
