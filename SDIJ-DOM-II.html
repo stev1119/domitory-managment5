@@ -2787,24 +2787,7 @@ let finalMemo = memo;
             return false;
         });
         
-        // 개발자 도구 열림 감지 및 경고
-        (function() {
-            const devtools = /./;
-            devtools.toString = function() {
-                this.opened = true;
-            };
-            
-            const checkStatus = setInterval(function() {
-                console.log('%c', devtools);
-                if (devtools.opened) {
-                    alert('⚠️ 개발자 도구 사용이 감지되었습니다.');
-                    // 원하면 페이지 리다이렉트도 가능
-                    // window.location.href = 'about:blank';
-                }
-                devtools.opened = false;
-            }, 1000);
-        })();
-        
+
 
     </script>
 </body>
