@@ -1053,18 +1053,18 @@ let searchTimeout;
             '최금주T': ['C동2층'],
             '나정우T': ['C동3층'],
             '고승완T': ['C동4층'],
-            '이상민T': ['D동1층'],
-            '이상민T2': ['D동2층'],
-            '남인달T': ['D동3층'],
-            '김영현T': ['D동4층'],
-            '이은영T': ['E동1층'],
-            '원현주T': ['E동2층'],
-            '진정현T': ['E동3층'],
-            '김혜정T': ['E동4층'],
-            '조영권T': ['F동1층'],
-            '조영권T2': ['F동2층'],
-            '이시우T': ['F동3층'],
-            '이영운T': ['F동4층']
+           '이상민T': ['D동2층'],
+'이상민T2': ['D동3층'],
+'남인달T': ['D동4층'],
+'김영현T': ['D동5층'],
+'이은영T': ['E동2층'],
+'원현주T': ['E동3층'],
+'진정현T': ['E동4층'],
+'김혜정T': ['E동5층'],
+'조영권T': ['F동2층'],
+'조영권T2': ['F동3층'],
+'이시우T': ['F동4층'],
+'이영운T': ['F동5층']
         };
 
         // 3인실 셀 범위
@@ -1634,14 +1634,16 @@ async function loadExitedStudentsData() {
             };
 
             // 각 동별로 초기화
-            Object.keys(buildingInfo).forEach(building => {
-                stats.buildings[building] = {
-                    floors: { '1': 0, '2': 0, '3': 0, '4': 0 },
-                    total: 0,
-                    gender: buildingInfo[building].gender
-                };
-            });
-
+          Object.keys(buildingInfo).forEach(building => {
+    const isDefBuilding = ['D', 'E', 'F'].includes(building);
+    stats.buildings[building] = {
+        floors: isDefBuilding 
+            ? { '2': 0, '3': 0, '4': 0, '5': 0 }
+            : { '1': 0, '2': 0, '3': 0, '4': 0 },
+        total: 0,
+        gender: buildingInfo[building].gender
+    };
+});
             // 담당자별 통계 초기화
             Object.keys(managerInfo).forEach(manager => {
                 stats.managers[manager] = {
@@ -1731,12 +1733,18 @@ async function loadExitedStudentsData() {
                     updateStatsByStatus(stats.libraryC, status);
                 }
                 // 동별 통계 업데이트 (현재원만)
-                if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
-                    if (floor >= '1' && floor <= '4') {
-                        stats.buildings[building].floors[floor]++;
-                        stats.buildings[building].total++;
-                    }
-                }
+if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status)) {
+    // D, E, F동은 실제 호실이 2~4층 범위이지만 5층으로 표시
+    const displayFloor = ['D', 'E', 'F'].includes(building) && floor === '4' ? '5' : floor;
+    const validFloors = ['D', 'E', 'F'].includes(building) 
+        ? ['2', '3', '4', '5'] 
+        : ['1', '2', '3', '4'];
+    
+    if (validFloors.includes(displayFloor)) {
+        stats.buildings[building].floors[displayFloor]++;
+        stats.buildings[building].total++;
+    }
+}
 
                 // 담당자별 통계 업데이트
                 const areaKey = `${building}동${floor}층`;
@@ -1934,8 +1942,11 @@ async function loadExitedStudentsData() {
                 floorsGrid.className = 'floors-grid';
                 
                 // 각 층별 카드 생성
-                for (let floor = 1; floor <= 4; floor++) {
-                    const areaKey = `${building}동${floor}층`;
+const floorStart = ['D', 'E', 'F'].includes(building) ? 2 : 1;
+const floorEnd = ['D', 'E', 'F'].includes(building) ? 5 : 4;
+
+for (let floor = floorStart; floor <= floorEnd; floor++) {
+    const areaKey = `${building}동${floor}층`;
                     const manager = Object.keys(managerInfo).find(mgr => 
                         managerInfo[mgr].includes(areaKey)
                     );
@@ -2028,7 +2039,9 @@ areaCard.innerHTML = `
                 const roomBuilding = room.toString().charAt(0).toUpperCase();
                 const roomFloor = room.toString().charAt(1);
                 
-                if (roomBuilding !== building || roomFloor !== floor) return;
+// D, E, F동 5층은 실제 호실 4층(4XX)과 매칭
+const matchFloor = (['D', 'E', 'F'].includes(building) && floor === '5') ? '4' : floor;
+if (roomBuilding !== building || roomFloor !== matchFloor) return;
                 
                 // 상태별 필터링
                 let shouldInclude = false;
