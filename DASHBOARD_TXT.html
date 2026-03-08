@@ -2043,8 +2043,9 @@ if (stats.buildings[building] && ['정상', '신규', '이동+'].includes(status
                     break;
                 default:
                     // 기본값 처리 (정상으로 간주)
-                    statObj.current++;
-                    break;
+                    console.warn('알 수 없는 상태값:', status);
+    break;
+                 
             }
         }
 
@@ -3232,9 +3233,10 @@ function showRoomDetail(roomId) {
         
     </script>
     </script>
-    
+   
     <!-- 개발자 도구 방지 코드 -->
-    <script>
+    /* 
+   <script>
         // F12 키 방지
         document.addEventListener('keydown', function(e) {
             // F12 키
@@ -3291,6 +3293,7 @@ function showRoomDetail(roomId) {
             e.preventDefault();
             return false;
         });
-          </script>
+      </script>
+     */ 
 </body>
 </html>
