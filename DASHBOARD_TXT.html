@@ -1903,9 +1903,7 @@ Object.keys(buildingInfo).forEach(building => {
                     continue;
                 }
 
-                processedCount++;
-
-                // 건물과 층 추출
+                              // 건물과 층 추출
                 const building = room.toString().charAt(0).toUpperCase();
                 const floor = room.toString().charAt(1);
 
@@ -1914,7 +1912,7 @@ Object.keys(buildingInfo).forEach(building => {
                     console.warn('알 수 없는 건물:', building, 'in room:', room);
                     continue;
                 }
-
+  processedCount++;
                 const buildingGender = buildingInfo[building].gender;
 
                 // 전체 통계 업데이트
