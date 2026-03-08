@@ -1825,7 +1825,7 @@ async function loadAFSheetData() {
                 floorsGrid.className = 'floors-grid';
                 
                 // 각 층별 카드 생성
-                for (let floor = 1; floor <= 4; floor++) {
+                for (let floor = 1; floor <= 5; floor++) {
                     const areaKey = `${building}동${floor}층`;
                     const manager = Object.keys(managerInfo).find(mgr => 
                         managerInfo[mgr].includes(areaKey)
