@@ -740,13 +740,26 @@
         function updateStudentStatus(index, status) {
             currentStudents[index].status = status;
             updateStats();
+            applyStatusColor(event.target, status);
         }
 
         // 학생 메모 업데이트 (원본 그대로)
         function updateStudentMemo(index, memo) {
             currentStudents[index].memo = memo;
         }
-
+function applyStatusColor(select, status) {
+    const colors = {
+        '정상': '#1f2937',
+        '외박': '#ef4444',
+        '퇴소': '#10b981',
+        '미배정': '#f59e0b',
+        '이동-': '#3b82f6',
+        '이동+': '#3b82f6',
+        '신규': '#f97316',
+        '등미': '#6b7280'
+    };
+    select.style.color = colors[status] || '#1f2937';
+}
         // 통계 자동 집계 (원본 그대로)
         function updateStats() {
             const stats = {
