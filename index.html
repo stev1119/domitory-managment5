@@ -169,6 +169,15 @@
             background: #f9fafb;
             border-radius: 10px;
         }
+        .students-header h3 {
+    font-size: 1.5rem;  /* ✅ 크기 증가 */
+    font-weight: 800;   /* ✅ 두껍게 */
+}
+
+.students-header span {
+    font-size: 1.3rem;  /* ✅ 크기 증가 */
+    font-weight: 700;   /* ✅ 두껍게 */
+}
 
         .student-card {
             background: white;
@@ -189,7 +198,7 @@
 
         .room-number {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             color: #4f46e5;
             text-align: center;
             padding: 8px;
@@ -200,14 +209,15 @@
         .student-name {
             font-weight: 600;
             color: #1f2937;
-            font-size: 1rem;
+            font-size: 1.4rem;
         }
 
         .student-status select {
-            padding: 8px 12px;
+            padding: 12px 16px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
+            font-weight: 700;
             background: white;
             outline: none;
             transition: all 0.3s ease;
@@ -280,7 +290,24 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+ .refresh-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin-top: 15px;
+        }
 
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
         .loading {
             display: none;
             text-align: center;
@@ -375,32 +402,32 @@
             <div class="stats-grid">
                 <div class="stat-card current">
                     <h3>현재원</h3>
-                    <input type="number" id="current-count" class="number" value="0" min="0">
-                </div>
+                    <div class="number" id="current-count">0</div>
+</div>
                 <div class="stat-card out">
                     <h3>외박</h3>
-                    <input type="number" id="out-count" class="number" value="0" min="0">
-                </div>
+                   <div class="number" id="out-count">0</div>
+</div>
                 <div class="stat-card new">
                     <h3>신규</h3>
-                    <input type="number" id="new-count" class="number" value="0" min="0">
-                </div>
+                   <div class="number" id="new-count">0</div>
+</div>
                 <div class="stat-card move-out">
                     <h3>이동-</h3>
                     <input type="number" id="move-out-count" class="number" value="0" min="0">
                 </div>
                 <div class="stat-card move-in">
                     <h3>이동+</h3>
-                    <input type="number" id="move-in-count" class="number" value="0" min="0">
-                </div>
+                    <div class="number" id="move-in-count">0</div>
+</div>
                 <div class="stat-card absent">
                     <h3>등미</h3>
-                    <input type="number" id="absent-count" class="number" value="0" min="0">
-                </div>
+                    <div class="number" id="absent-count">0</div>
+</div>
                 <div class="stat-card etc">
                     <h3>퇴소</h3>
-                    <input type="number" id="etc-count" class="number" value="0" min="0">
-                </div>
+                    <div class="number" id="etc-count">0</div>
+</div>
             </div>
 
             <!-- 선택 컨트롤 -->
@@ -484,7 +511,9 @@
                      인원보고 제출
                 </button>
             </div>
-
+<button class="refresh-btn" onclick="location.reload()">
+    🔄 새로고침
+</button>
             <!-- 로딩 및 메시지 -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
@@ -765,13 +794,16 @@
                 s.name !== '미배정' && (s.status === '정상' || s.status === '신규' || s.status === '이동+')
             ).length;
 
-            document.getElementById('current-count').value = stats.current;
-            document.getElementById('out-count').value = stats.out;
-            document.getElementById('new-count').value = stats.new;
-            document.getElementById('move-out-count').value = stats.moveOut;
-            document.getElementById('move-in-count').value = stats.moveIn;
-            document.getElementById('absent-count').value = stats.absent;
-            document.getElementById('etc-count').value = stats.etc;
+        // 기존 (전부 .value)
+
+// 수정 (이동- 만 .value, 나머지는 .textContent)
+document.getElementById('current-count').textContent = stats.current;
+document.getElementById('out-count').textContent = stats.out;
+document.getElementById('new-count').textContent = stats.new;
+document.getElementById('move-out-count').value = stats.moveOut;  // 이동- 유지
+document.getElementById('move-in-count').textContent = stats.moveIn;
+document.getElementById('absent-count').textContent = stats.absent;
+document.getElementById('etc-count').textContent = stats.etc;
         }
 
         // 보고서 제출 (원본 그대로)
@@ -973,18 +1005,17 @@
 
         // 잔디 웹훅 전송 - 시간 표시 추가
         async function sendToJandi(manager, building, floor, isModification) {
-          const webhookUrl = 'https://wh.jandi.com/connect-api/webhook/29522216/6d39892bb9a7a85d3f3d7842cf283ebb';
-             //  const webhookUrl = 'https://wh.jandi.com/connect-api/webhook/29522216/f77b6b9921e67111a0c7fe2731edad0a';
+           // const webhookUrl = 'https://wh.jandi.com/connect-api/webhook/29522216/3d9603c3b428b386c0d640758e236cb4';
+              const webhookUrl = 'https://wh.jandi.com/connect-api/webhook/29522216/6d39892bb9a7a85d3f3d7842cf283ebb';
             const stats = {
-                current: parseInt(document.getElementById('current-count').value),
-                out: parseInt(document.getElementById('out-count').value),
-                new: parseInt(document.getElementById('new-count').value),
-                moveOut: parseInt(document.getElementById('move-out-count').value),
-                moveIn: parseInt(document.getElementById('move-in-count').value),
-                absent: parseInt(document.getElementById('absent-count').value),
-                etc: parseInt(document.getElementById('etc-count').value)
+current: parseInt(document.getElementById('current-count').textContent),
+out: parseInt(document.getElementById('out-count').textContent),
+new: parseInt(document.getElementById('new-count').textContent),
+moveOut: parseInt(document.getElementById('move-out-count').value), // 이동- 만 .value 유지
+moveIn: parseInt(document.getElementById('move-in-count').textContent),
+absent: parseInt(document.getElementById('absent-count').textContent),
+etc: parseInt(document.getElementById('etc-count').textContent)
             };
-
             // 특별 상태 학생들 정보 수집 (이름이 없어도 비고가 있으면 포함)
             const specialStudents = {
                 외박: currentStudents.filter(s => s.status === '외박' && (s.name !== '미배정' || s.memo.trim())),
@@ -992,7 +1023,8 @@
                 '이동-': currentStudents.filter(s => s.status === '이동-' && (s.name !== '미배정' || s.memo.trim())),
                 '이동+': currentStudents.filter(s => s.status === '이동+' && (s.name !== '미배정' || s.memo.trim())),
                 등미: currentStudents.filter(s => s.status === '등미' && (s.name !== '미배정' || s.memo.trim())),
-                퇴소: currentStudents.filter(s => s.status === '퇴소' && (s.name !== '미배정' || s.memo.trim()))
+                퇴소: currentStudents.filter(s => s.status === '퇴소' && (s.name !== '미배정' || s.memo.trim())),
+                정상: currentStudents.filter(s => s.status === '정상' && s.memo && s.memo.trim())
             };
 
             // 현재 시간 포맷팅 (한국 시간)
