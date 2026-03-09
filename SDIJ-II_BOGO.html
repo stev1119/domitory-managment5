@@ -280,7 +280,24 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+ .refresh-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            margin-top: 15px;
+        }
 
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
         .loading {
             display: none;
             text-align: center;
@@ -484,7 +501,9 @@
                      인원보고 제출
                 </button>
             </div>
-
+<button class="refresh-btn" onclick="location.reload()">
+    🔄 새로고침
+</button>
             <!-- 로딩 및 메시지 -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
