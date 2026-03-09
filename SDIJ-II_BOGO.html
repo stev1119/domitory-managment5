@@ -765,11 +765,14 @@
                 s.name !== '미배정' && (s.status === '정상' || s.status === '신규' || s.status === '이동+')
             ).length;
 
-            document.getElementById('current-count').textContent = stats.current;
+        // 기존 (전부 .value)
+
+// 수정 (이동- 만 .value, 나머지는 .textContent)
+document.getElementById('current-count').textContent = stats.current;
 document.getElementById('out-count').textContent = stats.out;
 document.getElementById('new-count').textContent = stats.new;
-            document.getElementById('move-out-count').value = stats.moveOut;
-            document.getElementById('move-in-count').textContent = stats.moveIn;
+document.getElementById('move-out-count').value = stats.moveOut;  // 이동- 유지
+document.getElementById('move-in-count').textContent = stats.moveIn;
 document.getElementById('absent-count').textContent = stats.absent;
 document.getElementById('etc-count').textContent = stats.etc;
         }
