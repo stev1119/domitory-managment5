@@ -1005,7 +1005,7 @@ moveOut: parseInt(document.getElementById('move-out-count').value), // 이동- �
 moveIn: parseInt(document.getElementById('move-in-count').textContent),
 absent: parseInt(document.getElementById('absent-count').textContent),
 etc: parseInt(document.getElementById('etc-count').textContent)
-
+            };
             // 특별 상태 학생들 정보 수집 (이름이 없어도 비고가 있으면 포함)
             const specialStudents = {
                 외박: currentStudents.filter(s => s.status === '외박' && (s.name !== '미배정' || s.memo.trim())),
