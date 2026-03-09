@@ -726,7 +726,7 @@
                         </select>
                     </div>
                     <div class="student-memo">
-                        <input type="text" value="${student.memo}" placeholder="비고" onchange="updateStudentMemo(${index}, this.value)">
+                        <input type="text" value="${student.memo}" placeholder="비고" oninput="updateStudentMemo(${index}, this.value)">
                     </div>
                 `;
                 studentsGrid.appendChild(studentCard);
@@ -1023,7 +1023,8 @@ etc: parseInt(document.getElementById('etc-count').textContent)
                 '이동-': currentStudents.filter(s => s.status === '이동-' && (s.name !== '미배정' || s.memo.trim())),
                 '이동+': currentStudents.filter(s => s.status === '이동+' && (s.name !== '미배정' || s.memo.trim())),
                 등미: currentStudents.filter(s => s.status === '등미' && (s.name !== '미배정' || s.memo.trim())),
-                퇴소: currentStudents.filter(s => s.status === '퇴소' && (s.name !== '미배정' || s.memo.trim()))
+                퇴소: currentStudents.filter(s => s.status === '퇴소' && (s.name !== '미배정' || s.memo.trim())),
+                정상: currentStudents.filter(s => s.status === '정상' && s.memo && s.memo.trim())
             };
 
             // 현재 시간 포맷팅 (한국 시간)
