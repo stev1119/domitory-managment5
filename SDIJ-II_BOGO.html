@@ -195,7 +195,35 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-
+         /* 상태별 카드 배경색 */
+.student-card.status-외박 {
+    background: #fee2e2;
+    border-left: 5px solid #ef4444;
+}
+.student-card.status-미배정 {
+    background: #fef9c3;
+    border-left: 5px solid #eab308;
+}
+.student-card.status-신규 {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+}
+.student-card.status-이동- {
+    background: #eff6ff;
+    border-left: 5px solid #3b82f6;
+}
+.student-card.status-이동\+ {
+    background: #f0fdf4;
+    border-left: 5px solid #22c55e;
+}
+.student-card.status-등미 {
+    background: #f3f4f6;
+    border-left: 5px solid #6b7280;
+}
+.student-card.status-퇴소 {
+    background: #ecfdf5;
+    border-left: 5px solid #10b981;
+}
         .room-number {
             font-weight: 700;
             font-size: 1.4rem;
@@ -759,6 +787,15 @@ function applyStatusColor(select, status) {
         '등미': '#6b7280'
     };
     select.style.color = colors[status] || '#1f2937';
+
+    // 부모 카드 찾아서 배경색 클래스 변경
+    const card = select.closest('.student-card');
+    if (card) {
+        card.className = 'student-card'; // 기존 상태 클래스 초기화
+        if (status !== '정상') {
+            card.classList.add('status-' + status);
+        }
+    }
 }
         // 통계 자동 집계 (원본 그대로)
         function updateStats() {
