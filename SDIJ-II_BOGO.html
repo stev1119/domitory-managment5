@@ -757,12 +757,13 @@
                         <input type="text" value="${student.memo}" placeholder="비고" oninput="updateStudentMemo(${index}, this.value)">
                     </div>
                 `;
-                studentsGrid.appendChild(studentCard);
-            });
-// 초기 상태에 따라 배경색 적용
+                // 초기 상태에 따라 배경색 적용
 if (student.status !== '정상') {
     studentCard.classList.add('status-' + student.status);
 }
+                studentsGrid.appendChild(studentCard);
+            });
+
             // 자동 집계 업데이트
             updateStats();
         }
