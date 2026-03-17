@@ -1613,25 +1613,26 @@ await loadAFSheetData();
                         const allData = parseCSV(csvText);
                         
                         // B3부터 시작하는 데이터만 추출 (B=2번째 열, 3=3번째 행)
-                        sheetsData = [];
+                       sheetsData = [];
                         
-                        // 헤더 (B3:P3)
-                        if (allData.length > 2 && allData[2].length > 1) {
-                            const header = allData[2].slice(1, 17); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
-                            sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
-                        }
-                        
-                        // 데이터 (B4부터)
-                        for (let i = 3; i < allData.length; i++) {
-                            if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 17); // B열:P열
-                                if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
-                                    sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
-                                }
+                       sheetsData = [];
+
+                        // 헤더는 코드에서 직접 지정 (CSV 빈행 생략 문제 우회)
+                        sheetsData.push(['인덱스', '기숙사번호', '이름', '상태', '날짜', '메모', '학부모연락처', '본인연락처', '라이브러리좌석', '그룹', '생활담임', '생년월일', '성별', '입소일', '출신고교', '기숙사선생님', '부담임']);
+
+                        // 전체 행 순회 - 기숙사번호 형식인 행만 포함
+                        for (let i = 0; i < allData.length; i++) {
+                            const rawRow = allData[i] || [];
+                            if (rawRow.length < 2) continue;
+                            const row = rawRow.slice(1, 17); // B~Q열
+                            // B열이 기숙사번호 형식(A101 등)인 경우만 포함
+                            if (row[0] && /^[A-Fa-f]\d/.test(row[0].trim())) {
+                                sheetsData.push([i + 1].concat(row));
                             }
                         }
                         
                         console.log('CSV 방식 성공:', sheetsData.length, '행 (헤더 포함)');
+                       
                         return true;
                     }
                 } catch (csvError) {
@@ -3268,7 +3269,7 @@ function showRoomDetail(roomId) {
     </script>
    
     <!-- 개발자 도구 방지 코드 -->
-   <script>
+ <script>
         // F12 키 방지
         document.addEventListener('keydown', function(e) {
             // F12 키
