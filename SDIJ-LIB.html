@@ -1714,35 +1714,52 @@ await loadAFSheetData();
         }
 
         // CSV 파싱 함수
-        function parseCSV(csv) {
-            const lines = csv.split('\n');
-            const result = [];
-            
-            lines.forEach(line => {
-                if (line.trim()) {
-                    // 간단한 CSV 파싱 
-                    const row = [];
-                    let current = '';
-                    let inQuotes = false;
-                    
-                    for (let i = 0; i < line.length; i++) {
-                        const char = line[i];
-                        if (char === '"') {
-                            inQuotes = !inQuotes;
-                        } else if (char === ',' && !inQuotes) {
-                            row.push(current.trim());
-                            current = '';
-                        } else {
-                            current += char;
-                        }
-                    }
-                    row.push(current.trim());
-                    result.push(row);
-                }
-            });
-            
-            return result;
+function parseCSV(csv) {
+    const result = [];
+    let row = [];
+    let current = '';
+    let inQuotes = false;
+
+    // \r\n, \r, \n 모두 처리
+    const normalized = csv.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    for (let i = 0; i < normalized.length; i++) {
+        const char = normalized[i];
+        const nextChar = normalized[i + 1];
+
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+                // 이스케이프된 따옴표 ""
+                current += '"';
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            row.push(current.trim());
+            current = '';
+        } else if (char === '\n' && !inQuotes) {
+            row.push(current.trim());
+            if (row.some(cell => cell !== '')) {
+                result.push(row);
+            }
+            row = [];
+            current = '';
+        } else {
+            current += char;
         }
+    }
+
+    // 마지막 행 처리
+    if (current || row.length > 0) {
+        row.push(current.trim());
+        if (row.some(cell => cell !== '')) {
+            result.push(row);
+        }
+    }
+
+    return result;
+}
 // AF시트 데이터 로드
 async function loadAFSheetData() {
     try {
