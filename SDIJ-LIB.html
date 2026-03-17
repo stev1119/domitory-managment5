@@ -1632,6 +1632,17 @@ await loadAFSheetData();
                         }
                         
                         console.log('CSV 방식 성공:', sheetsData.length, '행 (헤더 포함)');
+console.log('전체 allData 행 수:', allData.length);
+console.log('allData[2] (3행/헤더):', allData[2]);
+console.log('allData[3] (4행/A101):', allData[3]);
+console.log('allData[4] (5행/A102):', allData[4]);
+console.log('sheetsData 전체 행 수:', sheetsData.length);
+console.log('sheetsData[0] (헤더):', sheetsData[0]);
+console.log('sheetsData[1] (첫번째 데이터):', sheetsData[1]);
+console.log('sheetsData[2] (두번째 데이터):', sheetsData[2]);
+
+
+                        
                         return true;
                     }
                 } catch (csvError) {
@@ -3268,64 +3279,7 @@ function showRoomDetail(roomId) {
     </script>
    
     <!-- 개발자 도구 방지 코드 -->
-   <script>
-        // F12 키 방지
-        document.addEventListener('keydown', function(e) {
-            // F12 키
-            if (e.key === 'F12' || e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Ctrl+Shift+I (개발자 도구)
-            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Ctrl+Shift+J (콘솔)
-            if (e.ctrlKey && e.shiftKey && e.key === 'J') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Ctrl+Shift+C (요소 검사)
-            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Ctrl+U (소스 보기)
-            if (e.ctrlKey && e.key === 'u') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Mac용: Cmd+Option+I
-            if (e.metaKey && e.altKey && e.key === 'i') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Mac용: Cmd+Option+J
-            if (e.metaKey && e.altKey && e.key === 'j') {
-                e.preventDefault();
-                return false;
-            }
-            
-            // Mac용: Cmd+Option+C
-            if (e.metaKey && e.altKey && e.key === 'c') {
-                e.preventDefault();
-                return false;
-            }
-        });
-        
-        // 우클릭 방지 (선택사항)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-      </script>
+ 
 
 </body>
 </html>
