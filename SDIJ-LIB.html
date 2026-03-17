@@ -1746,35 +1746,33 @@ await loadAFSheetData();
 // AF시트 데이터 로드
 async function loadAFSheetData() {
     try {
-        console.log('AF시트 데이터 로드 시작...');
-        const csvUrl = `https://docs.google.com/spreadsheets/d/1jvpvDwXLEHAok31_cGaWintGgD0kSkoPIzxBquYgkIc/export?format=csv&gid=62521893`;
-        
+        console.log('IF시트 데이터 로드 시작...');
+        const csvUrl = `https://docs.google.com/spreadsheets/d/1KwnRo6Rsv-hAU4s796gaPy5ymaRvjAQ6uSWF41JRWhk/export?format=csv&gid=0`;
+        // ↑ IF시트 스프레드시트 ID와 gid로 교체 
+
         const csvResponse = await fetch(csvUrl);
         if (csvResponse.ok) {
             const csvText = await csvResponse.text();
             const allData = parseCSV(csvText);
             afSheetData = [];
-            
-            for (let i = 0; i < allData.length; i++) {
-                if (allData[i].length > 6) {
-                    const bCol = allData[i][1] || '';
-                    const dCol = allData[i][3] || '';
-                    const gCol = allData[i][6] || '';
-                    
-                    if (bCol || gCol) {
-                        afSheetData.push({
-                            nameB: bCol.trim(),
-                            nameG: gCol.trim(),
-                            note: dCol.trim()
-                        });
-                    }
+
+            for (let i = 1; i < allData.length; i++) { // 1행부터 (0행=헤더 제외)
+                const row = allData[i];
+                if (!row || row.length < 2) continue;
+
+                const nameB = (row[1] || '').trim(); // B열 이름
+                if (nameB) {
+                    afSheetData.push({
+                        name: nameB,
+                        fullRow: row  // 전체 행 데이터 저장
+                    });
                 }
             }
-            console.log('AF시트 로드 성공:', afSheetData.length, '행');
+            console.log('IF시트 로드 성공:', afSheetData.length, '행');
             return true;
         }
     } catch (error) {
-        console.error('AF시트 로드 실패:', error);
+        console.error('IF시트 로드 실패:', error);
         return false;
     }
 }
@@ -2524,32 +2522,23 @@ function performSearch(query) {
         const parentPhone = row[6] || '';
         const qColumn = row[16] || '';
 
-        const searchFields = [
+const searchFields = [
             room.toLowerCase(),
             name.toLowerCase(),
             librarySeats.toLowerCase(),
-            phone,
-            parentPhone,
-            qColumn.toLowerCase() 
+            phone.replace(/-/g, ''),
+            parentPhone.replace(/-/g, ''),
+            qColumn.toLowerCase()
         ].join(' ');
 
-        if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
-            let additionalNotes = []; // 배열로 변경
-            if (extendedSearch && afSheetData.length > 0) {
-                // 같은 이름의 모든 AF 데이터 찾기
-                const afMatches = afSheetData.filter(afRow => 
-                    afRow.nameB === name || afRow.nameG === name
-                );
-                additionalNotes = afMatches.map(match => match.note).filter(note => note);
-            }
-            
+
+      if (searchFields.includes(lowerQuery) && name && name !== '미배정') {
             results.push({
-                room: room,
-                name: name,
-                status: status,
+                room,
+                name,
+                status,
                 rowData: row,
                 rowIndex: index,
-                additionalNotes: additionalNotes, // 배열로 변경
                 source: 'main'
             });
         }
@@ -2559,11 +2548,24 @@ function performSearch(query) {
     if (extendedSearch && afSheetData.length > 0) {
         const foundNames = new Set(results.map(r => r.name));
         
-        afSheetData.forEach((afRow, index) => {
-            const nameB = afRow.nameB.toLowerCase();
-            const nameG = afRow.nameG.toLowerCase();
-            const note = afRow.note;
-            
+       afSheetData.forEach((afRow) => {
+            const nameLower = afRow.name.toLowerCase();
+            if (nameLower.includes(lowerQuery) && !foundNames.has(afRow.name)) {
+                results.push({
+                    room: 'IF시트',
+                    name: afRow.name,
+                    status: '퇴소(이력)',
+                    rowData: afRow.fullRow,  // 전체 행 데이터
+                    rowIndex: -1,
+                    source: 'af'
+                });
+            foundNames.add(afRow.name);
+            }
+        });
+    }
+
+    displaySearchResults(results, extendedSearch);
+}
             // AF 시트의 이름이 검색어와 일치하고, 이미 기존 시트에서 찾지 못한 경우
             if ((nameB.includes(lowerQuery) || nameG.includes(lowerQuery))) {
                 const displayName = afRow.nameB || afRow.nameG;
@@ -2599,41 +2601,36 @@ function performSearch(query) {
 // 검색 결과 표시 (수정: 여러 AF시트 정보 표시)
 function displaySearchResults(results, extendedSearch) {
     const searchResults = document.getElementById('searchResults');
-    
+
     if (results.length === 0) {
         searchResults.innerHTML = '<div class="search-result-item">검색 결과가 없습니다.</div>';
     } else {
         searchResults.innerHTML = results.map((result) => {
-            // AF 시트에만 있는 데이터인 경우
             if (result.source === 'af') {
-                const notesHtml = result.additionalNotes.length > 0 
-                    ? result.additionalNotes.map((note, idx) => `
-                        <div style="margin-top: 5px; padding: 5px 10px; background: white; border-radius: 6px; font-size: 0.85rem; color: #92400e; border-left: 3px solid #f59e0b;">
-                            <strong>${idx + 1}.</strong> ${note}
-                        </div>
-                    `).join('')
-                    : '<div style="margin-top: 5px; font-size: 0.9rem; color: #92400e;">상세 정보 없음</div>';
-                
+                // IF시트 데이터 — 클릭 시 모달로 전체 정보 표시
                 return `
-                    <div class="search-result-item" style="background: #fef3c7;">
-                        <div class="result-room" style="color: #f59e0b;">◆ 기숙사이력 및 퇴소(생)정보 포함 (${result.additionalNotes.length}건)</div>
+                    <div class="search-result-item" style="background: #fef3c7;"
+                         onclick="showAFStudentDetail('${result.name.replace(/'/g, "\\'")}')">
+                        <div class="result-room" style="color: #d97706;">◆ 기숙사이력/퇴소생 정보</div>
                         <div class="result-name">${result.name}</div>
-                        ${notesHtml}
-                        <div style="margin-top: 5px; font-size: 0.8rem; color: #6b7280;">
-                            ※ 기존 시트에 없는 정보입니다
-                        </div>
+                        <div class="result-status" style="color: #92400e;">IF시트 기록 — 클릭하여 상세보기</div>
                     </div>
                 `;
             }
-            
-            // 기존 시트 데이터인 경우
-            const additionalNotesHtml = extendedSearch && result.additionalNotes && result.additionalNotes.length > 0
-                ? result.additionalNotes.map((note, idx) => `
-                    <div style="margin-top: 3px; padding: 5px 10px; background: #fef3c7; border-radius: 6px; font-size: 0.85rem; color: #92400e;">
-                        ◆ ${result.additionalNotes.length > 1 ? `${idx + 1}. ` : ''}${note}
-                    </div>
-                `).join('')
-                : '';
+             // 기존 시트 데이터
+            return `
+                <div class="search-result-item"
+                     onclick="showStudentDetailByIndex(${result.rowIndex}, null)">
+                    <div class="result-room">${result.room}</div>
+                    <div class="result-name">${result.name}</div>
+                    <div class="result-status">상태: ${result.status}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    searchResults.style.display = 'block';
+}
             
             return `
                 <div class="search-result-item" onclick="showStudentDetailByIndex(${result.rowIndex}, ${extendedSearch && result.additionalNotes ? `'${result.additionalNotes.join(' | ').replace(/'/g, "\\'")}'` : 'null'})">
@@ -2647,6 +2644,74 @@ function displaySearchResults(results, extendedSearch) {
     }
     
     searchResults.style.display = 'block';
+}
+        // IF시트 학생 상세보기
+function showAFStudentDetail(name) {
+    // 해당 이름의 모든 IF시트 행 찾기
+    const rows = afSheetData.filter(r => r.name === name);
+    if (rows.length === 0) return;
+
+    document.getElementById('searchResults').style.display = 'none';
+
+    const modalStudentsGrid = document.getElementById('modalStudentsGrid');
+    document.getElementById('modalTitle').textContent = `[이력/퇴소] ${name} 정보`;
+
+    modalStudentsGrid.innerHTML = rows.map(r => createAFStudentCard(r.fullRow)).join('');
+    document.getElementById('studentModal').style.display = 'block';
+}
+
+// IF시트 학생 카드 생성 (IF시트 열 구조에 맞게 조정)
+function createAFStudentCard(row) {
+    const cols = row.map(c => (c || '').trim());
+
+    const fields = [
+        { label: '학생ID',         val: cols[1]  },  // B
+        { label: '학부모 전화번호', val: cols[3]  },  // D
+        { label: '학생 전화번호',   val: cols[4]  },  // E
+        { label: '카드번호',        val: cols[5]  },  // F
+        { label: '구역',            val: cols[7]  },  // H
+        { label: '라이브러리 좌석', val: cols[8]  },  // I
+        { label: '성별',            val: cols[9]  },  // J
+        { label: '생년월일',        val: cols[10] },  // K
+        { label: '출신고교',        val: cols[11] },  // L
+        { label: '계열',            val: cols[12] },  // M
+        { label: '기숙사 선생님',   val: cols[13] },  // N
+        { label: '기숙사 번호',     val: cols[14] },  // O
+        { label: '입소일',          val: cols[18] },  // S
+        { label: '퇴원일',          val: cols[19] },  // T
+        { label: '1차 등원일',      val: cols[20] },  // U
+        { label: '1차 퇴원일',      val: cols[21] },  // V
+        { label: '부담임 선생님',   val: cols[27] },  // AB
+        { label: '담임 선생님',     val: cols[28] },  // AC
+        { label: '그룹',            val: cols[35] },  // AJ
+    ];
+
+    const name = cols[2] || cols[1] || '이름 없음';  // C열 이름, 없으면 B열 ID
+
+    const detailRows = fields
+        .filter(f => f.val)
+        .map(f => `
+            <div class="detail-item">
+                <div class="detail-label">${f.label}</div>
+                <div class="detail-value">${f.val}</div>
+            </div>
+        `).join('');
+
+    return `
+        <div class="student-info-card" style="border-left-color: #f59e0b;">
+            <div class="student-info-header">
+                <div class="student-room" style="color: #d97706;">${cols[14] || 'IF시트'}</div>
+                <div class="student-status" style="background: #f59e0b;">이력/퇴소</div>
+            </div>
+            <div class="student-details">
+                <div class="detail-item" style="grid-column: 1 / -1;">
+                    <div class="detail-label">이름</div>
+                    <div class="detail-value" style="font-size: 1.1rem; font-weight: 700;">${name}</div>
+                </div>
+                ${detailRows}
+            </div>
+        </div>
+    `;
 }
         // 상태별 학생 보기
         function showStudentsByStatus(status) {
