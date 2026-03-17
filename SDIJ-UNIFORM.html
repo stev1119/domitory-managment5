@@ -3,393 +3,343 @@
 <head>
 <meta charset="UTF-8">
 <title>단체복 착용 안내 A3</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 @page { size: A3 landscape; margin: 0; }
+
+:root {
+  --blue:   #1e4fd8;
+  --green:  #0f9e6a;
+  --orange: #e07800;
+  --red:    #d93030;
+  --dark:   #1a1f2e;
+  --bg:     #ffffff;
+  --gray:   #f4f5f7;
+  --text:   #222;
+  --muted:  #666;
+}
 
 body {
   width: 420mm;
   height: 297mm;
   overflow: hidden;
   font-family: 'Noto Sans KR', sans-serif;
-  background: #f5f3ee;
+  background: var(--bg);
 }
 
 .poster {
   width: 420mm;
   height: 297mm;
   display: grid;
-  grid-template-columns: 230px 1fr 1fr 1fr 200px;
-  grid-template-rows: 1fr;
-  background: #f5f3ee;
+  /* 타이틀 | 기본원칙 | 후드티 | 세탁대체 | 추가구매 */
+  grid-template-columns: 210px 1fr 1fr 1fr 190px;
+  background: var(--bg);
 }
 
-/* ── 1. 타이틀 컬럼 ── */
-.col-title {
-  background: #1a2744;
+/* ══════════════════════════════
+   1. 타이틀 패널
+══════════════════════════════ */
+.panel-title {
+  background: var(--dark);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 36px 28px 32px;
+  padding: 34px 26px 30px;
   position: relative;
   overflow: hidden;
 }
-.col-title::after {
+.panel-title::before {
   content: '';
   position: absolute;
-  bottom: -60px; right: -60px;
-  width: 200px; height: 200px;
+  bottom: -80px; right: -80px;
+  width: 220px; height: 220px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.035);
 }
-.col-title::before {
+
+.tag-notice {
+  display: inline-block;
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 8px;
+  margin-bottom: 18px;
+}
+
+.t-main-icon { font-size: 58px; line-height: 1; margin-bottom: 14px; }
+
+h1 {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 36px; font-weight: 900;
+  color: #fff;
+  line-height: 1.15; letter-spacing: -0.02em;
+  word-break: keep-all;
+  white-space: nowrap;
+}
+h1 em {
+  font-style: normal;
+  color: #f5c518;
+  display: block;
+  font-size: 34px;
+}
+
+.t-sub {
+  font-size: 10px; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-top: 8px;
+}
+
+.penalty {
+  background: var(--red);
+  border-radius: 10px;
+  padding: 13px 15px;
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 20px;
+}
+.penalty-ico { font-size: 28px; flex-shrink: 0; }
+.penalty-txt { font-size: 14px; font-weight: 900; color: #fff; line-height: 1.45; }
+
+.brand {
+  font-size: 12px; font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.06em;
+}
+.brand em { color: #f5c518; font-style: normal; }
+
+/* ══════════════════════════════
+   공통 패널
+══════════════════════════════ */
+.panel {
+  border-left: 1px solid #e8eaed;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px 24px;
+  gap: 14px;
+}
+
+.panel-header {
+  padding-bottom: 14px;
+  border-bottom: 2px solid currentColor;
+  margin-bottom: 2px;
+}
+.p-tag {
+  display: inline-block;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 3px;
+  margin-bottom: 8px;
+}
+.p-heading {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 21px; font-weight: 900;
+  line-height: 1.3;
+}
+
+/* ══════════════════════════════
+   2. 기본 원칙 패널
+══════════════════════════════ */
+.panel-basic { color: var(--blue); }
+.panel-basic .p-tag  { background: var(--blue); color: #fff; }
+.panel-basic .p-heading { color: var(--dark); }
+
+.rule-card {
+  background: var(--gray);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+  flex: 1;
+}
+.rule-icon { font-size: 44px; flex-shrink: 0; }
+.rule-body {}
+.rule-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 4px;
+}
+.rule-title { font-size: 17px; font-weight: 900; color: var(--dark); margin-bottom: 3px; }
+.rule-desc  { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.rule-desc strong { color: var(--dark); font-weight: 700; }
+
+.must-box {
+  background: #e8eeff;
+  border: 1.5px solid #b8cbff;
+  border-radius: 10px;
+  padding: 13px 15px;
+  display: flex; align-items: center; gap: 10px;
+}
+.must-ico { font-size: 24px; flex-shrink: 0; }
+.must-txt { font-size: 13px; font-weight: 700; color: var(--blue); line-height: 1.55; }
+
+/* ══════════════════════════════
+   3. 후드 패널
+══════════════════════════════ */
+.panel-hood { color: var(--green); }
+.panel-hood .p-tag  { background: var(--green); color: #fff; }
+.panel-hood .p-heading { color: var(--dark); }
+
+.hood-visual {
+  background: var(--gray);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hood-icon { font-size: 52px; flex-shrink: 0; }
+.hood-caption { font-size: 13px; color: var(--muted); line-height: 1.75; }
+.hood-caption strong { color: var(--dark); font-weight: 700; }
+
+.color-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.color-card {
+  border-radius: 12px;
+  padding: 14px 8px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 9px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+}
+.c-swatch {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+.c-label { font-size: 13.5px; font-weight: 700; color: var(--dark); }
+.c-ok {
+  font-size: 10px; font-weight: 700;
+  color: var(--green); letter-spacing: 0.08em;
+}
+
+.deny-row {
+  background: #fff0f0;
+  border: 1.5px solid #ffc0c0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.deny-ico { font-size: 24px; flex-shrink: 0; }
+.deny-txt { font-size: 12.5px; font-weight: 500; color: #9b1a1a; line-height: 1.65; }
+
+/* ══════════════════════════════
+   4. 세탁 대체 패널
+══════════════════════════════ */
+.panel-wash { color: var(--orange); }
+.panel-wash .p-tag  { background: var(--orange); color: #fff; }
+.panel-wash .p-heading { color: var(--dark); }
+
+.wash-header-visual {
+  background: #fff8ec;
+  border: 1.5px solid #f5dca0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 2px;
+}
+.wash-hv-ico { font-size: 30px; }
+.wash-hv-txt { font-size: 12.5px; color: #7a4a00; line-height: 1.7; font-weight: 500; }
+.wash-hv-txt strong { color: #5a3000; font-weight: 900; }
+
+.wash-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.wash-card {
+  background: var(--gray);
+  border-radius: 12px;
+  padding: 14px;
+}
+.wc-icon { font-size: 36px; margin-bottom: 8px; }
+.wc-title { font-size: 15px; font-weight: 900; color: var(--dark); margin-bottom: 6px; }
+.wc-ok {
+  display: inline-block;
+  font-size: 11.5px; font-weight: 700;
+  color: var(--green);
+  background: #e6f7f0;
+  border-radius: 4px; padding: 2px 8px;
+  margin-bottom: 5px;
+}
+.wc-text { font-size: 12px; color: var(--muted); line-height: 1.7; }
+.wc-text strong { color: var(--dark); font-weight: 700; }
+
+.cargo-deny {
+  background: #fff0f0;
+  border: 1.5px solid #ffc0c0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.cargo-ico { font-size: 28px; flex-shrink: 0; }
+.cargo-txt { font-size: 12.5px; font-weight: 600; color: #9b1a1a; line-height: 1.65; }
+
+/* ══════════════════════════════
+   5. 추가구매 패널
+══════════════════════════════ */
+.panel-buy {
+  background: var(--dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 22px 26px;
+  position: relative;
+  overflow: hidden;
+}
+.panel-buy::before {
   content: '';
   position: absolute;
-  top: -40px; left: -40px;
-  width: 150px; height: 150px;
+  top: -60px; left: -60px;
+  width: 180px; height: 180px;
   border-radius: 50%;
   background: rgba(255,255,255,0.03);
 }
 
-.school-badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.45);
-  text-transform: uppercase;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  padding-top: 10px;
-  margin-bottom: 22px;
-  position: relative;
-  z-index: 1;
-}
-
-.title-main {
-  position: relative;
-  z-index: 1;
-}
-.title-kr {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 48px;
-  font-weight: 900;
-  color: #ffffff;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-.title-accent {
-  display: block;
-  font-size: 48px;
-  color: #f0c040;
-  line-height: 1.1;
-}
-.title-en {
-  margin-top: 12px;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: rgba(255,255,255,0.3);
-  text-transform: uppercase;
-}
-
-.penalty-badge {
-  position: relative;
-  z-index: 1;
-  background: #e83a3a;
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-top: 24px;
-}
-.penalty-icon { font-size: 26px; margin-bottom: 6px; }
-.penalty-text {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.6;
-}
-
-.brand-bottom {
-  position: relative; z-index: 1;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.3);
-  letter-spacing: 0.06em;
-}
-.brand-bottom em { color: #f0c040; font-style: normal; }
-
-/* ── 공통 컬럼 스타일 ── */
-.col {
-  padding: 30px 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  border-left: 3px solid rgba(0,0,0,0.06);
-  position: relative;
-}
-
-.col-num {
-  position: absolute;
-  top: 24px; right: 22px;
-  font-size: 72px;
-  font-family: 'Noto Serif KR', serif;
-  font-weight: 900;
-  color: rgba(0,0,0,0.05);
-  line-height: 1;
-  pointer-events: none;
-}
-
-.col-tag {
-  display: inline-block;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-  width: fit-content;
-}
-
-.col-heading {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 26px;
-  font-weight: 900;
-  line-height: 1.25;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid currentColor;
-  opacity: 0.9;
-}
-
-/* ── 2. 기본착용 컬럼 ── */
-.col-basic {
-  background: #eef3fb;
-}
-.col-basic .col-tag { background: #1a2744; color: #fff; }
-.col-basic .col-heading { color: #1a2744; border-color: #1a2744; }
-
-.rule-big {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 14px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.rule-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
-.rule-body {}
-.rule-title {
-  font-size: 15px;
-  font-weight: 900;
-  color: #1a2744;
-  margin-bottom: 4px;
-}
-.rule-desc {
-  font-size: 12.5px;
-  color: #444;
-  line-height: 1.75;
-  font-weight: 400;
-}
-.rule-desc strong { color: #1a2744; font-weight: 700; }
-
-/* ── 3. 후드 컬럼 ── */
-.col-hood {
-  background: #f0faf5;
-}
-.col-hood .col-tag { background: #1a7a52; color: #fff; }
-.col-hood .col-heading { color: #1a7a52; border-color: #1a7a52; }
-
-.color-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-.color-block {
-  border-radius: 10px;
-  padding: 14px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  border: 2px solid rgba(0,0,0,0.06);
-}
-.color-swatch {
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-}
-.color-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #222;
-}
-
-.allowed-box {
-  background: #fff;
-  border-radius: 10px;
-  padding: 14px 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 10px;
-}
-.allowed-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  color: #1a7a52;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-.allowed-text {
-  font-size: 13px;
-  color: #333;
-  line-height: 1.75;
-  font-weight: 400;
-}
-.allowed-text strong { color: #1a7a52; font-weight: 700; }
-
-/* ── 4. 세탁 컬럼 ── */
-.col-wash {
-  background: #fdf5e8;
-}
-.col-wash .col-tag { background: #b96a00; color: #fff; }
-.col-wash .col-heading { color: #b96a00; border-color: #b96a00; }
-
-.wash-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  margin-bottom: 10px;
-}
-.wash-card-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #f0e0c0;
-}
-.wash-card-icon { font-size: 30px; }
-.wash-card-title {
-  font-size: 16px;
-  font-weight: 900;
-  color: #b96a00;
-}
-.wash-rule {
-  font-size: 13px;
-  color: #444;
-  line-height: 1.8;
-  font-weight: 400;
-}
-.wash-rule strong { color: #333; font-weight: 700; }
-
-.deny-box {
-  background: #fde8e8;
-  border: 1.5px solid #f0b0b0;
-  border-radius: 10px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.deny-icon { font-size: 22px; flex-shrink: 0; }
-.deny-text {
-  font-size: 12.5px;
-  color: #8b1a1a;
-  line-height: 1.75;
-  font-weight: 500;
-}
-
-/* ── 5. 추가구매 컬럼 ── */
-.col-buy {
-  background: #1a2744;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 30px 24px 28px;
-  position: relative;
-  overflow: hidden;
-}
-.col-buy::before {
-  content: '';
-  position: absolute;
-  top: -50px; right: -50px;
-  width: 180px; height: 180px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.04);
-}
-
 .buy-tag {
   display: inline-block;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 3px;
-  background: #f0c040;
-  color: #1a2744;
-  margin-bottom: 12px;
-  width: fit-content;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px;
+  background: #f5c518; color: var(--dark);
+  margin-bottom: 12px; width: fit-content;
 }
-
 .buy-heading {
   font-family: 'Noto Serif KR', serif;
-  font-size: 22px;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1.3;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid rgba(255,255,255,0.15);
+  font-size: 21px; font-weight: 900;
+  color: #fff; line-height: 1.3;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
 }
 
-.buy-icon-big { font-size: 52px; margin-bottom: 16px; display: block; }
+.buy-big-icon { font-size: 56px; display: block; margin-bottom: 14px; }
 
-.buy-card {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 10px;
-  padding: 14px;
+.buy-item {
+  display: flex; align-items: flex-start; gap: 8px;
   margin-bottom: 10px;
 }
-.buy-card-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #f0c040;
-  margin-bottom: 6px;
+.buy-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #f5c518; flex-shrink: 0; margin-top: 6px;
 }
-.buy-card-text {
-  font-size: 12.5px;
-  color: rgba(255,255,255,0.75);
-  line-height: 1.75;
-}
-.buy-card-text strong { color: #fff; }
+.buy-item-txt { font-size: 12.5px; color: rgba(255,255,255,0.65); line-height: 1.7; }
 
 .buy-cta {
-  background: #f0c040;
-  border-radius: 8px;
-  padding: 14px 16px;
+  background: #f5c518;
+  border-radius: 10px;
+  padding: 15px 14px;
   text-align: center;
-  margin-top: auto;
+  margin-top: 16px;
 }
-.buy-cta-icon { font-size: 24px; }
-.buy-cta-text {
-  font-size: 13px;
-  font-weight: 900;
-  color: #1a2744;
-  margin-top: 6px;
-  line-height: 1.5;
+.buy-cta-ico { font-size: 28px; }
+.buy-cta-txt {
+  font-size: 14px; font-weight: 900;
+  color: var(--dark); margin-top: 6px; line-height: 1.4;
 }
 
 @media print {
-  body { width: 420mm; height: 297mm; background: #f5f3ee; }
+  body { width: 420mm; height: 297mm; }
   .poster { width: 420mm; height: 297mm; }
 }
 </style>
@@ -398,134 +348,146 @@ body {
 <div class="poster">
 
   <!-- 1. 타이틀 -->
-  <div class="col-title">
-    <div class="school-badge">시대인재N 기숙학원</div>
-    <div class="title-main">
-      <div class="title-kr">단체복<span class="title-accent">착용안내</span></div>
-      <p class="title-en">Uniform Wearing Guide</p>
-      <div class="penalty-badge">
-        <div class="penalty-icon">⚠️</div>
-        <div class="penalty-text">위반 시<br>벌점 부과</div>
+  <div class="panel-title">
+    <div class="tag-notice">시대인재N 기숙학원 · Notice</div>
+    <div>
+      <div class="t-main-icon">👔</div>
+      <h1>단체복<em>착용안내</em></h1>
+      <p class="t-sub">Uniform Wearing Guide</p>
+      <div class="penalty">
+        <div class="penalty-ico">⚠️</div>
+        <div class="penalty-txt">위반 시<br>벌점 부과</div>
       </div>
     </div>
-    <div class="brand-bottom">시대인재<em>N</em> 기숙학원</div>
+    <div class="brand">시대인재<em>N</em> 기숙학원</div>
   </div>
 
-  <!-- 2. 기본 착용 원칙 -->
-  <div class="col col-basic">
-    <div class="col-num">01</div>
-    <div class="col-tag">기본 원칙</div>
-    <div class="col-heading">겉으로 드러나는 옷은<br>전부 단체복 착용</div>
+  <!-- 2. 기본 원칙 -->
+  <div class="panel panel-basic">
+    <div class="panel-header">
+      <div class="p-tag">01 · 기본 원칙</div>
+      <div class="p-heading">겉으로 드러나는 옷은<br>모두 단체복 착용</div>
+    </div>
 
-    <div class="rule-big">
+    <div class="rule-card">
       <div class="rule-icon">👕</div>
       <div class="rule-body">
-        <div class="rule-title">상의</div>
-        <div class="rule-desc">겉에 보이는 <strong>모든 상의</strong>는 단체복 착용 필수</div>
+        <div class="rule-label">상의</div>
+        <div class="rule-title">단체복 상의 필수</div>
+        <div class="rule-desc">겉에 보이는 <strong>모든 상의</strong>는 단체복 착용</div>
       </div>
     </div>
 
-    <div class="rule-big">
+    <div class="rule-card">
       <div class="rule-icon">👖</div>
       <div class="rule-body">
-        <div class="rule-title">하의</div>
-        <div class="rule-desc">겉에 보이는 <strong>모든 하의</strong>는 단체복 착용 필수</div>
+        <div class="rule-label">하의</div>
+        <div class="rule-title">단체복 하의 필수</div>
+        <div class="rule-desc">겉에 보이는 <strong>모든 하의</strong>는 단체복 착용</div>
       </div>
     </div>
 
-    <div class="rule-big" style="border: 2px solid #e8e0f0; box-shadow:none;">
-      <div class="rule-icon">🏫</div>
-      <div class="rule-body">
-        <div class="rule-title">적용 범위</div>
-        <div class="rule-desc">기숙사 내 <strong>모든 공간</strong>에서 항상 적용</div>
-      </div>
+    <div class="must-box">
+      <div class="must-ico">📌</div>
+      <div class="must-txt">기숙사 내 모든 공간,<br>모든 시간 동안 적용</div>
     </div>
   </div>
 
-  <!-- 3. 후드집업 속 티셔츠 -->
-  <div class="col col-hood">
-    <div class="col-num">02</div>
-    <div class="col-tag">예외 규정</div>
-    <div class="col-heading">후드집업 속<br>티셔츠 허용 기준</div>
-
-    <div class="allowed-box">
-      <div class="allowed-label">✅ 허용 조건</div>
-      <div class="allowed-text"><strong>무늬 없는 단색</strong>만 착용 가능<br>아래 3가지 색상에 한함</div>
+  <!-- 3. 후드 속 티셔츠 -->
+  <div class="panel panel-hood">
+    <div class="panel-header">
+      <div class="p-tag">02 · 예외 규정</div>
+      <div class="p-heading">후드집업 속 티셔츠<br>허용 기준</div>
     </div>
 
-    <div class="color-grid">
-      <div class="color-block" style="background:#e8e8e8;">
-        <div class="color-swatch" style="background:#888888;"></div>
-        <div class="color-name">회색</div>
-      </div>
-      <div class="color-block" style="background:#dde3f0;">
-        <div class="color-swatch" style="background:#2b3a6b;"></div>
-        <div class="color-name">남색</div>
-      </div>
-      <div class="color-block" style="background:#e0e0e0;">
-        <div class="color-swatch" style="background:#1a1a1a; border: 2px solid #999;"></div>
-        <div class="color-name">검정색</div>
+    <div class="hood-visual">
+      <div class="hood-icon">🧥</div>
+      <div class="hood-caption">
+        후드집업 <strong>안에 입는 티셔츠</strong>는<br>
+        <strong>무늬 없는 단색</strong>에 한해 허용<br>
+        아래 3가지 색상만 가능
       </div>
     </div>
 
-    <div class="deny-box">
-      <div class="deny-icon">🚫</div>
-      <div class="deny-text">무늬·로고·글자가 있는 티셔츠<br>위 3가지 외 색상 — <strong>모두 불가</strong></div>
+    <div class="color-row">
+      <div class="color-card">
+        <div class="c-swatch" style="background:#888;"></div>
+        <div class="c-label">회색</div>
+        <div class="c-ok">✓ 허용</div>
+      </div>
+      <div class="color-card">
+        <div class="c-swatch" style="background:#2b3a6b;"></div>
+        <div class="c-label">남색</div>
+        <div class="c-ok">✓ 허용</div>
+      </div>
+      <div class="color-card">
+        <div class="c-swatch" style="background:#1a1a1a; border: 2px solid #bbb;"></div>
+        <div class="c-label">검정색</div>
+        <div class="c-ok">✓ 허용</div>
+      </div>
+    </div>
+
+    <div class="deny-row">
+      <div class="deny-ico">🚫</div>
+      <div class="deny-txt">무늬·로고·글자 있는 티셔츠<br>위 3색 외 색상 — <strong>모두 불가</strong></div>
     </div>
   </div>
 
-  <!-- 4. 세탁 시 대체복 -->
-  <div class="col col-wash">
-    <div class="col-num">03</div>
-    <div class="col-tag">임시 대체 착용</div>
-    <div class="col-heading">단체복 세탁 중일 때<br>임시 대체 기준</div>
+  <!-- 4. 세탁 대체 -->
+  <div class="panel panel-wash">
+    <div class="panel-header">
+      <div class="p-tag">03 · 세탁 시 대체</div>
+      <div class="p-heading">두 벌 모두 세탁 중일 때<br>임시 대체 착용 기준</div>
+    </div>
 
-    <div class="wash-card">
-      <div class="wash-card-header">
-        <div class="wash-card-icon">👕</div>
-        <div class="wash-card-title">상의</div>
+    <div class="wash-header-visual">
+      <div class="wash-hv-ico">🧺</div>
+      <div class="wash-hv-txt">단체복 <strong>두 벌 모두 세탁 중</strong>인<br>불가피한 경우에만 적용</div>
+    </div>
+
+    <div class="wash-split">
+      <div class="wash-card">
+        <div class="wc-icon">👕</div>
+        <div class="wc-title">상의</div>
+        <div class="wc-ok">✓ 허용 색상</div>
+        <div class="wc-text"><strong>회색 · 검정색</strong><br>민무늬 상의만 가능</div>
       </div>
-      <div class="wash-rule">
-        <strong>회색 또는 검정색</strong> 민무늬 상의만 가능<br>
-        로고·무늬·줄무늬 등 모두 불가
+      <div class="wash-card">
+        <div class="wc-icon">👖</div>
+        <div class="wc-title">하의</div>
+        <div class="wc-ok">✓ 허용 색상</div>
+        <div class="wc-text"><strong>검정 · 회색</strong> 바지<br>무늬·장식 없어야 함</div>
       </div>
     </div>
 
-    <div class="wash-card">
-      <div class="wash-card-header">
-        <div class="wash-card-icon">👖</div>
-        <div class="wash-card-title">하의</div>
-      </div>
-      <div class="wash-rule">
-        <strong>검정 또는 회색</strong> 바지만 가능<br>
-        무늬·장식·자수 없어야 함
-      </div>
-    </div>
-
-    <div class="deny-box">
-      <div class="deny-icon">🚫</div>
-      <div class="deny-text">카고 바지 등 <strong>옆주머니 달린 바지 불가</strong><br>장식이 하나라도 있으면 불가</div>
+    <div class="cargo-deny">
+      <div class="cargo-ico">🚫</div>
+      <div class="cargo-txt">카고 바지 등 <strong>옆주머니 달린 바지</strong> 불가<br>장식이 하나라도 있으면 착용 불가</div>
     </div>
   </div>
 
   <!-- 5. 추가구매 -->
-  <div class="col-buy">
+  <div class="panel-buy">
     <div>
       <div class="buy-tag">추가 구매 안내</div>
       <div class="buy-heading">단체복이<br>부족하다면?</div>
-      <span class="buy-icon-big">🛒</span>
-      <div class="buy-card">
-        <div class="buy-card-title">해당되는 경우</div>
-        <div class="buy-card-text">
-          땀이 많은 경우<br>
-          세탁 빈도가 높은 경우<br>
-          여벌이 필요한 경우
-        </div>
+      <span class="buy-big-icon">🛒</span>
+      <div class="buy-item">
+        <div class="buy-dot"></div>
+        <div class="buy-item-txt">땀이 많은 경우</div>
+      </div>
+      <div class="buy-item">
+        <div class="buy-dot"></div>
+        <div class="buy-item-txt">세탁 빈도가 높은 경우</div>
+      </div>
+      <div class="buy-item">
+        <div class="buy-dot"></div>
+        <div class="buy-item-txt">여벌이 필요한 경우</div>
       </div>
     </div>
     <div class="buy-cta">
-      <div class="buy-cta-icon">🙋</div>
-      <div class="buy-cta-text">담임 선생님께<br>말씀해 주세요</div>
+      <div class="buy-cta-ico">🙋</div>
+      <div class="buy-cta-txt">담임 선생님께<br>말씀해 주세요</div>
     </div>
   </div>
 
