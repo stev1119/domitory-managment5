@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단체복 착용 안내</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  body {
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+ 
+  .poster {
+    width: 620px;
+    min-height: 900px;
+    background: #0f0f1a;
+    position: relative;
+    overflow: hidden;
+    padding: 52px 48px 48px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  }
+ 
+  /* Background geometric elements */
+  .poster::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 340px;
+    height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,80,200,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .poster::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -60px;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(15,150,100,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+ 
+  /* Grid lines decoration */
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+ 
+  .accent-bar {
+    width: 56px;
+    height: 4px;
+    background: linear-gradient(90deg, #2d6cdf, #1ecda0);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+ 
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #1ecda0;
+    text-transform: uppercase;
+    border: 1px solid rgba(30,205,160,0.4);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 18px;
+    background: rgba(30,205,160,0.06);
+  }
+ 
+  h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 38px;
+    font-weight: 900;
+    color: #f0f0f0;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  h1 span {
+    color: #2d6cdf;
+  }
+ 
+  .subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+ 
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+    margin: 28px 0;
+  }
+ 
+  .section {
+    margin-bottom: 26px;
+    position: relative;
+    padding-left: 20px;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background: linear-gradient(180deg, #2d6cdf, #1ecda0);
+    border-radius: 2px;
+  }
+ 
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: #2d6cdf;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+ 
+  .section-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8e8e8;
+    margin-bottom: 10px;
+  }
+ 
+  .section p {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.9;
+    font-weight: 300;
+  }
+ 
+  .highlight-box {
+    background: rgba(45,108,223,0.1);
+    border: 1px solid rgba(45,108,223,0.25);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 10px 0;
+  }
+  .highlight-box p {
+    color: rgba(255,255,255,0.8) !important;
+    font-size: 13.5px;
+    line-height: 1.9;
+  }
+ 
+  .color-chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 400;
+  }
+  .chip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+ 
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .mini-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .mini-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #1ecda0;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .mini-card p {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.6) !important;
+    line-height: 1.75;
+  }
+ 
+  .warning-box {
+    background: rgba(220,80,60,0.08);
+    border: 1px solid rgba(220,80,60,0.22);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 10px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .warning-icon {
+    font-size: 16px;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .warning-box p {
+    font-size: 13px;
+    color: rgba(255,180,160,0.9) !important;
+    line-height: 1.75;
+  }
+ 
+  .tip-box {
+    background: rgba(30,205,160,0.07);
+    border: 1px solid rgba(30,205,160,0.2);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .tip-icon { font-size: 16px; line-height: 1.4; flex-shrink: 0; }
+  .tip-box p {
+    font-size: 13px;
+    color: rgba(180,240,220,0.85) !important;
+    line-height: 1.75;
+  }
+ 
+  .footer {
+    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 20px;
+  }
+  .footer-brand {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.04em;
+  }
+  .footer-brand span {
+    color: #2d6cdf;
+  }
+  .footer-note {
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    text-align: right;
+    line-height: 1.6;
+  }
+ 
+  /* Decorative corner marks */
+  .corner {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    opacity: 0.3;
+  }
+  .corner-tl { top: 20px; left: 20px; border-top: 2px solid #2d6cdf; border-left: 2px solid #2d6cdf; }
+  .corner-tr { top: 20px; right: 20px; border-top: 2px solid #2d6cdf; border-right: 2px solid #2d6cdf; }
+  .corner-bl { bottom: 20px; left: 20px; border-bottom: 2px solid #1ecda0; border-left: 2px solid #1ecda0; }
+  .corner-br { bottom: 20px; right: 20px; border-bottom: 2px solid #1ecda0; border-right: 2px solid #1ecda0; }
+</style>
+</head>
+<body>
+<div class="poster">
+  <div class="grid-lines"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+ 
+  <div style="position:relative; z-index:1;">
+    <div class="badge">NOTICE · 공지사항</div>
+    <div class="accent-bar"></div>
+    <h1>단체복<br><span>착용 안내</span></h1>
+    <p class="subtitle">SCHOOL UNIFORM POLICY · 시대인재N 기숙학원</p>
+ 
+    <!-- 원칙 -->
+    <div class="section">
+      <div class="section-label">원칙</div>
+      <div class="section-title">기본 원칙</div>
+      <div class="warning-box">
+        <span class="warning-icon">⚠️</span>
+        <p>단체복 착용은 <strong>필수</strong>입니다. 겉으로 드러나는 옷은 모두 단체복을 착용해야 하며, 위반 시 <strong>벌점</strong>이 부과될 수 있습니다.</p>
+      </div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- 후드집업 내부 -->
+    <div class="section">
+      <div class="section-label">한시적 예외기준</div>
+      <div class="section-title">후드집업 속 티셔츠 허용 기준</div>
+      <div class="highlight-box">
+        <p>무늬가 없는 <strong>단색</strong>에 한하여 착용 가능합니다.</p>
+        <div class="color-chips">
+          <div class="chip"><div class="chip-dot" style="background:#888;"></div>회색</div>
+          <div class="chip"><div class="chip-dot" style="background:#2b3a6b;"></div>남색</div>
+          <div class="chip"><div class="chip-dot" style="background:#222;border:1px solid #555;"></div>검정색</div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- 세탁 시 대체복 -->
+    <div class="section">
+      <div class="section-label">대체착용</div>
+      <div class="section-title">단체복 세탁 시 대체 착용 기준</div>
+      <p style="color:rgba(255,255,255,0.5); font-size:12.5px; margin-bottom:10px;">두 벌 모두 세탁 중일 경우에 한하여 아래 기준을 따릅니다.</p>
+      <div class="grid-2">
+        <div class="mini-card">
+          <div class="mini-card-title">👕 상의</div>
+          <p>회색·검정색<br><strong>민무늬</strong> 상의만 가능</p>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">👖 하의</div>
+          <p>아무 무늬·장식이 없는<br><strong>검정·회색 바지</strong>만 가능<br><span style="color:rgba(255,120,100,0.8); font-size:11.5px;">※ 카고 바지 등 옆주머니<br>달린 바지 불가</span></p>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="divider"></div>
+ 
+    <!-- 추가 구매 안내 -->
+    <div class="section">
+      <div class="section-label">INFO</div>
+      <div class="section-title">단체복 추가 구매</div>
+      <div class="tip-box">
+        <span class="tip-icon">💬</span>
+        <p>땀이 많거나 자주 세탁이 필요한 경우, <strong>단체복 추가 구매를</strong>고려해 주세요.</p>
+      </div>
+    </div>
+ 
+    <div class="footer">
+      <div class="footer-brand">시대인재<span>N</span> 기숙학원</div>
+      <div class="footer-note">학생 생활 규정<br>DORMITORY REGULATION</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
