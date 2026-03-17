@@ -2577,9 +2577,9 @@ function displaySearchResults(results, extendedSearch) {
                 return `
                     <div class="search-result-item" style="background: #fef3c7;"
                          onclick="showAFStudentDetail('${result.name.replace(/'/g, "\\'")}')">
-                        <div class="result-room" style="color: #d97706;">◆ 기숙사이력/퇴소생 정보</div>
+                        <div class="result-room" style="color: #d97706;">◆ 퇴소생 정보</div>
                         <div class="result-name">${result.name}</div>
-                        <div class="result-status" style="color: #92400e;">IF시트 기록 — 클릭하여 상세보기</div>
+                        <div class="result-status" style="color: #92400e;">퇴소전 기록 — 클릭하여 상세보기</div>
                     </div>
                 `;
             }
@@ -2651,7 +2651,7 @@ function createAFStudentCard(row) {
     return `
         <div class="student-info-card" style="border-left-color: #f59e0b;">
             <div class="student-info-header">
-                <div class="student-room" style="color: #d97706;">${cols[14] || 'IF시트'}</div>
+                <div class="student-room" style="color: #d97706;">${cols[14] || '퇴소전 정보'}</div>
                 <div class="student-status" style="background: #f59e0b;">이력/퇴소</div>
             </div>
             <div class="student-details">
