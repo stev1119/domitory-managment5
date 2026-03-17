@@ -1047,7 +1047,7 @@ position: absolute;
                 <span style="display: none; font-size: 2.5rem;">🏫</span>
                 <div class="header-text">
                     <h1>시대인재 기숙사 인원 현황</h1>
-                    <p>기숙사 인원현황 및 재원생(퇴원생)정보 검색</p>
+                    <p>실시간 인원 현황 모니터링 시스템</p>
                 </div>
             </div>
         </div>
@@ -1617,14 +1617,14 @@ await loadAFSheetData();
                         
                         // 헤더 (B3:P3)
                         if (allData.length > 2 && allData[2].length > 1) {
-                           const header = allData[2].slice(1, 17); // B~R열 (인덱스 1~17)
-sheetsData.push(['인덱스'].concat(header));
+                            const header = allData[2].slice(1, 17); // B3:P3 (B열=1번 인덱스부터 P열=15번 인덱스까지)
+                            sheetsData.push(['인덱스'].concat(header)); // 인덱스 열 추가
                         }
                         
                         // 데이터 (B4부터)
                         for (let i = 3; i < allData.length; i++) {
                             if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 17); // B~R열 (Q열=인덱스17 포함)
+                                const row = allData[i].slice(1, 17); // B열:P열
                                 if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
                                     sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
                                 }
@@ -2893,7 +2893,7 @@ let finalMemo = memo;
             const enrollDate = row[13] || '';
             const school = row[14] || '';
             const classroom = row[15] || '';
-           
+           const qColumnData = row[16] || '';
 
             const statusClass = getStatusClass(status);
 
@@ -3028,35 +3028,36 @@ let finalMemo = memo;
 
         // 텍스트 내용 생성
         function generateTextViewContent() {
-    const modalStudentsGrid = document.getElementById('modalStudentsGrid');
-    const studentCards = modalStudentsGrid.querySelectorAll('.student-info-card');
-    
-    let textContent = '';
-    
-    studentCards.forEach((card) => {
-        // 허용된 라벨만 명시적으로 추출 (R열 이후 절대 포함 안 됨)
-        const allowedLabels = ['이름', '라이브러리 좌석', '그룹', '성별'];
-        let room = '', name = '', librarySeat = '', group = '', gender = '';
+            const modalStudentsGrid = document.getElementById('modalStudentsGrid');
+            const studentCards = modalStudentsGrid.querySelectorAll('.student-info-card');
+            
+            let textContent = '';
+            
+            studentCards.forEach((card, index) => {
+                // 각 카드에서 필요한 정보 추출
+                const detailItems = card.querySelectorAll('.detail-item');
+                let room = '', name = '', librarySeat = '', group = '', gender = '';
+                
+                detailItems.forEach(item => {
+                    const label = item.querySelector('.detail-label')?.textContent;
+                    const value = item.querySelector('.detail-value')?.textContent;
+                    
+                    if (label === '이름') name = value;
+                    else if (label === '라이브러리 좌석') librarySeat = value;
+                    else if (label === '그룹') group = value;
+                    else if (label === '성별') gender = value;
+                });
+                
+                // 기숙사 번호는 student-room에서 추출
+                room = card.querySelector('.student-room')?.textContent || '';
+                
+                // 한 줄로 조합
+                textContent += `${room}, ${name}, ${librarySeat}, ${group}, ${gender}\n`;
+            });
+            
+            return textContent.trim();
+        }
 
-        card.querySelectorAll('.detail-item').forEach(item => {
-            const label = (item.querySelector('.detail-label')?.textContent || '').trim();
-            const value = (item.querySelector('.detail-value')?.textContent || '').trim();
-
-            if (!allowedLabels.includes(label)) return; // 허용된 항목만
-
-            if (label === '이름') name = value;
-            else if (label === '라이브러리 좌석') librarySeat = value;
-            else if (label === '그룹') group = value;
-            else if (label === '성별') gender = value;
-        });
-
-        room = card.querySelector('.student-room')?.textContent?.trim() || '';
-
-        textContent += `${room}, ${name}, ${librarySeat}, ${group}, ${gender}\n`;
-    });
-    
-    return textContent.trim();
-}
        
 // 텍스트 내용 복사
         function copyTextContent(event) {  // ✅ event 매개변수 추가
