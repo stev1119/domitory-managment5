@@ -1617,14 +1617,14 @@ await loadAFSheetData();
                         
                         // 헤더 (B3:P3)
                         if (allData.length > 2 && allData[2].length > 1) {
-                           const header = allData[2].slice(1, 18); // B~R열 (인덱스 1~17)
+                           const header = allData[2].slice(1, 17); // B~R열 (인덱스 1~17)
 sheetsData.push(['인덱스'].concat(header));
                         }
                         
                         // 데이터 (B4부터)
                         for (let i = 3; i < allData.length; i++) {
                             if (allData[i].length > 1) {
-                                const row = allData[i].slice(1, 18); // B~R열 (Q열=인덱스17 포함)
+                                const row = allData[i].slice(1, 17); // B~R열 (Q열=인덱스17 포함)
                                 if (row.some(cell => cell && cell.trim() !== '')) { // 빈 행이 아닌 경우만
                                     sheetsData.push([i].concat(row)); // 행 번호와 함께 추가
                                 }
@@ -2893,7 +2893,7 @@ let finalMemo = memo;
             const enrollDate = row[13] || '';
             const school = row[14] || '';
             const classroom = row[15] || '';
-           const qColumnData = row[16] || '';
+           
 
             const statusClass = getStatusClass(status);
 
