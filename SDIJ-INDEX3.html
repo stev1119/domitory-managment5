@@ -1673,7 +1673,7 @@ renderHistory();
             const el = document.getElementById('memory-info');
             if (!saved || (!saved.manager && !saved.building && !saved.floor)) {
                 el.className = 'memory-info empty';
-                el.innerHTML = '💾 기억된 설정 없음 — 담당자·동·층 선택 후 기억하기를 눌러주세요';
+                el.innerHTML = '★기억된 설정 없음 — 담당자·동·층 선택 후 기억하기를 눌러주세요';
                 return;
             }
             const managerText  = saved.manager  ? `<strong>${saved.manager}</strong>` : '담당자 미설정';
