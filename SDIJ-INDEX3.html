@@ -1265,6 +1265,12 @@ function applyStatusColor(select, status) {
             };
 
             currentStudents.forEach(student => {
+                // 이동- 는 이름 없어도 카운트 (나머지는 기존 그대로)
+                if (student.status === '이동-') {
+                    stats.moveOut++;
+                    return;
+                }
+
                 if (student.name !== '미배정') {
                     switch (student.status) {
                         case '정상':
@@ -1276,9 +1282,6 @@ function applyStatusColor(select, status) {
                         case '신규':
                             stats.new++;
                             stats.current++;
-                            break;
-                        case '이동-':
-                            stats.moveOut++;
                             break;
                         case '이동+':
                             stats.moveIn++;
