@@ -1893,11 +1893,18 @@ renderHistory();
         
     
 // ── 이동 메모 자동완성 ──
-        function renderMoveHelper(index, status) {
+function renderMoveHelper(index, status) {
             const helper = document.getElementById(`move-helper-${index}`);
             if (!helper) return;
 
-           if (status === '이동+') {
+            // 이동+/이동- 가 아닌 모든 상태는 헬퍼 완전 초기화
+            if (status !== '이동+' && status !== '이동-') {
+                helper.innerHTML = '';
+                helper.classList.remove('visible');
+                return;
+            }
+
+            if (status === '이동+') {
                 const room = currentStudents[index].room;
                 const name = currentStudents[index].name !== '미배정' ? currentStudents[index].name : '';
                 helper.innerHTML = `
@@ -1911,7 +1918,7 @@ renderHistory();
                 `;
                 helper.classList.add('visible');
 
-} else if (status === '이동-' || status === '미배정') {
+            } else if (status === '이동-') {
                 const room = currentStudents[index].room;
                 helper.innerHTML = `
                     <span class="helper-label">${room}</span>
@@ -1924,16 +1931,6 @@ renderHistory();
                     <button class="btn-apply-memo" onclick="applyMoveMemo(${index})">메모 적용</button>
                 `;
                 helper.classList.add('visible');
-
-           } else {
-                helper.innerHTML = '';
-                helper.classList.remove('visible');
-                // 비고 입력칸 원래대로 복원
-                const memoInput = document.getElementById(`memo-input-${index}`);
-                if (memoInput) {
-                    memoInput.style.display = '';
-                    memoInput.placeholder = '비고';
-                }
             }
         }
 
