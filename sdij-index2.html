@@ -592,36 +592,7 @@
         }
         .move-helper .btn-apply-memo:hover { opacity: 0.85; }
 
-        /* 빠른 메모 버튼 */
-        .quick-memo-btns {
-            display: none;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin-top: 5px;
-        }
-        .quick-memo-btns.visible { display: flex; }
-        .btn-quick-memo {
-            padding: 4px 12px;
-            background: #f3f4f6;
-            color: #374151;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 20px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s;
-            white-space: nowrap;
-        }
-        .btn-quick-memo:hover {
-            background: #eef2ff;
-            border-color: #4f46e5;
-            color: #4f46e5;
-        }
-        .btn-quick-memo.active {
-            background: #4f46e5;
-            border-color: #4f46e5;
-            color: white;
-        }
+        
 /* Jandi 미리보기 */
         .jandi-preview {
             background: #1e1e2e;
@@ -947,15 +918,7 @@
     <script>
         // 전역 변수
         let sheetsData = [];
-        const quickMemoMap = {
-            '외박':  ['외박중퇴소'],
-            '정상':  ['외출중외박'],
-            '등미':  ['미입실중'],
-            '퇴소':  [],
-            '신규':  [],
-            '이동+': [],
-            '이동-': [],
-            '미배정': []
+       
         };
         let currentStudents = [];
         let lastReportDate = {};
@@ -1163,10 +1126,9 @@
                             <option value="미배정" ${student.status === '미배정' ? 'selected' : ''}>미배정</option>
                         </select>
                     </div>
-                    <div class="student-memo">
+                   <div class="student-memo">
                         <input type="text" id="memo-input-${index}" value="${student.memo}" placeholder="비고" oninput="updateStudentMemo(${index}, this.value)">
                         <div class="move-helper" id="move-helper-${index}"></div>
-                        <div class="quick-memo-btns" id="quick-btns-${index}"></div>
                     </div>
                 `;
                 // 초기 상태에 따라 배경색 적용
@@ -1176,7 +1138,7 @@ if (student.status !== '정상') {
                 // 초기 로드 시 상태에 맞게 렌더링
                 setTimeout(() => {
                     renderMoveHelper(index, student.status);
-                    renderQuickBtns(index, student.status);
+                    
                 }, 0);
                 studentsGrid.appendChild(studentCard);
             });
@@ -1836,29 +1798,30 @@ renderHistory();
             const helper = document.getElementById(`move-helper-${index}`);
             if (!helper) return;
 
-            if (status === '이동+') {
+           if (status === '이동+') {
                 const room = currentStudents[index].room;
+                const name = currentStudents[index].name !== '미배정' ? currentStudents[index].name : '';
                 helper.innerHTML = `
                     <span class="helper-label">출발호실</span>
                     <input type="text" id="from-room-${index}" placeholder="예: B403" maxlength="6"
                         oninput="this.value=this.value.toUpperCase()"
                         onkeydown="if(event.key==='Enter') applyMoveMemo(${index})">
                     <span class="arrow-icon">→</span>
-                    <span class="helper-label">${room}로 이동</span>
+                    <span class="helper-label">${room} ${name}</span>
                     <button class="btn-apply-memo" onclick="applyMoveMemo(${index})">메모 적용</button>
                 `;
                 helper.classList.add('visible');
 
-            } else if (status === '이동-' || status === '미배정') {
+} else if (status === '이동-' || status === '미배정') {
                 const room = currentStudents[index].room;
-                const name = currentStudents[index].name;
                 helper.innerHTML = `
-                    <span class="helper-label">${room} ${name !== '미배정' ? name : ''}</span>
+                    <span class="helper-label">${room}</span>
+                    <input type="text" id="move-name-${index}" placeholder="이름" maxlength="10"
+                        onkeydown="if(event.key==='Enter') document.getElementById('from-room-${index}').focus()">
                     <span class="arrow-icon">→</span>
                     <input type="text" id="from-room-${index}" placeholder="도착호실 예: B401" maxlength="6"
                         oninput="this.value=this.value.toUpperCase()"
                         onkeydown="if(event.key==='Enter') applyMoveMemo(${index})">
-                    <span class="helper-label">로 이동</span>
                     <button class="btn-apply-memo" onclick="applyMoveMemo(${index})">메모 적용</button>
                 `;
                 helper.classList.add('visible');
@@ -1882,11 +1845,14 @@ renderHistory();
 
             let memoText = '';
             if (student.status === '이동+') {
+                // 이동+: 출발호실 입력 → "B403 홍길동 → B401로 이동"
                 memoText = `${otherRoom} ${student.name} → ${student.room}로 이동`;
             } else {
-                memoText = `${student.room} ${student.name !== '미배정' ? student.name : ''} → ${otherRoom}로 이동`.trim();
+                // 이동-/미배정: 출발호실 + 이름 입력 → "B403 홍길동 → B401로 이동"
+                const nameInput = document.getElementById(`move-name-${index}`);
+                const moveName  = nameInput ? nameInput.value.trim() : '';
+                memoText = `${student.room} ${moveName} → ${otherRoom}`.trim();
             }
-
             const memoInput = document.getElementById(`memo-input-${index}`);
             if (memoInput) {
                 memoInput.value = memoText;
@@ -1899,47 +1865,7 @@ renderHistory();
         }
 
         // ── 빠른 메모 버튼 ──
-        function applyQuickMemo(index, text) {
-            const memoInput = document.getElementById(`memo-input-${index}`);
-            if (!memoInput) return;
-
-            // 같은 버튼 다시 누르면 토글(취소)
-            if (memoInput.value === text) {
-                memoInput.value = '';
-                updateStudentMemo(index, '');
-                syncQuickBtnActive(index, '');
-                return;
-            }
-
-            memoInput.value = text;
-            updateStudentMemo(index, text);
-            syncQuickBtnActive(index, text);
-        }
-
-        function syncQuickBtnActive(index, currentText) {
-            const btns = document.querySelectorAll(`#quick-btns-${index} .btn-quick-memo`);
-            btns.forEach(b => b.classList.toggle('active', b.textContent === currentText));
-        }
-
-        function renderQuickBtns(index, status) {
-            const container = document.getElementById(`quick-btns-${index}`);
-            if (!container) return;
-
-            const btns = quickMemoMap[status] || [];
-
-            if (btns.length === 0) {
-                container.innerHTML = '';
-                container.classList.remove('visible');
-                return;
-            }
-
-            container.innerHTML = btns.map(text =>
-                `<button class="btn-quick-memo" onclick="applyQuickMemo(${index}, '${text}')">${text}</button>`
-            ).join('');
-            container.classList.add('visible');
-
-            syncQuickBtnActive(index, currentStudents[index].memo);
-        }
+        
 // ── 검색/상태 필터 ──
         function applyFilter() {
             const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
