@@ -591,62 +591,7 @@
             white-space: nowrap;
         }
         .move-helper .btn-apply-memo:hover { opacity: 0.85; }
-        /* 같은 층 이동 매칭 */
-        .match-list {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            margin-top: 6px;
-        }
-        .match-list.visible { display: flex; }
-        .match-label {
-            font-size: 0.75rem;
-            color: #6b7280;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-        .match-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            background: #f0fdf4;
-            border: 1.5px solid #86efac;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.82rem;
-            transition: all 0.15s;
-        }
-        .match-item:hover {
-            background: #dcfce7;
-            border-color: #22c55e;
-        }
-        .match-room {
-            font-weight: 700;
-            color: #15803d;
-        }
-        .match-name {
-            color: #166534;
-            flex: 1;
-        }
-        .match-btn {
-            font-size: 0.75rem;
-            background: #22c55e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 3px 8px;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        .match-btn:hover { background: #16a34a; }
-        .match-none {
-            font-size: 0.78rem;
-            color: #9ca3af;
-            font-style: italic;
-            padding: 4px 2px;
-        }
+       
        
 
         
@@ -1186,7 +1131,6 @@
                    <div class="student-memo">
                         <input type="text" id="memo-input-${index}" value="${student.memo}" placeholder="비고" oninput="updateStudentMemo(${index}, this.value)">
                         <div class="move-helper" id="move-helper-${index}"></div>
-                        <div class="match-list" id="match-list-${index}"></div>
                     </div>
                 `;
                 // 초기 상태에 따라 배경색 적용
@@ -1197,7 +1141,6 @@ if (student.status !== '정상') {
                 setTimeout(() => {
                     if (student.status === '이동+' || student.status === '이동-') {
                         renderMoveHelper(index, student.status);
-                        findSameFloorMatch(index, student.status);
                     }
                 }, 0);
                 studentsGrid.appendChild(studentCard);
@@ -1219,13 +1162,7 @@ function updateStudentStatus(index, status) {
 
             // 이동 헬퍼 / 빠른 버튼 전환
             renderMoveHelper(index, status);
-    // 이동 짝 매칭 시도
-            if (status === '이동+' || status === '이동-') {
-                findSameFloorMatch(index, status);
-            } else {
-                const matchList = document.getElementById(`match-list-${index}`);
-                if (matchList) matchList.classList.remove('visible');
-            }
+
             
 }
 
