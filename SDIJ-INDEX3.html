@@ -1193,10 +1193,12 @@
 if (student.status !== '정상') {
     studentCard.classList.add('status-' + student.status);
 }
-                // 초기 로드 시 상태에 맞게 렌더링
+                // 초기 로드 시 이동+/이동- 일 때만 헬퍼 표시
                 setTimeout(() => {
-                    renderMoveHelper(index, student.status);
-                    
+                    if (student.status === '이동+' || student.status === '이동-') {
+                        renderMoveHelper(index, student.status);
+                        findSameFloorMatch(index, student.status);
+                    }
                 }, 0);
                 studentsGrid.appendChild(studentCard);
             });
