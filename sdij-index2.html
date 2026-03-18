@@ -583,6 +583,59 @@
             transition: transform 0.2s;
             font-size: 0.75rem;
         }
+        /* 기억하기 버튼 영역 */
+        .memory-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border: 1px dashed #93c5fd;
+        }
+        .memory-bar .memory-info {
+            flex: 1;
+            font-size: 0.82rem;
+            color: #374151;
+        }
+        .memory-bar .memory-info strong {
+            color: #4f46e5;
+            font-weight: 700;
+        }
+        .memory-bar .memory-info.empty {
+            color: #9ca3af;
+            font-style: italic;
+        }
+        .btn-remember {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-remember:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-reset-memory {
+            padding: 8px 14px;
+            background: white;
+            color: #6b7280;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .btn-reset-memory:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fef2f2;
+        }
         .preview-arrow.open { transform: rotate(90deg); }
         .student-card.modified .changed-badge { display: inline-block; }
         
@@ -753,7 +806,14 @@
                     </select>
                 </div>
             </div>
-
+<!-- 기억하기 영역 -->
+            <div class="memory-bar">
+                <div class="memory-info empty" id="memory-info">
+                    💾 기억된 설정 없음 — 담당자·동·층 선택 후 기억하기를 눌러주세요
+                </div>
+                <button class="btn-remember" onclick="saveMemory()">💾 기억하기</button>
+                <button class="btn-reset-memory" onclick="resetMemory()">🗑 초기화</button>
+            </div>
             <!-- 학생 정보 섹션 -->
             <div class="students-section" id="students-section" style="display: none;">
                 <div class="students-header">
@@ -1487,6 +1547,7 @@ document.getElementById('building-select').addEventListener('change', function()
         // 페이지 로드 시 초기화 (원본 그대로)
         window.addEventListener('load', function() {
             loadSheetsData();
+           loadMemory();
 renderHistory();
             window.addEventListener('scroll', () => {
                 const summary = document.getElementById('sticky-summary');
@@ -1519,6 +1580,93 @@ renderHistory();
                 localStorage.setItem('yesterdayReports', JSON.stringify(lastReportDate));
             }
         }, 600000); // 1분마다 체크
+
+        // ── 담당자·동·층 수동 기억 ──
+        function saveMemory() {
+            const manager  = document.getElementById('manager-select').value;
+            const building = document.getElementById('building-select').value;
+            const floor    = document.getElementById('floor-select').value;
+
+            if (!manager && !building && !floor) {
+                alert('담당자, 동, 층 중 하나 이상을 먼저 선택해주세요.');
+                return;
+            }
+
+            const saved = { manager, building, floor };
+            localStorage.setItem('dormMemory', JSON.stringify(saved));
+            renderMemoryInfo(saved);
+            showMessage('설정이 기억되었습니다.', 'success');
+        }
+
+        function resetMemory() {
+            if (!confirm('기억된 설정을 초기화할까요?')) return;
+            localStorage.removeItem('dormMemory');
+            renderMemoryInfo(null);
+            showMessage('기억된 설정이 초기화되었습니다.', 'success');
+        }
+
+        function renderMemoryInfo(saved) {
+            const el = document.getElementById('memory-info');
+            if (!saved || (!saved.manager && !saved.building && !saved.floor)) {
+                el.className = 'memory-info empty';
+                el.innerHTML = '💾 기억된 설정 없음 — 담당자·동·층 선택 후 기억하기를 눌러주세요';
+                return;
+            }
+            const managerText  = saved.manager  ? `<strong>${saved.manager}</strong>` : '담당자 미설정';
+            const buildingText = saved.building ? `<strong>${saved.building}동</strong>` : '동 미설정';
+            const floorText    = saved.floor    ? `<strong>${saved.floor}층</strong>`   : '층 미설정';
+            el.className = 'memory-info';
+            el.innerHTML = `📌 기억된 설정: ${managerText} · ${buildingText} · ${floorText}`;
+        }
+
+        function loadMemory() {
+            const raw = localStorage.getItem('dormMemory');
+            if (!raw) return;
+
+            const saved = JSON.parse(raw);
+
+            // 담당자 복원
+            if (saved.manager) {
+                document.getElementById('manager-select').value = saved.manager;
+            }
+
+            // 동 복원 + 층 옵션 갱신
+            if (saved.building) {
+                const buildingSelect = document.getElementById('building-select');
+                buildingSelect.value = saved.building;
+
+                // 동에 맞는 층 옵션 업데이트 (기존 change 이벤트 로직과 동일)
+                const floorSelect = document.getElementById('floor-select');
+                if (['D', 'E', 'F'].includes(saved.building)) {
+                    floorSelect.innerHTML = `
+                        <option value="">층 선택</option>
+                        <option value="2">2층 (1인실)</option>
+                        <option value="3">3층 (1인실)</option>
+                        <option value="4">4층 (1인실)</option>
+                        <option value="5">5층 (3인실)</option>
+                    `;
+                } else {
+                    floorSelect.innerHTML = `
+                        <option value="">층 선택</option>
+                        <option value="1">1층 (1인실)</option>
+                        <option value="2">2층 (1인실)</option>
+                        <option value="3">3층 (1인실)</option>
+                        <option value="4">4층 (3인실)</option>
+                    `;
+                }
+
+                // 층 복원
+                if (saved.floor) {
+                    document.getElementById('floor-select').value = saved.floor;
+
+                    // 학생 목록 자동 로드
+                    const students = getStudentsByFloor(saved.building, saved.floor);
+                    displayStudents(students);
+                }
+            }
+
+            renderMemoryInfo(saved);
+        }
 // ── Jandi 미리보기 ──
         function buildJandiPreviewText(manager, building, floor, isModification) {
             const current = document.getElementById('current-count').textContent;
