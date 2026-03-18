@@ -591,7 +591,7 @@
             white-space: nowrap;
         }
         .move-helper .btn-apply-memo:hover { opacity: 0.85; }
-        /* 이동 짝 매칭 */
+        /* 같은 층 이동 매칭 */
         .match-list {
             display: none;
             flex-direction: column;
@@ -621,15 +621,15 @@
             background: #dcfce7;
             border-color: #22c55e;
         }
-        .match-item .match-room {
+        .match-room {
             font-weight: 700;
             color: #15803d;
         }
-        .match-item .match-name {
+        .match-name {
             color: #166534;
             flex: 1;
         }
-        .match-item .match-btn {
+        .match-btn {
             font-size: 0.75rem;
             background: #22c55e;
             color: white;
@@ -640,13 +640,14 @@
             font-weight: 600;
             white-space: nowrap;
         }
-        .match-item .match-btn:hover { background: #16a34a; }
+        .match-btn:hover { background: #16a34a; }
         .match-none {
             font-size: 0.78rem;
             color: #9ca3af;
             font-style: italic;
-            padding: 4px 0;
+            padding: 4px 2px;
         }
+       
 
         
 /* Jandi 미리보기 */
@@ -1218,7 +1219,7 @@ function updateStudentStatus(index, status) {
             renderMoveHelper(index, status);
     // 이동 짝 매칭 시도
             if (status === '이동+' || status === '이동-') {
-                findMatchCandidates(index, status);
+                findSameFloorMatch(index, status);
             } else {
                 const matchList = document.getElementById(`match-list-${index}`);
                 if (matchList) matchList.classList.remove('visible');
@@ -1860,65 +1861,40 @@ renderHistory();
                 arrow.classList.add('open');
             }
         }
-// ── 이동 학생 자동 짝 매칭 ──
-        function findMatchCandidates(index, status) {
+// ── 같은 층 이동 매칭 ──
+        function findSameFloorMatch(index, status) {
             const matchList = document.getElementById(`match-list-${index}`);
             if (!matchList) return;
 
-            // 현재 카드의 학생 정보
-            const student = currentStudents[index];
-
-            // 찾을 반대 상태
             const targetStatus = status === '이동+' ? '이동-' : '이동+';
 
-            // sheetsData 전체에서 반대 상태 학생 찾기
-            const candidates = [];
-            for (let i = 1; i < sheetsData.length; i++) {
-                const row = sheetsData[i];
-                if (!row || !row[1]) continue;
-
-                const rowRoom   = (row[1] || '').toString().trim();
-                const rowName   = (row[2] || '').toString().trim();
-                const rowStatus = (row[3] || '').toString().trim();
-
-                if (rowStatus === targetStatus && rowName && rowName !== '미배정') {
-                    // 현재 보고 층 학생은 이미 currentStudents에 있으므로 중복 제외
-                    const alreadyInCurrent = currentStudents.some(s => s.room === rowRoom);
-                    candidates.push({
-                        room: rowRoom,
-                        name: rowName,
-                        rowIndex: i,
-                        alreadyInCurrent
-                    });
-                }
-            }
-
-            // 현재 층 내 반대 상태 학생도 포함 (currentStudents에서)
-            currentStudents.forEach((s, i) => {
-                if (i !== index && s.status === targetStatus && s.name !== '미배정') {
-                    // 중복 방지
-                    if (!candidates.some(c => c.room === s.room)) {
-                        candidates.unshift({ room: s.room, name: s.name, rowIndex: s.rowIndex, alreadyInCurrent: true, localIndex: i });
-                    }
-                }
-            });
+            // currentStudents 에서 반대 상태 학생 찾기
+            const candidates = currentStudents
+                .map((s, i) => ({ ...s, localIndex: i }))
+                .filter(s =>
+                    s.localIndex !== index &&
+                    s.status === targetStatus &&
+                    s.name !== '미배정'
+                );
 
             matchList.innerHTML = '';
 
             if (candidates.length === 0) {
                 matchList.innerHTML = `
-                    <div class="match-label">🔗 매칭 가능한 ${targetStatus} 학생</div>
-                    <div class="match-none">현재 ${targetStatus} 상태인 학생이 없습니다</div>
+                    <div class="match-label">🔗 같은 층 ${targetStatus} 학생</div>
+                    <div class="match-none">같은 층에 ${targetStatus} 학생이 없습니다</div>
                 `;
             } else {
-                matchList.innerHTML = `<div class="match-label">🔗 매칭 가능한 ${targetStatus} 학생 (클릭하여 메모 자동완성)</div>`;
-                candidates.slice(0, 5).forEach(c => {
+                matchList.innerHTML = `
+                    <div class="match-label">🔗 같은 층 ${targetStatus} 학생 — 클릭하면 양쪽 메모 자동완성</div>
+                `;
+                candidates.forEach(c => {
                     const item = document.createElement('div');
                     item.className = 'match-item';
                     item.innerHTML = `
                         <span class="match-room">${c.room}</span>
                         <span class="match-name">${c.name}</span>
-                        <button class="match-btn" onclick="applyMatchMemo(${index}, '${c.room}', '${c.name}', ${c.localIndex ?? -1})">연결하기</button>
+                        <button class="match-btn" onclick="applySameFloorMatch(${index}, ${c.localIndex})">연결하기</button>
                     `;
                     matchList.appendChild(item);
                 });
@@ -1927,59 +1903,55 @@ renderHistory();
             matchList.classList.add('visible');
         }
 
-        function applyMatchMemo(index, otherRoom, otherName, otherLocalIndex) {
-            const student = currentStudents[index];
+        function applySameFloorMatch(myIndex, otherIndex) {
+            const me    = currentStudents[myIndex];
+            const other = currentStudents[otherIndex];
 
-            let myMemo    = '';
-            let otherMemo = '';
+            let myMemo, otherMemo;
 
-            if (student.status === '이동+') {
-                // 나는 도착(이동+), 상대는 출발(이동-)
-                myMemo    = `${otherRoom} ${otherName} → ${student.room}로 이동`;
-                otherMemo = `${otherRoom} ${otherName} → ${student.room}로 이동`;
+            if (me.status === '이동+') {
+                // 나: 도착(이동+), 상대: 출발(이동-)
+                myMemo    = `${other.room} ${other.name} → ${me.room}로 이동`;
+                otherMemo = `${other.room} ${other.name} → ${me.room}로 이동`;
             } else {
-                // 나는 출발(이동-), 상대는 도착(이동+)
-                myMemo    = `${student.room} ${student.name} → ${otherRoom}로 이동`;
-                otherMemo = `${student.room} ${student.name} → ${otherRoom}로 이동`;
+                // 나: 출발(이동-), 상대: 도착(이동+)
+                myMemo    = `${me.room} ${me.name} → ${other.room}로 이동`;
+                otherMemo = `${me.room} ${me.name} → ${other.room}로 이동`;
             }
 
             // 내 메모 적용
-            const myMemoInput = document.getElementById(`memo-input-${index}`);
-            if (myMemoInput) {
-                myMemoInput.value = myMemo;
-                updateStudentMemo(index, myMemo);
+            const myInput = document.getElementById(`memo-input-${myIndex}`);
+            if (myInput) {
+                myInput.value = myMemo;
+                updateStudentMemo(myIndex, myMemo);
             }
 
-            // 상대가 현재 층에 있으면 바로 적용
-            if (otherLocalIndex >= 0) {
-                const otherMemoInput = document.getElementById(`memo-input-${otherLocalIndex}`);
-                if (otherMemoInput) {
-                    otherMemoInput.value = otherMemo;
-                    updateStudentMemo(otherLocalIndex, otherMemo);
-                }
-                // 상대 카드 하이라이트
-                const otherCards = document.querySelectorAll('#students-grid .student-card');
-                if (otherCards[otherLocalIndex]) {
-                    otherCards[otherLocalIndex].classList.add('modified');
-                    // 잠깐 스크롤해서 보여주기
-                    otherCards[otherLocalIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
+            // 상대 메모 적용
+            const otherInput = document.getElementById(`memo-input-${otherIndex}`);
+            if (otherInput) {
+                otherInput.value = otherMemo;
+                updateStudentMemo(otherIndex, otherMemo);
             }
 
-            // 매칭 목록 숨기기
-            const matchList = document.getElementById(`match-list-${index}`);
-            if (matchList) matchList.classList.remove('visible');
+            // 양쪽 카드 하이라이트
+            const cards = document.querySelectorAll('#students-grid .student-card');
+            if (cards[myIndex])    cards[myIndex].classList.add('modified');
+            if (cards[otherIndex]) cards[otherIndex].classList.add('modified');
 
-            // 헬퍼도 숨기기
-            const helper = document.getElementById(`move-helper-${index}`);
-            if (helper) helper.classList.remove('visible');
+            // 상대 카드로 스크롤
+            if (cards[otherIndex]) {
+                cards[otherIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
 
-            // 내 카드 하이라이트
-            const myCards = document.querySelectorAll('#students-grid .student-card');
-            if (myCards[index]) myCards[index].classList.add('modified');
+            // 매칭 목록 · 헬퍼 숨기기
+            const myMatch = document.getElementById(`match-list-${myIndex}`);
+            if (myMatch) myMatch.classList.remove('visible');
+            const myHelper = document.getElementById(`move-helper-${myIndex}`);
+            if (myHelper) myHelper.classList.remove('visible');
 
-            showMessage(`✅ ${otherRoom} ${otherName}과 연결되었습니다.`, 'success');
+            showMessage(`✅ ${other.room} ${other.name}과 연결되었습니다.`, 'success');
         }
+        
     
 // ── 이동 메모 자동완성 ──
         function renderMoveHelper(index, status) {
