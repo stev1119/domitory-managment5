@@ -550,6 +550,40 @@
             padding: 2px 7px;
             white-space: nowrap;
         }
+/* Jandi 미리보기 */
+        .jandi-preview {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 0.82rem;
+            line-height: 1.9;
+            color: #e0e0e0;
+            font-family: monospace;
+            max-height: 260px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            border-left: 4px solid #4f46e5;
+        }
+        .preview-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.88rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        .preview-toggle:hover { color: #4f46e5; }
+        .preview-arrow {
+            display: inline-block;
+            transition: transform 0.2s;
+            font-size: 0.75rem;
+        }
+        .preview-arrow.open { transform: rotate(90deg); }
         .student-card.modified .changed-badge { display: inline-block; }
         
         
@@ -597,9 +631,14 @@
 </head>
 <body>
 <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-box">
+<div class="modal-box">
             <h3>◆인원보고 제출 확인◆</h3>
             <div class="modal-summary" id="modal-summary-content"></div>
+            <div class="preview-toggle" onclick="toggleJandiPreview()">
+                <span class="preview-arrow" id="preview-arrow">▶</span>
+                <span>Jandi 전송 메시지 미리보기</span>
+            </div>
+            <div class="jandi-preview" id="jandi-preview" style="display:none;"></div>
             <div class="modal-actions">
                 <button class="modal-cancel" onclick="closeModal()">취소</button>
                 <button class="modal-confirm" onclick="confirmSubmit()">제출하기</button>
@@ -1126,7 +1165,14 @@ document.getElementById('etc-count').textContent = stats.etc;
                 현재원 <strong>${current}</strong>명 &nbsp;|&nbsp; 외박 <strong>${out}</strong>명 &nbsp;|&nbsp; 신규 <strong>${newC}</strong>명<br>
                 이동- <strong>${moveOut}</strong>명 &nbsp;|&nbsp; 이동+ <strong>${moveIn}</strong>명 &nbsp;|&nbsp; 등미 <strong>${absent}</strong>명 &nbsp;|&nbsp; 퇴소 <strong>${etc}</strong>명
             `;
+const previewText = buildJandiPreviewText(manager, building, floor, isModification);
+            document.getElementById('jandi-preview').textContent = previewText;
+            document.getElementById('jandi-preview').style.display = 'none';
+            document.getElementById('preview-arrow').classList.remove('open');
             document.getElementById('confirm-modal').classList.add('active');
+            document.getElementById('confirm-modal').classList.add('active');
+
+
         }
         // 구글 시트 업데이트 - 수정된 버전
         async function updateGoogleSheets() {
@@ -1472,7 +1518,77 @@ renderHistory();
             if (now.getHours() === 22 && now.getMinutes() === 0) {
                 localStorage.setItem('yesterdayReports', JSON.stringify(lastReportDate));
             }
-        }, 60000); // 1분마다 체크
+        }, 600000); // 1분마다 체크
+// ── Jandi 미리보기 ──
+        function buildJandiPreviewText(manager, building, floor, isModification) {
+            const current = document.getElementById('current-count').textContent;
+            const out     = document.getElementById('out-count').textContent;
+            const newC    = document.getElementById('new-count').textContent;
+            const moveOut = document.getElementById('move-out-count').value;
+            const moveIn  = document.getElementById('move-in-count').textContent;
+            const absent  = document.getElementById('absent-count').textContent;
+            const etc     = document.getElementById('etc-count').textContent;
+
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', hour12: false
+            });
+
+            const specialStudents = {
+                '외박':  currentStudents.filter(s => s.status === '외박'  && (s.name !== '미배정' || s.memo.trim())),
+                '신규':  currentStudents.filter(s => s.status === '신규'  && (s.name !== '미배정' || s.memo.trim())),
+                '이동-': currentStudents.filter(s => s.status === '이동-' && (s.name !== '미배정' || s.memo.trim())),
+                '이동+': currentStudents.filter(s => s.status === '이동+' && (s.name !== '미배정' || s.memo.trim())),
+                '등미':  currentStudents.filter(s => s.status === '등미'  && (s.name !== '미배정' || s.memo.trim())),
+                '퇴소':  currentStudents.filter(s => s.status === '퇴소'  && (s.name !== '미배정' || s.memo.trim())),
+                '정상':  currentStudents.filter(s => s.status === '정상'  && s.memo && s.memo.trim())
+            };
+
+            let msg = `${isModification ? '🔄 수정보고' : '◆ 인원보고◆'}\n\n`;
+            msg += `◆ 보고시간: ${timeString}\n`;
+            msg += `◆ 담당자: ${manager}\n`;
+            msg += `◆ 위치: ${building}동 ${floor}층\n\n`;
+            msg += `▶ 인원 현황 ◀\n`;
+            msg += `• 현재원: ${current}명\n`;
+            msg += `• 외박: ${out}명\n`;
+            msg += `• 신규: ${newC}명\n`;
+            msg += `• 이동-: ${moveOut}명\n`;
+            msg += `• 이동+: ${moveIn}명\n`;
+            msg += `• 등미: ${absent}명\n`;
+            msg += `• 퇴소: ${etc}명\n\n`;
+
+            Object.keys(specialStudents).forEach(status => {
+                if (specialStudents[status].length > 0) {
+                    msg += `▶ ${status} 학생 목록:\n`;
+                    specialStudents[status].forEach(student => {
+                        msg += `   • ${student.room}`;
+                        if (student.name !== '미배정') msg += ` ${student.name}`;
+                        if (student.memo) msg += ` (${student.memo})`;
+                        msg += '\n';
+                    });
+                    msg += '\n';
+                }
+            });
+
+            return msg;
+        }
+
+        function toggleJandiPreview() {
+            const preview = document.getElementById('jandi-preview');
+            const arrow   = document.getElementById('preview-arrow');
+            const isOpen  = preview.style.display !== 'none';
+
+            if (isOpen) {
+                preview.style.display = 'none';
+                arrow.classList.remove('open');
+            } else {
+                preview.style.display = 'block';
+                arrow.classList.add('open');
+            }
+        }
+
 // ── 검색/상태 필터 ──
         function applyFilter() {
             const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
