@@ -377,6 +377,182 @@
             border: 1px solid #fca5a5;
         }
 
+    /* 스티키 요약바 */
+        .sticky-summary {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(79, 70, 229, 0.97);
+            color: white;
+            padding: 10px 20px;
+            display: none;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .sticky-summary span {
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .sticky-summary .sticky-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: none;
+            padding: 0;
+            margin-right: 4px;
+        }
+        /* 검색 필터 바 */
+        .filter-bar {
+            display: none;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-bar input {
+            padding: 8px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            flex: 1;
+            min-width: 160px;
+            transition: border-color 0.2s;
+        }
+        .filter-bar input:focus { border-color: #4f46e5; }
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            outline: none;
+            cursor: pointer;
+        }
+        .filter-bar select:focus { border-color: #4f46e5; }
+        .filter-count {
+            font-size: 0.85rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+        /* 제출 확인 모달 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-box h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1f2937;
+        }
+        .modal-summary {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #374151;
+        }
+        .modal-summary strong { color: #4f46e5; }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal-cancel {
+            padding: 10px 22px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .modal-cancel:hover { background: #f3f4f6; }
+        .modal-confirm {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* 제출 이력 */
+        .history-section {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        .history-section h4 {
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .history-list { display: flex; flex-direction: column; gap: 6px; }
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.82rem;
+            color: #374151;
+            padding: 6px 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0;
+        }
+        .history-item .h-badge {
+            background: #eef2ff;
+            color: #4f46e5;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+        .history-item .h-time { color: #9ca3af; margin-left: auto; white-space: nowrap; }
+        .history-empty { font-size: 0.82rem; color: #9ca3af; text-align: center; padding: 6px 0; }
+        /* 변경된 카드 하이라이트 */
+        .student-card.modified {
+            box-shadow: 0 0 0 2.5px #4f46e5, 0 4px 15px rgba(79,70,229,0.15);
+        }
+        .changed-badge {
+            display: none;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #4f46e5;
+            background: #eef2ff;
+            border-radius: 10px;
+            padding: 2px 7px;
+            white-space: nowrap;
+        }
+        .student-card.modified .changed-badge { display: inline-block; }
+        
+        
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -416,9 +592,21 @@
                 max-height: 400px;
             }
         }
+        
     </style>
 </head>
 <body>
+<div class="modal-overlay" id="confirm-modal">
+        <div class="modal-box">
+            <h3>◆인원보고 제출 확인◆</h3>
+            <div class="modal-summary" id="modal-summary-content"></div>
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeModal()">취소</button>
+                <button class="modal-confirm" onclick="confirmSubmit()">제출하기</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container">
         <div class="header">
             <h1>시대인재 기숙사 인원보고</h1>
@@ -426,6 +614,17 @@
         </div>
 
         <div class="main-content">
+<div class="sticky-summary" id="sticky-summary">
+                <span class="sticky-title" id="sticky-location">-</span>
+                <span id="s-current">현재원 0</span>
+                <span id="s-out">외박 0</span>
+                <span id="s-new">신규 0</span>
+                <span id="s-moveout">이동- 0</span>
+                <span id="s-movein">이동+ 0</span>
+                <span id="s-absent">등미 0</span>
+                <span id="s-etc">퇴소 0</span>
+            </div>
+            
             <!-- 인원 현황 카드 -->
             <div class="stats-grid">
                 <div class="stat-card current">
@@ -522,6 +721,22 @@
                     <h3>학생 현황</h3>
                     <span id="selected-info"></span>
                 </div>
+<div class="filter-bar" id="filter-bar">
+                    <input type="text" id="search-input" placeholder="이름 또는 호실 검색..." oninput="applyFilter()">
+                    <select id="status-filter" onchange="applyFilter()">
+                        <option value="">전체 상태</option>
+                        <option value="정상">정상</option>
+                        <option value="외박">외박</option>
+                        <option value="신규">신규</option>
+                        <option value="이동-">이동-</option>
+                        <option value="이동+">이동+</option>
+                        <option value="등미">등미</option>
+                        <option value="퇴소">퇴소</option>
+                        <option value="미배정">미배정</option>
+                    </select>
+                    <span class="filter-count" id="filter-count"></span>
+                </div>
+                
                 <div class="students-grid" id="students-grid">
                     <!-- 학생 카드들이 여기에 동적으로 추가됩니다 -->
                 </div>
@@ -539,6 +754,13 @@
                      인원보고 제출
                 </button>
             </div>
+<div class="history-section">
+                    <h4>◆오늘 제출 이력◆</h4>
+                    <div class="history-list" id="history-list">
+                        <div class="history-empty">아직 제출 이력이 없습니다</div>
+                    </div>
+                </div>
+            
 <button class="refresh-btn" onclick="location.reload()">
     🔄 새로고침
 </button>
@@ -630,6 +852,7 @@
                 }
                 
                 console.log('시트 데이터 로드 완료:', sheetsData.length, '행 (헤더 포함)');
+                sessionStorage.setItem('sheetsCache', JSON.stringify(sheetsData));
                 console.log('실제 데이터 범위: B3:P' + (data.values.length + 2));
                 
                 // 모든 동별 데이터 확인
@@ -735,12 +958,17 @@
             studentsGrid.innerHTML = '';
             currentStudents = students;
 
+            document.getElementById('filter-bar').style.display = 'flex';
+            document.getElementById('search-input').value = '';
+            document.getElementById('status-filter').value = '';
+            document.getElementById('filter-count').textContent = `총 ${students.length}명`;
+
             students.forEach((student, index) => {
                 const studentCard = document.createElement('div');
                 studentCard.className = 'student-card';
                 studentCard.innerHTML = `
                     <div class="room-number">${student.room}</div>
-                    <div class="student-name">${student.name}</div>
+                  <div class="student-name">${student.name} <span class="changed-badge">변경됨</span></div>
                     <div class="student-status">
                         <select onchange="updateStudentStatus(${index}, this.value)">
                             <option value="정상" ${student.status === '정상' ? 'selected' : ''}>정상</option>
@@ -769,10 +997,13 @@ if (student.status !== '정상') {
         }
 
         // 학생 상태 업데이트 (원본 그대로)
-        function updateStudentStatus(index, status) {
+function updateStudentStatus(index, status) {
             currentStudents[index].status = status;
             updateStats();
             applyStatusColor(event.target, status);
+            // 변경 하이라이트
+            const cards = document.querySelectorAll('#students-grid .student-card');
+            if (cards[index]) cards[index].classList.add('modified');
         }
 
         // 학생 메모 업데이트 (원본 그대로)
@@ -858,13 +1089,14 @@ document.getElementById('move-out-count').value = stats.moveOut;  // 이동- 유
 document.getElementById('move-in-count').textContent = stats.moveIn;
 document.getElementById('absent-count').textContent = stats.absent;
 document.getElementById('etc-count').textContent = stats.etc;
+            updateStickyBar();
         }
 
         // 보고서 제출 (원본 그대로)
-        async function submitReport() {
-            const manager = document.getElementById('manager-select').value;
+       async function submitReport() {
+            const manager  = document.getElementById('manager-select').value;
             const building = document.getElementById('building-select').value;
-            const floor = document.getElementById('floor-select').value;
+            const floor    = document.getElementById('floor-select').value;
             const isModification = document.getElementById('is-modification').checked;
 
             if (!manager || !building || !floor) {
@@ -872,37 +1104,30 @@ document.getElementById('etc-count').textContent = stats.etc;
                 return;
             }
 
-            // 중복 제출 체크
             const reportKey = `${building}-${floor}`;
             const today = new Date().toDateString();
             const currentHour = new Date().getHours();
-            
+
             if (!isModification && lastReportDate[reportKey] === today && currentHour < 22) {
                 showMessage('이미 오늘 보고를 완료했습니다. 수정보고를 선택해주세요.', 'error');
                 return;
             }
 
-            try {
-                showLoading(true);
+            const current = document.getElementById('current-count').textContent;
+            const out     = document.getElementById('out-count').textContent;
+            const newC    = document.getElementById('new-count').textContent;
+            const moveOut = document.getElementById('move-out-count').value;
+            const moveIn  = document.getElementById('move-in-count').textContent;
+            const absent  = document.getElementById('absent-count').textContent;
+            const etc     = document.getElementById('etc-count').textContent;
 
-                // 구글 시트 업데이트
-                await updateGoogleSheets();
-
-                // 잔디 웹훅 전송
-                await sendToJandi(manager, building, floor, isModification);
-
-                // 제출 완료 처리
-                lastReportDate[reportKey] = today;
-                showMessage('인원보고가 성공적으로 제출되었습니다.', 'success');
-                
-                showLoading(false);
-            } catch (error) {
-                console.error('제출 실패:', error);
-                showMessage('제출 중 오류가 발생했습니다.', 'error');
-                showLoading(false);
-            }
+            document.getElementById('modal-summary-content').innerHTML = `
+                <strong>${building}동 ${floor}층</strong> · 담당: <strong>${manager}</strong>${isModification ? ' · 🔄 수정보고' : ''}<br>
+                현재원 <strong>${current}</strong>명 &nbsp;|&nbsp; 외박 <strong>${out}</strong>명 &nbsp;|&nbsp; 신규 <strong>${newC}</strong>명<br>
+                이동- <strong>${moveOut}</strong>명 &nbsp;|&nbsp; 이동+ <strong>${moveIn}</strong>명 &nbsp;|&nbsp; 등미 <strong>${absent}</strong>명 &nbsp;|&nbsp; 퇴소 <strong>${etc}</strong>명
+            `;
+            document.getElementById('confirm-modal').classList.add('active');
         }
-
         // 구글 시트 업데이트 - 수정된 버전
         async function updateGoogleSheets() {
             try {
@@ -1216,6 +1441,19 @@ document.getElementById('building-select').addEventListener('change', function()
         // 페이지 로드 시 초기화 (원본 그대로)
         window.addEventListener('load', function() {
             loadSheetsData();
+renderHistory();
+            window.addEventListener('scroll', () => {
+                const summary = document.getElementById('sticky-summary');
+                const statsGrid = document.querySelector('.stats-grid');
+                if (!statsGrid) return;
+                const statsBottom = statsGrid.getBoundingClientRect().bottom;
+                const studentsVisible = document.getElementById('students-section').style.display !== 'none';
+                if (statsBottom < 0 && studentsVisible) {
+                    summary.style.display = 'flex';
+                } else {
+                    summary.style.display = 'none';
+                }
+            });
             
             // 어제 보고 데이터 복원 (22시 이후)
             const currentHour = new Date().getHours();
@@ -1235,6 +1473,101 @@ document.getElementById('building-select').addEventListener('change', function()
                 localStorage.setItem('yesterdayReports', JSON.stringify(lastReportDate));
             }
         }, 60000); // 1분마다 체크
+// ── 검색/상태 필터 ──
+        function applyFilter() {
+            const searchVal = document.getElementById('search-input').value.trim().toLowerCase();
+            const statusVal = document.getElementById('status-filter').value;
+            const cards = document.querySelectorAll('#students-grid .student-card');
+            let visible = 0;
+            cards.forEach((card, i) => {
+                const student = currentStudents[i];
+                if (!student) return;
+                const matchSearch = !searchVal ||
+                    student.name.toLowerCase().includes(searchVal) ||
+                    student.room.toLowerCase().includes(searchVal);
+                const matchStatus = !statusVal || student.status === statusVal;
+                card.style.display = (matchSearch && matchStatus) ? '' : 'none';
+                if (matchSearch && matchStatus) visible++;
+            });
+            const total = cards.length;
+            document.getElementById('filter-count').textContent =
+                (searchVal || statusVal) ? `${visible} / ${total}명 표시 중` : `총 ${total}명`;
+        }
+
+        // ── 스티키 요약바 업데이트 ──
+        function updateStickyBar() {
+            const building = document.getElementById('building-select').value;
+            const floor = document.getElementById('floor-select').value;
+            if (!building || !floor) return;
+            document.getElementById('sticky-location').textContent = `${building}동 ${floor}층`;
+            document.getElementById('s-current').textContent  = `현재원 ${document.getElementById('current-count').textContent}`;
+            document.getElementById('s-out').textContent      = `외박 ${document.getElementById('out-count').textContent}`;
+            document.getElementById('s-new').textContent      = `신규 ${document.getElementById('new-count').textContent}`;
+            document.getElementById('s-moveout').textContent  = `이동- ${document.getElementById('move-out-count').value}`;
+            document.getElementById('s-movein').textContent   = `이동+ ${document.getElementById('move-in-count').textContent}`;
+            document.getElementById('s-absent').textContent   = `등미 ${document.getElementById('absent-count').textContent}`;
+            document.getElementById('s-etc').textContent      = `퇴소 ${document.getElementById('etc-count').textContent}`;
+        }
+
+        // ── 모달 열기/닫기/확정 ──
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+        }
+
+        async function confirmSubmit() {
+            closeModal();
+            const manager  = document.getElementById('manager-select').value;
+            const building = document.getElementById('building-select').value;
+            const floor    = document.getElementById('floor-select').value;
+            const isModification = document.getElementById('is-modification').checked;
+            const reportKey = `${building}-${floor}`;
+            const today = new Date().toDateString();
+            try {
+                showLoading(true);
+                await updateGoogleSheets();
+                await sendToJandi(manager, building, floor, isModification);
+                lastReportDate[reportKey] = today;
+                addHistory(building, floor, manager, isModification);
+                showMessage('인원보고가 성공적으로 제출되었습니다.', 'success');
+                showLoading(false);
+            } catch (error) {
+                console.error('제출 실패:', error);
+                showMessage('제출 중 오류가 발생했습니다.', 'error');
+                showLoading(false);
+            }
+        }
+
+        // ── 제출 이력 ──
+        function addHistory(building, floor, manager, isModification) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+            const current = document.getElementById('current-count').textContent;
+            const item = { building, floor, manager, isModification, timeStr, current };
+            const stored = JSON.parse(sessionStorage.getItem('submitHistory') || '[]');
+            stored.unshift(item);
+            if (stored.length > 10) stored.pop();
+            sessionStorage.setItem('submitHistory', JSON.stringify(stored));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const stored = JSON.parse(sessionStorage.getItem('submitHistory') || '[]');
+            const list = document.getElementById('history-list');
+            if (stored.length === 0) {
+                list.innerHTML = '<div class="history-empty">아직 제출 이력이 없습니다</div>';
+                return;
+            }
+            list.innerHTML = stored.map(item => `
+                <div class="history-item">
+                    <span class="h-badge">${item.building}동 ${item.floor}층</span>
+                    <span>${item.manager}</span>
+                    <span style="color:#6b7280">${item.isModification ? '🔄 수정' : '✅ 정상'}</span>
+                    <span>현재원 ${item.current}명</span>
+                    <span class="h-time">${item.timeStr}</span>
+                </div>
+            `).join('');
+        }
+        
     </script>
         <!-- 개발자 도구 방지 코드 -->
     <script>
