@@ -1117,15 +1117,14 @@
                 if (studentRows.length > 0) {
                     // 해당 호실의 모든 학생 추가 (3인실 대응)
                     studentRows.forEach(studentRow => {
-                        students.push({
+                       students.push({
                             room: studentRow.data[1] || roomCode,
                             name: studentRow.data[2] || '미배정',
                             status: studentRow.data[3] || '정상',
-                            date: studentRow.data[5] || '',
-                            memo: studentRow.data[6] || '',
+                            date: studentRow.data[4] || '',
+                            memo: studentRow.data[5] || '',
                             rowIndex: studentRow.index
                         });
-                    });
                 } else {
                     // 시트에 없는 호실은 미배정으로 추가
                     students.push({
