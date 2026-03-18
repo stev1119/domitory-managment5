@@ -1925,9 +1925,15 @@ renderHistory();
                 `;
                 helper.classList.add('visible');
 
-            } else {
+           } else {
                 helper.innerHTML = '';
                 helper.classList.remove('visible');
+                // 비고 입력칸 원래대로 복원
+                const memoInput = document.getElementById(`memo-input-${index}`);
+                if (memoInput) {
+                    memoInput.style.display = '';
+                    memoInput.placeholder = '비고';
+                }
             }
         }
 
