@@ -778,7 +778,7 @@
 </div>
                 <div class="stat-card move-out">
                     <h3>이동-</h3>
-                    <input type="number" id="move-out-count" class="number" value="0" min="0">
+                    <div class="number" id="move-out-count">0</div>
                 </div>
                 <div class="stat-card move-in">
                     <h3>이동+</h3>
@@ -1248,7 +1248,7 @@ function applyStatusColor(select, status) {
 document.getElementById('current-count').textContent = stats.current;
 document.getElementById('out-count').textContent = stats.out;
 document.getElementById('new-count').textContent = stats.new;
-document.getElementById('move-out-count').value = stats.moveOut;  // 이동- 유지
+document.getElementById('move-out-count').textContent = stats.moveOut;  // 이동- 유지
 document.getElementById('move-in-count').textContent = stats.moveIn;
 document.getElementById('absent-count').textContent = stats.absent;
 document.getElementById('etc-count').textContent = stats.etc;
@@ -1279,7 +1279,7 @@ document.getElementById('etc-count').textContent = stats.etc;
             const current = document.getElementById('current-count').textContent;
             const out     = document.getElementById('out-count').textContent;
             const newC    = document.getElementById('new-count').textContent;
-            const moveOut = document.getElementById('move-out-count').value;
+            const moveOut = document.getElementById('move-out-count').textContent;
             const moveIn  = document.getElementById('move-in-count').textContent;
             const absent  = document.getElementById('absent-count').textContent;
             const etc     = document.getElementById('etc-count').textContent;
@@ -1460,7 +1460,7 @@ const previewText = buildJandiPreviewText(manager, building, floor, isModificati
 current: parseInt(document.getElementById('current-count').textContent),
 out: parseInt(document.getElementById('out-count').textContent),
 new: parseInt(document.getElementById('new-count').textContent),
-moveOut: parseInt(document.getElementById('move-out-count').value), // 이동- 만 .value 유지
+moveOut: parseInt(document.getElementById('move-out-count').textContent), // 이동- 만 .value 유지
 moveIn: parseInt(document.getElementById('move-in-count').textContent),
 absent: parseInt(document.getElementById('absent-count').textContent),
 etc: parseInt(document.getElementById('etc-count').textContent)
@@ -1736,7 +1736,7 @@ renderHistory();
             const current = document.getElementById('current-count').textContent;
             const out     = document.getElementById('out-count').textContent;
             const newC    = document.getElementById('new-count').textContent;
-            const moveOut = document.getElementById('move-out-count').value;
+            const moveOut = document.getElementById('move-out-count').textContent;
             const moveIn  = document.getElementById('move-in-count').textContent;
             const absent  = document.getElementById('absent-count').textContent;
             const etc     = document.getElementById('etc-count').textContent;
@@ -1998,7 +1998,7 @@ function renderMoveHelper(index, status) {
             document.getElementById('s-current').textContent  = `현재원 ${document.getElementById('current-count').textContent}`;
             document.getElementById('s-out').textContent      = `외박 ${document.getElementById('out-count').textContent}`;
             document.getElementById('s-new').textContent      = `신규 ${document.getElementById('new-count').textContent}`;
-            document.getElementById('s-moveout').textContent  = `이동- ${document.getElementById('move-out-count').value}`;
+            document.getElementById('s-moveout').textContent  = `이동- ${document.getElementById('move-out-count').textContent}`;
             document.getElementById('s-movein').textContent   = `이동+ ${document.getElementById('move-in-count').textContent}`;
             document.getElementById('s-absent').textContent   = `등미 ${document.getElementById('absent-count').textContent}`;
             document.getElementById('s-etc').textContent      = `퇴소 ${document.getElementById('etc-count').textContent}`;
