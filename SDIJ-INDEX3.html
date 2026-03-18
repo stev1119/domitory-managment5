@@ -1121,8 +1121,8 @@
                             room: studentRow.data[1] || roomCode,
                             name: studentRow.data[2] || '미배정',
                             status: studentRow.data[3] || '정상',
-                            date: studentRow.data[4] || '',
-                            memo: studentRow.data[5] || '',
+                            date: studentRow.data[5] || '',
+                            memo: studentRow.data[6] || '',
                             rowIndex: studentRow.index
                         });
                     });
@@ -1877,9 +1877,9 @@ renderHistory();
                 const row = sheetsData[i];
                 if (!row || !row[1]) continue;
 
-                const rowStatus = (row[3] || '').toString().trim();
                 const rowRoom   = (row[1] || '').toString().trim();
                 const rowName   = (row[2] || '').toString().trim();
+                const rowStatus = (row[3] || '').toString().trim();
 
                 if (rowStatus === targetStatus && rowName && rowName !== '미배정') {
                     // 현재 보고 층 학생은 이미 currentStudents에 있으므로 중복 제외
