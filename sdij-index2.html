@@ -970,6 +970,7 @@
                 });
                 
                 showLoading(false);
+                loadMemory();
                 
             } catch (error) {
                 console.error('시트 데이터 로드 실패:', error);
@@ -1547,7 +1548,7 @@ document.getElementById('building-select').addEventListener('change', function()
         // 페이지 로드 시 초기화 (원본 그대로)
         window.addEventListener('load', function() {
             loadSheetsData();
-           loadMemory();
+           
 renderHistory();
             window.addEventListener('scroll', () => {
                 const summary = document.getElementById('sticky-summary');
