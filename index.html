@@ -1908,7 +1908,7 @@ function renderMoveHelper(index, status) {
                 const room = currentStudents[index].room;
                 const name = currentStudents[index].name !== '미배정' ? currentStudents[index].name : '';
                 helper.innerHTML = `
-                    <span class="helper-label">출발호실</span>
+                    <span class="helper-label">이동(前)호실</span>
                     <input type="text" id="from-room-${index}" placeholder="예: B403" maxlength="6"
                         oninput="this.value=this.value.toUpperCase()"
                         onkeydown="if(event.key==='Enter') applyMoveMemo(${index})">
@@ -1925,7 +1925,7 @@ function renderMoveHelper(index, status) {
                     <input type="text" id="move-name-${index}" placeholder="이름" maxlength="10"
                         onkeydown="if(event.key==='Enter') document.getElementById('from-room-${index}').focus()">
                     <span class="arrow-icon">→</span>
-                    <input type="text" id="from-room-${index}" placeholder="도착호실 예: B401" maxlength="6"
+                    <input type="text" id="from-room-${index}" placeholder="이동할호실" maxlength="6"
                         oninput="this.value=this.value.toUpperCase()"
                         onkeydown="if(event.key==='Enter') applyMoveMemo(${index})">
                     <button class="btn-apply-memo" onclick="applyMoveMemo(${index})">메모 적용</button>
